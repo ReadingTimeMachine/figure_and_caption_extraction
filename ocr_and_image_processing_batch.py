@@ -73,7 +73,7 @@ if inParallel:
     yt.enable_parallelism()
     
 from ocr_and_image_processing_utils import get_already_ocr_processed, find_pickle_file_name, \
-   get_random_page_list, find_squares_auto, cull_squares_and_dewarp
+   get_random_page_list, find_squares_auto, cull_squares_and_dewarp, angles_results_from_ocr
 
 
 # import numpy as np
@@ -171,7 +171,7 @@ ws, pageNums, pdfarts = get_random_page_list(wsAlreadyDone)
 wsInds = np.arange(0,len(ws))
     
 # debug
-#wsInds = wsInds[:2]
+wsInds = wsInds[:2]
 #wsInds = wsInds[90:]
 
 
@@ -248,267 +248,245 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
         hocr = pytesseract.image_to_pdf_or_hocr(textImg,  config="--oem 1 --psm 12", extension='hocr')
         if debug: print('done finding OCR')
         # translate to text to find namespace for xpath
-        htmlText = hocr.decode('utf-8')  
+        #htmlText = hocr.decode('utf-8')  
+        
+    # get some info useful for squarefinding (by taking out text blocks)
+    # these will be bounding boxes of words, rotations of text
+    results_def, rotations = angles_results_from_ocr(hocr)
     
     # onto square finding
     # open img in grayscale 
     with Image.open(imgImageProc) as img:
-        # find all the squares on the page -> use this to de-warp
-        if debug: print('finding squares...')
-        saved_squares, color_bars = find_squares_auto(np.array(img.convert('L')).astype('uint8'))
-        if debug: print('done finding squares')
+        saved_squares, color_bars = find_squares_auto(img, results_def, rotations) # 4 ways
+        saved_squares_culled, cin1,cout1 = cull_squares_and_dewarp(np.array(img.convert('RGB')), 
+                                                                   saved_squares.copy())
+        # note: cin1 and cout1 are not used as of yet, but could be used to dewarp images
 
-        # final culling of squares & saving of de-warped images
-        if debug: print('culling squares....')
-        saved_squares_culled, cin1,cout1 = cull_squares_and_dewarp(np.array(img.convert('RGB')), saved_squares.copy())
-
-    import sys; sys.exit()
-    
+    sto.result = [imgImageProc,ws[iw], hocr, results_def, rotations, saved_squares_culled, color_bars,cin1,cout1]    
     # remove tmp TIFF image for storage reasons if doing PDF processing
     if pdfarts is not None: # have PDFs
         remove(imOCRName)
         
-    for iimPDF2, imPDF in enumerate(thisSeq):
-        iimPDF = pageNums[iw] # just overrite for single page
-#         if pdfarts is not None: # have PDFs
-#             # make sure we do our best to capture accurate text/images
-#             imPDF.resize(width=int(0.5*imPDF.width),height=int(0.5*imPDF.height))
-#             imPDF.background_color = Color("white")
-#             imPDF.alpha_channel = 'remove'
+#     for iimPDF2, imPDF in enumerate(thisSeq):
+#         iimPDF = pageNums[iw] # just overrite for single page
+# #         if pdfarts is not None: # have PDFs
+# #             # make sure we do our best to capture accurate text/images
+# #             imPDF.resize(width=int(0.5*imPDF.width),height=int(0.5*imPDF.height))
+# #             imPDF.background_color = Color("white")
+# #             imPDF.alpha_channel = 'remove'
 
-#             checkws = ws[iw].split('/')[-1].split('.pdf')[0] # for outputting file
-#             WandImage(imPDF).save(filename=images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg')
-#         else: # bitmaps or jpegs
-#             if 'bmp' in ws[iw]:
-#                 checkws = ws[iw].split('/')[-1].split('.bmp')[0] # for outputting file
-#             elif 'jpeg' in ws[iw]:
-#                 checkws = ws[iw].split('/')[-1].split('.jpeg')[0] # for outputting file  
+# #             checkws = ws[iw].split('/')[-1].split('.pdf')[0] # for outputting file
+# #             WandImage(imPDF).save(filename=images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg')
+# #         else: # bitmaps or jpegs
+# #             if 'bmp' in ws[iw]:
+# #                 checkws = ws[iw].split('/')[-1].split('.bmp')[0] # for outputting file
+# #             elif 'jpeg' in ws[iw]:
+# #                 checkws = ws[iw].split('/')[-1].split('.jpeg')[0] # for outputting file  
+# #             else:
+# #                 checkws = ws[iw].split('/')[-1].split('.jpg')[0] # for outputting file  
+# #             # read in and copy to jpeg 
+# #             im = Image.open(ws[iw])
+# #             im.save(images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg', quality=95)
+# #             #im.save(images_pdf + checkws + '_p'+str(iimPDF) + '.tiff', quality=95)
+# #             del im
+        
+#         ws_all_pages.append(images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg')
+
+#         ######################### OCR ################################
+        
+#         if debug: print('reading in image:', checkws + '_p'+str(iimPDF) + '.jpeg')
+
+#         # (I) Read in image
+#         fn = images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg' #ws[iw]
+        
+#         #if iw > 0: import sys; sys.exit()
+
+#         img = Image.open(fn)
+
+#         # im to data
+#         img = np.array(img)
+#         img = np.uint8(img) # just in case
+
+#         # for later use
+#         if len(img.shape) < 3:
+#             backtorgb = cv.cvtColor(img,cv.COLOR_GRAY2RGB)
+#         else:
+#             backtorgb = img.copy()
+#             img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
+
+
+#         # UNSKEWED OCR
+
+#         # find all the squares on the page -> use this to de-warp
+#         if debug: print('finding squares...')
+#         saved_squares = find_squares_auto_one(img.copy())
+#         if debug: print('done finding squares')
+
+#         # final culling of squares & saving of de-warped images
+#         if debug: print('culling squares....')
+#         imgs, saved_squares, _, _, cin1,cout1 = cull_squares_and_dewarp(backtorgb.copy(), 
+#                                                             saved_squares.copy(), 
+#                                                            return_centers=True)
+#         if debug: print('done culling squares')
+#         # OCR the full image, for every de-warped image
+#         results_def = []
+#         rotations = [] # keep if rotated text
+#         lineNums = [] # store line numbers
+#         angles = []
+#         confidences = [] # save confidences
+
+#         # replace if we don't want to do this based on skewed stuff
+#         textImg = img.copy()
+
+#         # use hocr to grab rotations of text
+#         if debug: print('starting OCR...')
+#         hocr = pytesseract.image_to_pdf_or_hocr(textImg,  config="--oem 1 --psm 12", extension='hocr')
+#         if debug: print('done finding OCR')
+#         # translate to text to find namespace for xpath
+#         htmlText = hocr.decode('utf-8')
+#         # grab namespace
+#         nameSpace = ''
+#         for l in htmlText.split('\n'):
+#             if 'xmlns' in l:
+#                 nameSpace = l.split('xmlns="')[1].split('"')[0]
+#                 break
+#         tree = etree.fromstring(hocr)
+#         ns = {'tei': nameSpace}
+
+#         # grab words
+#         words = tree.xpath("//tei:span[@class='ocrx_word']/text()", namespaces=ns)
+
+#         # grab bounding boxes too
+#         bboxesText = tree.xpath("//tei:span[@class='ocrx_word']/@title", namespaces=ns)
+#         # parse and grab bboxes alone
+#         bboxes = []
+#         for b in bboxesText:
+#             mybb = b.split('bbox ')[1].split(';')[0].split()
+#             mybb = np.array(mybb).astype('int').tolist()
+#             bboxes.append(mybb)   
+#             confidences.append(float(b.split('x_wconf')[1]))
+
+#         # now, grab parent structure and see if you can see a "text angle" tag for rotated text
+#         angles = []; lines = []; ocr_par = []
+#         for i,angle in enumerate(tree.xpath("//tei:span[@class='ocrx_word']", namespaces=ns)):
+#             myangle = angle.xpath("../@title", namespaces=ns) # this should be line tag
+#             par = angle.xpath("../../@title", namespaces=ns) # grab spacing of paragraph blocks for layout stuff later
+#             par = par[0]
+#             bb = np.array(par.split(' ')[1:]).astype('int').tolist()
+#             x = bb[0]; y = bb[1]
+#             w = bb[2]-x; h = bb[3]-y
+#             ocr_par.append((x,y,w,h))
+#             if len(myangle) > 1:
+#                 print('HAVE TOO MANY PARENTS')
+#             if 'textangle' in myangle[0]:
+#                 # grab text angle
+#                 textangle = float(myangle[0].split('textangle')[1].split(';')[0])
 #             else:
-#                 checkws = ws[iw].split('/')[-1].split('.jpg')[0] # for outputting file  
-#             # read in and copy to jpeg 
-#             im = Image.open(ws[iw])
-#             im.save(images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg', quality=95)
-#             #im.save(images_pdf + checkws + '_p'+str(iimPDF) + '.tiff', quality=95)
-#             del im
-        
-        ws_all_pages.append(images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg')
+#                 textangle = 0.0
+#             angles.append(textangle)
+#             # also please grab line number
+#             myl = angle.xpath("../@id", namespaces=ns) # this should be line tag
+#             l = myl[0].split("_")
+#             if int(l[1]) != 1:
+#                 print(' SOMETHING WEIRD HAS happened!!')
+#                 sys.exit()
+#             lines.append(int(l[2]))
 
-        ######################### OCR ################################
-        
-        if debug: print('reading in image:', checkws + '_p'+str(iimPDF) + '.jpeg')
+#         # put it all together
+#         for text, bb, rot,l in zip(words,bboxes,angles,lines):
+#             x = bb[0]; y = bb[1]
+#             w = bb[2]-x; h = bb[3]-y
+#             results_def.append( ((x,y,w,h),text) )
+#             rotations.append(rot)
+#             lineNums.append(l)
 
-        # (I) Read in image
-        fn = images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg' #ws[iw]
-        
-        #if iw > 0: import sys; sys.exit()
+#         #####################################################################################
 
-        img = Image.open(fn)
+#         # now, let's re-run and try to find more squares
+#         if debug: print('final square finding...')
+#         #centers_in = []; centers_out = []
+#         saved_squares = find_squares_auto(img, results_def, rotations) # 4 ways
+#         _, saved_squares, _, _, centers_in, centers_out = cull_squares_and_dewarp(backtorgb.copy(), 
+#                                                                                   saved_squares.copy(), 
+#                                                                                   return_centers=True)
+#         if debug: print('done with final square finding')
 
-        # im to data
-        img = np.array(img)
-        img = np.uint8(img) # just in case
-
-        # for later use
-        if len(img.shape) < 3:
-            backtorgb = cv.cvtColor(img,cv.COLOR_GRAY2RGB)
-        else:
-            backtorgb = img.copy()
-            img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
-
-
-        # UNSKEWED OCR
-
-        # find all the squares on the page -> use this to de-warp
-        if debug: print('finding squares...')
-        saved_squares = find_squares_auto_one(img.copy())
-        if debug: print('done finding squares')
-
-        # final culling of squares & saving of de-warped images
-        if debug: print('culling squares....')
-        imgs, saved_squares, _, _, cin1,cout1 = cull_squares_and_dewarp(backtorgb.copy(), 
-                                                            saved_squares.copy(), 
-                                                           return_centers=True)
-        if debug: print('done culling squares')
-        # OCR the full image, for every de-warped image
-        results_def = []
-        rotations = [] # keep if rotated text
-        lineNums = [] # store line numbers
-        angles = []
-        confidences = [] # save confidences
-
-        # replace if we don't want to do this based on skewed stuff
-        textImg = img.copy()
-
-        # use hocr to grab rotations of text
-        if debug: print('starting OCR...')
-        hocr = pytesseract.image_to_pdf_or_hocr(textImg,  config="--oem 1 --psm 12", extension='hocr')
-        if debug: print('done finding OCR')
-        # translate to text to find namespace for xpath
-        htmlText = hocr.decode('utf-8')
-        # grab namespace
-        nameSpace = ''
-        for l in htmlText.split('\n'):
-            if 'xmlns' in l:
-                nameSpace = l.split('xmlns="')[1].split('"')[0]
-                break
-        tree = etree.fromstring(hocr)
-        ns = {'tei': nameSpace}
-
-        # grab words
-        words = tree.xpath("//tei:span[@class='ocrx_word']/text()", namespaces=ns)
-
-        # grab bounding boxes too
-        bboxesText = tree.xpath("//tei:span[@class='ocrx_word']/@title", namespaces=ns)
-        # parse and grab bboxes alone
-        bboxes = []
-        for b in bboxesText:
-            mybb = b.split('bbox ')[1].split(';')[0].split()
-            mybb = np.array(mybb).astype('int').tolist()
-            bboxes.append(mybb)   
-            confidences.append(float(b.split('x_wconf')[1]))
-
-        # now, grab parent structure and see if you can see a "text angle" tag for rotated text
-        angles = []; lines = []; ocr_par = []
-        for i,angle in enumerate(tree.xpath("//tei:span[@class='ocrx_word']", namespaces=ns)):
-            myangle = angle.xpath("../@title", namespaces=ns) # this should be line tag
-            par = angle.xpath("../../@title", namespaces=ns) # grab spacing of paragraph blocks for layout stuff later
-            par = par[0]
-            bb = np.array(par.split(' ')[1:]).astype('int').tolist()
-            x = bb[0]; y = bb[1]
-            w = bb[2]-x; h = bb[3]-y
-            ocr_par.append((x,y,w,h))
-            if len(myangle) > 1:
-                print('HAVE TOO MANY PARENTS')
-            if 'textangle' in myangle[0]:
-                # grab text angle
-                textangle = float(myangle[0].split('textangle')[1].split(';')[0])
-            else:
-                textangle = 0.0
-            angles.append(textangle)
-            # also please grab line number
-            myl = angle.xpath("../@id", namespaces=ns) # this should be line tag
-            l = myl[0].split("_")
-            if int(l[1]) != 1:
-                print(' SOMETHING WEIRD HAS happened!!')
-                sys.exit()
-            lines.append(int(l[2]))
-
-        # put it all together
-        for text, bb, rot,l in zip(words,bboxes,angles,lines):
-            x = bb[0]; y = bb[1]
-            w = bb[2]-x; h = bb[3]-y
-            results_def.append( ((x,y,w,h),text) )
-            rotations.append(rot)
-            lineNums.append(l)
-
-        #####################################################################################
-
-        # now, let's re-run and try to find more squares
-        if debug: print('final square finding...')
-        #centers_in = []; centers_out = []
-        saved_squares = find_squares_auto(img, results_def, rotations) # 4 ways
-        _, saved_squares, _, _, centers_in, centers_out = cull_squares_and_dewarp(backtorgb.copy(), 
-                                                                                  saved_squares.copy(), 
-                                                                                  return_centers=True)
-        if debug: print('done with final square finding')
-
-        sys.stdout.flush()
-        saved_squares_all_pages.append(saved_squares)
-        results_def_all_pages.append(results_def)
-        rotations_all_pages.append(rotations)
-        lineNums_all_pages.append(lineNums)
-        confidences_all_pages.append(confidences)
-        ocr_par_all_pages.append(ocr_par)
-        PDFlinkStorage_all_pages.append(ws[iw])
-        pageNumStorage_all_pages.append(pageNums[iw])
-        htmlText_all_pages.append(htmlText)
-        centers_in_all_pages.append(centers_in)
-        centers_out_all_pages.append(centers_out)
-        centers_in_1_all_pages.append(centers_in)
-        centers_out_1_all_pages.append(centers_out)
+#         sys.stdout.flush()
+#         saved_squares_all_pages.append(saved_squares)
+#         results_def_all_pages.append(results_def)
+#         rotations_all_pages.append(rotations)
+#         lineNums_all_pages.append(lineNums)
+#         confidences_all_pages.append(confidences)
+#         ocr_par_all_pages.append(ocr_par)
+#         PDFlinkStorage_all_pages.append(ws[iw])
+#         pageNumStorage_all_pages.append(pageNums[iw])
+#         htmlText_all_pages.append(htmlText)
+#         centers_in_all_pages.append(centers_in)
+#         centers_out_all_pages.append(centers_out)
+#         centers_in_1_all_pages.append(centers_in)
+#         centers_out_1_all_pages.append(centers_out)
 
 
-        del results_def
-        del rotations
-        del lineNums
-        del saved_squares
-        del confidences
-        del ocr_par
-        del imgs
-        del img
-        del hocr
-        del tree
-        del words
-        del htmlText
+#         del results_def
+#         del rotations
+#         del lineNums
+#         del saved_squares
+#         del confidences
+#         del ocr_par
+#         del imgs
+#         del img
+#         del hocr
+#         del tree
+#         del words
+#         del htmlText
 
-    # save full things
-    sto.result = [ws_all_pages, results_def_all_pages, rotations_all_pages, lineNums_all_pages, 
-                  saved_squares_all_pages, confidences_all_pages, ocr_par_all_pages, 
-                  #links_all_pages, gifLinkStorage_all_pages,
-                  PDFlinkStorage_all_pages,pageNumStorage_all_pages,
-                  #downloadLinkStorage_all_pages, 
-                  htmlText_all_pages, 
-                 centers_in_all_pages, centers_out_all_pages, 
-                 centers_in_1_all_pages, centers_out_1_all_pages]#, ocr_par_unskew, words_in_par_unskew]
+#     # save full things
+#     sto.result = [ws_all_pages, results_def_all_pages, rotations_all_pages, lineNums_all_pages, 
+#                   saved_squares_all_pages, confidences_all_pages, ocr_par_all_pages, 
+#                   #links_all_pages, gifLinkStorage_all_pages,
+#                   PDFlinkStorage_all_pages,pageNumStorage_all_pages,
+#                   #downloadLinkStorage_all_pages, 
+#                   htmlText_all_pages, 
+#                  centers_in_all_pages, centers_out_all_pages, 
+#                  centers_in_1_all_pages, centers_out_1_all_pages]#, ocr_par_unskew, words_in_par_unskew]
 
     if iw%mod_output == 0: print('On ' + str(iw) + ' of ' + str(len(wsInds)))
     
     
 if yt.is_root():
-    full_run_squares = []; full_run_ocr = []; full_run_rotations = []; full_run_lineNums = []; wsout = []
-    full_run_confidences = []; full_run_paragraphs = []; full_run_pdfwords=[]; full_run_pdftextBoxes = []    
-    remove_filenames = []
-    full_run_links = []; full_run_gifLinkStorage = []; full_run_PDFlinkStorage = []; full_run_pageNumStorage = []; full_run_downloadLinkStorage=[]
-    full_run_PDFlayouts = []
-    full_run_htmlTextUS = []; full_run_htmlText = []; centers_in = []; centers_out = []
-    centers_in_1 = []; centers_out_1 = []
+    # sto.result = [imgImageProc,ws[iw], hocr, results_def, rotations, saved_squares_culled, color_bars,cin1,cout1]    
+    full_run_squares = []; full_run_ocr = []; full_run_rotations = []; wsout = []
+    full_run_hocr = []; centers_in = []; centers_out = []; color_bars = []
+    full_run_pdf = []
   
     for ns, vals in sorted(my_storage.items()):
         if vals is not None:
             for v in vals[0]:
                 wsout.append(v)
             for v in vals[1]:
-                full_run_ocr.append(v)
+                full_run_pdf.append(v)
             for v in vals[2]:
-                full_run_rotations.append(v)
+                full_run_hocr.append(v)
             for v in vals[3]:
-                full_run_lineNums.append(v)
+                full_run_ocr.append(v)
             for v in vals[4]:
-                full_run_squares.append(v)
+                full_run_rotations.append(v)
             for v in vals[5]:
-                full_run_confidences.append(v)
+                full_run_squares.append(v)
             for v in vals[6]:
-                full_run_paragraphs.append(v)
-            #for v in vals[7]:
-            #    full_run_links.append(v)
-            #for v in vals[8]:
-            #    full_run_gifLinkStorage.append(v)
+                color_bars.append(v)
             for v in vals[7]:
-                full_run_PDFlinkStorage.append(v)
-            for v in vals[8]:
-                full_run_pageNumStorage.append(v)
-            #for v in vals[11]:
-            #    full_run_downloadLinkStorage.append(v)
-            for v in vals[9]:
-                full_run_htmlText.append(v)
-            for v in vals[10]:
                 centers_in.append(v)
-            for v in vals[11]:
+            for v in vals[8]:
                 centers_out.append(v)
-            for v in vals[12]:
-                centers_in_1.append(v)
-            for v in vals[13]:
-                centers_out_1.append(v)
+
         
     # do a little test save here - locations of squares and figure caption boxes
     #pp = pickle_dir + 'full_ocr_results_and_squares' + pickle_file_mod + '.pickle'
     with open(pickle_file_name, 'wb') as ff:
         pickle.dump([wsout, full_run_squares, full_run_ocr, full_run_rotations, 
-                     full_run_lineNums, full_run_confidences, full_run_paragraphs, 
-                     full_run_links, full_run_gifLinkStorage, full_run_PDFlinkStorage, 
-                     full_run_pageNumStorage, full_run_downloadLinkStorage,
-                     full_run_htmlText, centers_in, centers_out, 
-                     centers_in_1, centers_out_1], ff)
+                     full_run_pdf, full_run_hocr, color_bars,
+                      centers_in, centers_out], ff)
         
     print("DONE at", time.ctime(time.time()))
 

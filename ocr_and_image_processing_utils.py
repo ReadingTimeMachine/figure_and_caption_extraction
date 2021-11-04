@@ -4,6 +4,7 @@ import config
 from yt import is_root
 import numpy as np
 import cv2 as cv
+from lxml import etree
 
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
@@ -143,6 +144,79 @@ def get_random_page_list(wsAlreadyDone):
     return ws, pageNums, pdfarts
 
 
+
+# -------------- parsing some results from OCR for later square finding --------
+
+def angles_results_from_ocr(hocr, return_lines=False):
+    htmlText = hocr.decode('utf-8')  
+    results_def = []
+    rotations = [] # keep if rotated text
+    lineNums = [] # store line numbers
+    angles = []
+    confidences = [] # save confidences
+
+    # grab namespace
+    nameSpace = ''
+    for l in htmlText.split('\n'):
+        if 'xmlns' in l:
+            nameSpace = l.split('xmlns="')[1].split('"')[0]
+            break
+    tree = etree.fromstring(hocr)
+    ns = {'tei': nameSpace}
+
+    # grab words
+    words = tree.xpath("//tei:span[@class='ocrx_word']/text()", namespaces=ns)
+
+    # grab bounding boxes too
+    bboxesText = tree.xpath("//tei:span[@class='ocrx_word']/@title", namespaces=ns)
+    # parse and grab bboxes alone
+    bboxes = []
+    for b in bboxesText:
+        mybb = b.split('bbox ')[1].split(';')[0].split()
+        mybb = np.array(mybb).astype('int').tolist()
+        bboxes.append(mybb)   
+        confidences.append(float(b.split('x_wconf')[1]))
+
+    # now, grab parent structure and see if you can see a "text angle" tag for rotated text
+    angles = []; lines = []; ocr_par = []
+    for i,angle in enumerate(tree.xpath("//tei:span[@class='ocrx_word']", namespaces=ns)):
+        myangle = angle.xpath("../@title", namespaces=ns) # this should be line tag
+        par = angle.xpath("../../@title", namespaces=ns) # grab spacing of paragraph blocks for layout stuff later
+        par = par[0]
+        bb = np.array(par.split(' ')[1:]).astype('int').tolist()
+        x = bb[0]; y = bb[1]
+        w = bb[2]-x; h = bb[3]-y
+        ocr_par.append((x,y,w,h))
+        if len(myangle) > 1:
+            print('HAVE TOO MANY PARENTS')
+        if 'textangle' in myangle[0]:
+            # grab text angle
+            textangle = float(myangle[0].split('textangle')[1].split(';')[0])
+        else:
+            textangle = 0.0
+        angles.append(textangle)
+        # also please grab line number
+        myl = angle.xpath("../@id", namespaces=ns) # this should be line tag
+        l = myl[0].split("_")
+        if int(l[1]) != 1:
+            print(' SOMETHING WEIRD HAS happened!!')
+            sys.exit()
+        lines.append(int(l[2]))
+
+    # put it all together
+    for text, bb, rot,l in zip(words,bboxes,angles,lines):
+        x = bb[0]; y = bb[1]
+        w = bb[2]-x; h = bb[3]-y
+        results_def.append( ((x,y,w,h),text) )
+        rotations.append(rot)
+        lineNums.append(l)
+
+    if return_lines:
+        return results_def, rotations, lines
+    else:
+        return results_def, rotations
+
+
 # ---------- square finding with image processing ------------------
 def angle_cos(p0, p1, p2):
     d1, d2 = (p0-p1).astype('float'), (p2-p1).astype('float')
@@ -188,7 +262,7 @@ def find_squares(img, deltaBin = 15, max_cos_req=0.01):
 # this automatically re-runs find-squares more finely grained if nothing is found
 # deltaBin is how many gray-scale bins to slice our image into to start, deltaBinReplace is how small 
 #.  it gets if we don't find any squares the first time
-def find_squares_auto(img, deltaBin = 26, deltaBinReplace = 8, areaCutOff = 0.01):    
+def find_squares_auto_one(img, deltaBin = 26, deltaBinReplace = 8, areaCutOff = 0.01):    
     
     # find squares
     squares = find_squares(img, deltaBin = deltaBin)
@@ -271,6 +345,163 @@ def find_squares_auto(img, deltaBin = 26, deltaBinReplace = 8, areaCutOff = 0.01
                     
     return saved_squares, color_bars
 
+# uses 4 different methods to find squares, culls at end
+def find_squares_auto(img, results_culled, angles_culled, 
+                      deltaBin = 26, deltaBinReplace = 8, areaCutOff = 0.01, 
+                      hog_disk_radius = 10):  
+    from skimage import filters, util
+    from scipy.stats import mode
+    from skimage.morphology import disk
+    
+    kShmear = (7,5) # smear more along horizontal
+    krotShmear = (5,7)    
+    
+    # im to data
+    img = np.array(img)
+    img = np.uint8(img) # just in case
+
+    # for later use
+    if len(img.shape) < 3:
+        backtorgb = cv.cvtColor(img,cv.COLOR_GRAY2RGB)
+    else:
+        backtorgb = img.copy()
+        img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
+
+    if len(mode(angles_culled).mode) > 0:
+        myRot = mode(angles_culled).mode[0]
+    else:
+        myRot = -50
+    badRotation = False
+    if myRot == 90 or myRot == 270:
+        rotatedImage = True
+        #print('Rotated image detected')
+    elif myRot == 0:
+        rotatedImage = False
+    else:
+        print('rotation issue') 
+        print(myRot)
+        badRotation = True
+        
+
+    if not badRotation:
+        # ------ (1) using Text to help find squares with masking out of text------
+        blocksImg = backtorgb.copy()
+        blocksImg[:,:,:] = 255
+        # save locations for "fig" tags
+        results_fig = []
+        for ((startX, startY, w, h), text) in results_culled:
+            # fuzzy search
+            if (len(text) > 0):    
+                # if ('high' not in text.strip().lower()):
+                #     if len(text) < 5:
+                #         if regex.match( '(FIG){e<=1}', text, re.IGNORECASE ):
+                #             results_fig.append( ((startX,startY,w,h), text) )
+                #     elif len(text) >= 5 and len(text) < 7:
+                #         if regex.match( '(FIGURE){e<=2}', text, re.IGNORECASE ):
+                #             results_fig.append( ((startX,startY,w,h), text) )
+                # only plot if length of text is > 1!... or 2...
+                if len(text) > 1:
+                    cv.rectangle( blocksImg,  (startX, startY), (startX+w, startY+h), (0, 0, 255), -1 )
+
+        kuse = kShmear
+        # if image is rotated, un-rotate
+        if rotatedImage: # have rotated image -> rotate smear
+            kuse = krotShmear
+
+        image = blocksImg 
+        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        blur = cv.GaussianBlur(gray, (7,7), 0)
+        thresh = cv.threshold(blur, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)[1]
+
+        # regular
+        kernel = cv.getStructuringElement(cv.MORPH_RECT, kuse)
+        dilate = cv.dilate(thresh, kernel, iterations=4)    
+
+        # what is "white" here?
+        myThresh = mode(img.flatten()).mode[0]
+
+        showImg = backtorgb.copy()
+        dilateOut = dilate.copy().astype('float64')
+        dilateOut = dilateOut.max() - dilateOut # 1.0 = ok, 0.0 = words
+        if dilateOut.max() != 0:
+            dilateOut /= dilateOut.max()
+        else:
+            dilateOut *= 0.0
+        for k in range(3): 
+            sItmp = showImg[:,:,k]
+            sItmp[dilateOut == 0] = 255
+            showImg[:,:,k] = sItmp
+
+        # all
+        grayShowImg = showImg.copy()
+        showImg[showImg < myThresh] = 0    
+
+        # ------ (2) HOG ----------
+
+        # calc HOG
+        mag = filters.scharr(img)
+        gx = filters.scharr_h(img)
+        gy = filters.scharr_v(img)
+        _, ang = cv.cartToPolar(gx, gy)
+
+        # ------ find all the squares -------
+        saved_squares, c1 = find_squares_auto_one(showImg.copy(), 
+                                              deltaBin = deltaBin, 
+                                              deltaBinReplace = 
+                                              deltaBinReplace, 
+                                              areaCutOff = areaCutOff)
+
+        # also for orig image
+        saved_squares_orig, c2 = find_squares_auto_one(grayShowImg.copy(), 
+                                              deltaBin = deltaBin, 
+                                              deltaBinReplace = 
+                                              deltaBinReplace, 
+                                              areaCutOff = areaCutOff)
+
+        # also for unaltered image
+        saved_squares_img, c3 = find_squares_auto_one(backtorgb.copy(), 
+                                              deltaBin = deltaBin, 
+                                              deltaBinReplace = 
+                                              deltaBinReplace, 
+                                              areaCutOff = areaCutOff)
+
+        # HOG
+        selem = disk(hog_disk_radius)
+        hogShmear = filters.rank.mean(util.img_as_ubyte(mag.copy()/mag.max()), selem=selem)
+        saved_squares_hog, c4 = find_squares_auto_one(hogShmear.copy(), 
+                                              deltaBin = deltaBin, 
+                                              deltaBinReplace = 
+                                              deltaBinReplace, 
+                                              areaCutOff = areaCutOff)
+
+        saved_squares_final = []; color_bars = c2 # use orig colorbars
+        for ss in saved_squares:
+            saved_squares_final.append(ss)
+        #for cc in c1:
+        #    color_bars.append(cc)
+
+        for ss in saved_squares_orig:
+            saved_squares_final.append(ss)
+        #for cc in c2:
+        #    color_bars.append(cc)
+
+        for ss in saved_squares_img:
+            saved_squares_final.append(ss)
+        #for cc in c3:
+        #    color_bars.append(cc)
+
+        for ss in saved_squares_hog:
+            saved_squares_final.append(ss)
+        #for cc in c4:
+        #    color_bars.append(cc)
+
+        return saved_squares_final, color_bars
+    else:
+        return [], []
+
+
+
+
 
 # from ref[5]
 def cluster_points(points, nclusters):
@@ -305,17 +536,6 @@ def cull_squares_and_dewarp(backtorgb,saved_squares):
         # but if two vectors have the same angle then the shorter distance should come first.
         return angle, lenvector
 
-    
-    # # for each group, get average positions of all squares in that group
-    # # grab where we think RA is going to be in our image
-    # xLabelRegion = []    
-    # # same for dec or y
-    # yLabelRegion = []
-    # # collect all points in a group
-    # imgs = [] # save individual dewarped images
-
-    # note: each bounding box + axis labels will be dewarped and placed individually
-    #imout = backtorgb.copy()
     saved_centers = []; centers_in_s = []; centers_out_s = []
 
     if len(saved_squares) > 0: # if we have any squares detected
@@ -364,11 +584,6 @@ def cull_squares_and_dewarp(backtorgb,saved_squares):
             w = int(round(np.max(centers[:,0])))-x
             y = int(round(np.min(centers[:,1])))
             h = int(round(np.max(centers[:,1])))-y
-            
-            #x0 = int(round(np.min(centers[:,0] ))); y0 = int(round(np.min(centers[:,1])))
-            #x1 = int(round(np.max(centers[:,0]))); y1 = int(round(np.max(centers[:,1])))
-            #ssCenters = np.array([ [x0,y0], [x1,y0], [x1,y1], [x0,y1] ])
-            #saved_centers.append(ssCenters)
 
             # save centers if you want to do dewarping later on
             centers_out = np.float32([[x,y],[x+w,y],[x,y+h],[x+w,y+h]]) # 3 points should *NOT* be colinear
@@ -392,21 +607,6 @@ def cull_squares_and_dewarp(backtorgb,saved_squares):
 
             centers_in_s.append(centers_in); centers_out_s.append(centers_out)
 
-                # https://docs.opencv.org/3.1.0/da/d6e/tutorial_py_geometric_transformations.html
-                #M = cv.getPerspectiveTransform(centers_in,centers_out)
-
-                # create a dewarped image
-                #ymin = max([0,y-xRange_y])
-                #ymax = y+h+xRange_y
-                #xmin = max([min([x-yRange_x,x-xRange_x]),0])
-                #xmax = x+w+xRange_x
-                #imDistorted = imout.copy()[ymin:ymax, xmin:xmax]
-                #dst = cv.warpPerspective(backtorgb.copy(),M, (backtorgb.shape[1],backtorgb.shape[0]))
-                # save this under images
-                #imgs.append(dst)
-                #imout[ymin:ymax, xmin:xmax] = dst
-
-
             # finally, store average square
             s = np.zeros([4,2],dtype='int32')
             s[0] = [x,y]
@@ -415,36 +615,5 @@ def cull_squares_and_dewarp(backtorgb,saved_squares):
             s[3] = [x, y+h]
 
             saved_squares.append(s)
-
-#                 # find were we think the x-labels will live
-#                 xLabel = np.zeros([4,2],dtype='int32')
-#                 # all the + in the y-direction is because images are y=0 at top, increse down
-#                 # scale labels by size of image area compared to scale?
-#                 xmin = max([x-xRange_x,0])
-#                 xLabel[0] = [xmin, y+h+xRange_y]
-#                 xLabel[1] = [x+w+xRange_x, y+h+xRange_y]
-#                 xLabel[2] = [x+w+xRange_x, y+h-xRange_y_up]
-#                 xLabel[3] = [xmin, y+h-xRange_y_up]
-
-#                 xLabelRegion.append(xLabel)
-
-#                 # where do we think y-labels will live
-#                 yLabel = np.zeros([4,2],dtype='int32')
-#                 xmin = max([x-yRange_x,0])
-#                 ymin = max([y-yRange_x_up,0])
-#                 yLabel[0] = [xmin, ymin]
-#                 yLabel[1] = [x+yRange_x_up, ymin]
-#                 yLabel[2] = [x+yRange_x_up, y+h+yRange_y]
-#                 yLabel[3] = [xmin, y+h+yRange_y]
-
-#                 yLabelRegion.append(yLabel)
-
-
-    # if noDewarp:
-    #     return saved_centers
-    # else:
-    #     if not return_centers:
-    #         return imgs, saved_squares, xLabelRegion, yLabelRegion
-    #     else:
-    #         return imgs, saved_squares, xLabelRegion, yLabelRegion, centers_in_s, centers_out_s                
+               
     return saved_squares, centers_in_s, centers_out_s
