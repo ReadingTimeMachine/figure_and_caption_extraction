@@ -2,6 +2,7 @@
 
 # 0. Where are article PDFs stored?
 full_article_pdfs_dir = '/Users/jillnaiman/tmpADSDownloads/pdfs/'
+# NOTE: the default is for PDFs but it will also look for individual pages in .bmp, .jpg, and .jpeg file formats
 
 # 1. where to store JPEGs of individual pages from PDF articles?
 images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Pages/RandomSingleFromPDFIndexed/'
@@ -30,10 +31,7 @@ nRandom_ocr_image = 1500
 # do you want to use a list of files to process?
 ocr_list_file = None # set to none if no and you want to pull randomly
 
-
-
-####### Default Naming Structure #######
-
-# 1. default name for ocr-processing & image results -- take # will increase each time this is run
+# default name for ocr-processing & image results -- take # will increase each time this is run
 pickle_file_head = 'full_ocr_newPDFs_TIFF_take'
 # NOTE: delete all these files if you want to start over (in ocr_results_dir)
+
