@@ -463,7 +463,7 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
 #                  centers_in_all_pages, centers_out_all_pages, 
 #                  centers_in_1_all_pages, centers_out_1_all_pages]#, ocr_par_unskew, words_in_par_unskew]
 
-    if iw%mod_output == 0: print('On ' + str(iw) + ' of ' + str(len(wsInds)))
+    if iw%mod_output == 0: print('On ' + str(iw) + ' of ' + str(len(wsInds))+ ' at ' + str(time.ctime(time.time())))
     
     
 if yt.is_root():
