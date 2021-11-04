@@ -59,7 +59,7 @@ def get_random_page_list(wsAlreadyDone):
     # get list of possible files from what has been downloaded in full article PDFs
     pdfarts = glob(config.full_article_pdfs_dir+'*pdf')
     if is_root() and len(pdfarts)>0: 
-        print('working with:', len(pdfarts), 'full article PDFs')
+        print('working with:', len(pdfarts), 'full article PDFs, will pull random pages from these')
     elif is_root():
         print('no PDFs, going to look for bit maps')
 
@@ -139,4 +139,4 @@ def get_random_page_list(wsAlreadyDone):
                     pdfarts = None
                     pageNums = np.repeat(0,len(ws))
                     
-    return ws, pageNums
+    return ws, pageNums, pdfarts

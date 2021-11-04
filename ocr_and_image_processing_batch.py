@@ -58,7 +58,8 @@ pdffigures_dpi = 300 # this makes around the right size
 #import pickle
 import numpy as np
 import yt
-   
+import time  
+from wand.image import Image as WandImage
 
 if inParallel:
     yt.enable_parallelism()
@@ -110,7 +111,6 @@ from ocr_and_image_processing_utils import get_already_ocr_processed, find_pickl
 # import pandas as pd
 
 # #from pdf2image import convert_from_path # this doesn't do great
-# from wand.image import Image as WandImage
 # from wand.color import Color
 
 # from pdfminer.pdfparser import PDFParser
@@ -155,13 +155,7 @@ pickle_file_name = find_pickle_file_name()
 if yt.is_root(): print('working with pickle file:', pickle_file_name)
 
 # get randomly selected articles and pages
-ws, pageNums = get_random_page_list(wsAlreadyDone)
-
-                
-import sys; sys.exit()
-  
-
-    
+ws, pageNums, pdfarts = get_random_page_list(wsAlreadyDone)
 
 # debug overwrite
 #ws = [full_article_pdfs + '1984ApJ___282__345R.pdf'] 
@@ -181,6 +175,8 @@ start_time = time.time()
 if yt.is_root(): print('START: ', time.ctime(start_time))
 times_tracking = np.array([]) # I don't think this is used anymore...
 
+import sys; sys.exit()
+
 
 for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):    
     saved_squares_all_pages = []; ws_all_pages = []; results_def_all_pages=[]
@@ -195,13 +191,16 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
 
     ######################## GET PDF AND MAKE IMAGE ###################
 
-    # save PDF file
+    # read PDF file into memory, if using PDFs
     if pdfarts is not None:
         wimgPDF = WandImage(filename=ws[iw] +'[' + str(int(pageNums[iw])) + ']', 
                             resolution=pdffigures_dpi*2, format='pdf') 
         thisSeq = wimgPDF.sequence
     else: # bitmaps
         thisSeq = [ws[iw]]
+        
+        
+    import sys; sys.exit()
         
     for iimPDF2, imPDF in enumerate(thisSeq):
         iimPDF = pageNums[iw] # just overrite for single page
