@@ -3,7 +3,7 @@ import config
 # YOU NEED TO DO download_ocr_and_pdfminer_whole_pages_batch.py BEFORE THIS ONE
 # god help me I'm adding tiffs -- but ONLY for annotated pages!!
 
-# use tiff?  else, jpeg
+# use tiff for OCR?  else, jpeg
 use_tiff = True 
 
 
@@ -23,12 +23,17 @@ use_tiff = True
 # fileCheckArr = ['full_ocr_newPDFs_TIFF_take*pickle'] 
 # # ONLY running on annotations:
 
-
+# params for this file
 # how many random images to grab?
-nRandom = config.nRandom_ocr_image #1500
-
-
-import sys; sys.exit()
+#nRandom = config.nRandom_ocr_image #1500
+nprocs = config.nProcs
+if nprocs > 1:
+    inParallel = True
+images_dir = config.images_jpeg_dir
+#fileCheckArr = [config.ocr_results_dir+config.pickle_file_head + '*.pickle'] # look for already done ones
+#pickle_dir = config.ocr_results_dir
+#pickle_file_head = config.pickle_file_head
+#full_article_pdfs = config.full_article_pdfs_dir
 
 #inParallel = True
 #nprocs = 6
@@ -49,210 +54,111 @@ pdffigures_dpi = 300 # this makes around the right size
 # -----------------------------------------------
 # -----------------------------------------------
     
+#from glob import glob
+#import pickle
 import numpy as np
-import cv2 as cv
-from glob import glob
-import urllib
-import sys
-from PIL import ImageFont, ImageDraw, Image, ImageOps
-# fonts
-fontpath = "../simsun.ttc" # the font that has this "º" symbol
-
-from IPython.display import display
-
-import pytesseract                                                                                          
-from pytesseract.pytesseract import TesseractError
-
-import imutils
-from imutils.object_detection import non_max_suppression
-import argparse
 import yt
-import os
-import matplotlib.pyplot as plt
+   
 
-sys.path.append('../')
-from utils import grab_random_list
-
-from scipy.ndimage.interpolation import rotate as rotateImage
-
-import pickle
-#!conda install -c anaconda lxml
-from lxml import etree
-
-# fuzzy searches
-import regex
-import re
-
-from image_grab_utils import find_squares_auto, cull_squares_and_dewarp, generate_subplots, angle_cos, \
-    create_line_groups_y, find_squares_auto_one
-
-from caption_utils import rotate, Point, doOverlap, overlappingArea
-
-import time
-import pandas as pd
-
-#from pdf2image import convert_from_path # this doesn't do great
-from wand.image import Image as WandImage
-from wand.color import Color
-
-from pdfminer.pdfparser import PDFParser
-from pdfminer.pdfdocument import PDFDocument
-from pdfminer.pdfpage import PDFPage
-from pdfminer.pdfinterp import resolve1
-
-import yt
 if inParallel:
     yt.enable_parallelism()
     
-if not (inParallel and yt.enable_parallelism()):
-    nprocs = 1
-    print('reset nprocs = 1')
+from ocr_and_image_processing_utils import get_already_ocr_processed, find_pickle_file_name, \
+   get_random_page_list
+
+
+# import numpy as np
+# import cv2 as cv
+# from glob import glob
+# import urllib
+# import sys
+# from PIL import ImageFont, ImageDraw, Image, ImageOps
+# # fonts
+# fontpath = "../simsun.ttc" # the font that has this "º" symbol
+
+# from IPython.display import display
+
+# import pytesseract                                                                                          
+# from pytesseract.pytesseract import TesseractError
+
+# import imutils
+# from imutils.object_detection import non_max_suppression
+# import argparse
+# import yt
+# import os
+# import matplotlib.pyplot as plt
+
+# sys.path.append('../')
+# from utils import grab_random_list
+
+# from scipy.ndimage.interpolation import rotate as rotateImage
+
+# import pickle
+# #!conda install -c anaconda lxml
+# from lxml import etree
+
+# # fuzzy searches
+# import regex
+# import re
+
+# from image_grab_utils import find_squares_auto, cull_squares_and_dewarp, generate_subplots, angle_cos, \
+#     create_line_groups_y, find_squares_auto_one
+
+# from caption_utils import rotate, Point, doOverlap, overlappingArea
+
+# import time
+# import pandas as pd
+
+# #from pdf2image import convert_from_path # this doesn't do great
+# from wand.image import Image as WandImage
+# from wand.color import Color
+
+# from pdfminer.pdfparser import PDFParser
+# from pdfminer.pdfdocument import PDFDocument
+# from pdfminer.pdfpage import PDFPage
+# from pdfminer.pdfinterp import resolve1
+
+# import yt
+# if inParallel:
+#     yt.enable_parallelism()
+    
+# if not (inParallel and yt.enable_parallelism()):
+#     nprocs = 1
+#     print('reset nprocs = 1')
         
-# -------- for PDF mining -----------------------
+# # -------- for PDF mining -----------------------
 
-from scipy import stats
+# from scipy import stats
 
-# for generating PDFs
-import requests, bs4
-from urllib.request import Request, urlopen
-import wget
+# # for generating PDFs
+# import requests, bs4
+# from urllib.request import Request, urlopen
+# import wget
 
-# -------------------------------------------------
+# # -------------------------------------------------
 
-#pdfdir+pdflink -> for "unpacking" objects with PDFminer
-def flat_iter(obj):
-    yield obj
-    if isinstance(obj, LTContainer):
-        for ob in obj:
-            yield from flat_iter(ob)
+# #pdfdir+pdflink -> for "unpacking" objects with PDFminer
+# def flat_iter(obj):
+#     yield obj
+#     if isinstance(obj, LTContainer):
+#         for ob in obj:
+#             yield from flat_iter(ob)
 
 # -----------------------------------------------
 
-# # Get all already done... 
-wsAlreadyDone = []
-# loop and grab
-# check for stars:
-fileCheckArr2 = []
-for f in fileCheckArr:
-    if '*' not in f:
-        fileCheckArr2.append(f)
-    else:
-        fs = glob(pickle_dir+f)
-        for ff in fs:
-            fileCheckArr2.append(ff.split('/')[-1])
-for cp in fileCheckArr2:
-    with open(pickle_dir+cp, 'rb') as f:
-        wsout, full_run_squares, full_run_ocr, full_run_rotations, \
-            full_run_lineNums, full_run_confidences, full_run_paragraphs, \
-            full_run_links, full_run_gifLinkStorage, full_run_PDFlinkStorage, \
-            full_run_pageNumStorage, full_run_downloadLinkStorage,\
-            full_run_htmlText,_,_,_,_ = pickle.load(f)
-        # splits
-        for i,w in enumerate(wsout):
-            wsout[i] = w.split('/')[-1].split('.jpeg')[0]
+# Get all already done pages... 
+wsAlreadyDone = get_already_ocr_processed()
 
-        wsAlreadyDone.extend(wsout)
-#import sys; sys.exit()
-
-# look for most recent:
-pickle_files = glob(pickle_dir + pickle_file_head + '*pickle')
-if len(pickle_files) == 0: # new!
-    pickle_file_name = pickle_dir + pickle_file_head +'1.pickle'
-else:
-    nums = []
-    for p in pickle_files:
-        nums.append(int(p.split('_take')[-1].split('.pickle')[0]))
-    newNum = max(nums)+1
-    pickle_file_name = pickle_dir + pickle_file_head +str(newNum)+'.pickle'
+# find the pickle file we will process next
+pickle_file_name = find_pickle_file_name()
 
 if yt.is_root(): print('working with pickle file:', pickle_file_name)
 
-# get list of possible files from what has been downloaded in full article PDFs
-pdfarts = glob(full_article_pdfs+'*pdf')
-if yt.is_root() and len(pdfarts)>0: 
-    print('working with:', len(pdfarts), 'full article PDFs')
-elif yt.is_root():
-    print('no PDFs, going to look for bit maps')
+# get randomly selected articles and pages
+ws, pageNums = get_random_page_list(wsAlreadyDone)
 
-# parse and construct random list
-already_have_jpegs = False
-if len(pdfarts): # if we have pdfs
-    pdfRandInts = np.random.choice(len(pdfarts),len(pdfarts),replace=False)
-    # loop and grab random page (if not already processed)
-    ws = []; pageNums = []
-    iloop = 0
-    while (len(ws) < nRandom):
-        if (iloop>=len(pdfarts)*10): # assume ~10 pages per article
-            print('no more files!')
-            break
-        f = pdfarts[pdfRandInts[iloop%len(pdfarts)]]
-        # how many pages?
-        parsed = True
-        with open(f,'rb') as ff:
-            try:
-                parser = PDFParser(ff)
-            except:
-                print('cant parse parser', f)
-                parsed = False
-            if parsed:
-                try:
-                    document = PDFDocument(parser)
-                except:
-                    print('cant parse at resolve stage', f)
-                    parsed = False
-                if parsed:
-                    if resolve1(document.catalog['Pages']) is not None:
-                        pages_count = resolve1(document.catalog['Pages'])['Count']  
-                    else:
-                        pages_count = 1
-        if parsed:
-            # grab a random page
-            pageInt = np.random.choice(pages_count,pages_count,replace=False)
-            # check for already having
-            art = f.split('/')[-1].split('.pdf')[0] + '_p' + str(int(pageInt[0]))
-            iloop2 = 0
-            while (art in wsAlreadyDone):
-                if (iloop2 >= pages_count): break
-                art = f.split('/')[-1].split('.pdf')[0] + '_p' + str(int(pageInt[iloop2]))
-                iloop2+=1
-            # append if found!
-            if iloop2-2 < pages_count: # didn't run out of pages
-                ws.append(f); pageNums.append(int(pageInt[iloop2-1]))
-
-        iloop += 1
-    if yt.is_root(): print('end loop to get pages of PDFs, iloop=',iloop)
-    #import sys; sys.exit()
-else: # look for bitmaps or jpegs
-    pdfarts = glob(full_article_pdfs+'*bmp')
-    # probably
-    if len(pdfarts) < nRandom and len(pdfarts) > 0: # have something, but smaller than random
-        ws = pdfarts.copy()
-        pdfarts = None
-        pageNums = np.repeat(0,len(ws))
-    elif len(pdfarts) > nRandom:
-        print('not random implemented, stopping')
-        import sys; sys.exit()
-    else:
-        if yt.is_root(): print('no bitmaps, looking for jpegs')
-        # look for jpegs
-        pdfarts = glob(full_article_pdfs+'*jpg')
-        if len(pdfarts) == 0:
-            pdfarts = glob(full_article_pdfs+'*jpeg')
-        if len(pdfarts) == 0:
-            print('really NO idea then... stopping')
-            import sys; sys.exit()
-        else: # found something! carry on!
-            if len(pdfarts) < nRandom:
-                ws = pdfarts.copy()
-                pdfarts = None
-                pageNums = np.repeat(0,len(ws))
-            else: # gotta grab random ones
-                pageInt = np.random.choice(len(pdfarts),nRandom,replace=False)
-                ws = np.array(pdfarts)[pageInt]
-                pdfarts = None
-                pageNums = np.repeat(0,len(ws))
                 
-#import sys; sys.exit()
+import sys; sys.exit()
   
 
     
