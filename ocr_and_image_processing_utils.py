@@ -380,9 +380,10 @@ def find_squares_auto(img, results_culled, angles_culled,
         badRotation = True
         
 
+    showImg = backtorgb.copy()
     if not badRotation:
-        # ------ (1) using Text to help find squares with masking out of text------
         blocksImg = backtorgb.copy()
+        # ------ (1) using Text to help find squares with masking out of text------
         blocksImg[:,:,:] = 255
         # save locations for "fig" tags
         results_fig = []
@@ -414,10 +415,7 @@ def find_squares_auto(img, results_culled, angles_culled,
         kernel = cv.getStructuringElement(cv.MORPH_RECT, kuse)
         dilate = cv.dilate(thresh, kernel, iterations=4)    
 
-        # what is "white" here?
-        myThresh = mode(img.flatten()).mode[0]
 
-        showImg = backtorgb.copy()
         dilateOut = dilate.copy().astype('float64')
         dilateOut = dilateOut.max() - dilateOut # 1.0 = ok, 0.0 = words
         if dilateOut.max() != 0:
@@ -429,72 +427,76 @@ def find_squares_auto(img, results_culled, angles_culled,
             sItmp[dilateOut == 0] = 255
             showImg[:,:,k] = sItmp
 
-        # all
-        grayShowImg = showImg.copy()
-        showImg[showImg < myThresh] = 0    
+            
+    # what is "white" here?
+    myThresh = mode(img.flatten()).mode[0]
 
-        # ------ (2) HOG ----------
+    # all
+    grayShowImg = showImg.copy()
+    showImg[showImg < myThresh] = 0    
 
-        # calc HOG
-        mag = filters.scharr(img)
-        gx = filters.scharr_h(img)
-        gy = filters.scharr_v(img)
-        _, ang = cv.cartToPolar(gx, gy)
+    # ------ (2) HOG ----------
 
-        # ------ find all the squares -------
-        saved_squares, c1 = find_squares_auto_one(showImg.copy(), 
-                                              deltaBin = deltaBin, 
-                                              deltaBinReplace = 
-                                              deltaBinReplace, 
-                                              areaCutOff = areaCutOff)
+    # calc HOG
+    mag = filters.scharr(img)
+    gx = filters.scharr_h(img)
+    gy = filters.scharr_v(img)
+    _, ang = cv.cartToPolar(gx, gy)
 
-        # also for orig image
-        saved_squares_orig, c2 = find_squares_auto_one(grayShowImg.copy(), 
-                                              deltaBin = deltaBin, 
-                                              deltaBinReplace = 
-                                              deltaBinReplace, 
-                                              areaCutOff = areaCutOff)
+    # ------ find all the squares -------
+    saved_squares, c1 = find_squares_auto_one(showImg.copy(), 
+                                          deltaBin = deltaBin, 
+                                          deltaBinReplace = 
+                                          deltaBinReplace, 
+                                          areaCutOff = areaCutOff)
 
-        # also for unaltered image
-        saved_squares_img, c3 = find_squares_auto_one(backtorgb.copy(), 
-                                              deltaBin = deltaBin, 
-                                              deltaBinReplace = 
-                                              deltaBinReplace, 
-                                              areaCutOff = areaCutOff)
+    # also for orig image
+    saved_squares_orig, c2 = find_squares_auto_one(grayShowImg.copy(), 
+                                          deltaBin = deltaBin, 
+                                          deltaBinReplace = 
+                                          deltaBinReplace, 
+                                          areaCutOff = areaCutOff)
 
-        # HOG
-        selem = disk(hog_disk_radius)
-        hogShmear = filters.rank.mean(util.img_as_ubyte(mag.copy()/mag.max()), selem=selem)
-        saved_squares_hog, c4 = find_squares_auto_one(hogShmear.copy(), 
-                                              deltaBin = deltaBin, 
-                                              deltaBinReplace = 
-                                              deltaBinReplace, 
-                                              areaCutOff = areaCutOff)
+    # also for unaltered image
+    saved_squares_img, c3 = find_squares_auto_one(backtorgb.copy(), 
+                                          deltaBin = deltaBin, 
+                                          deltaBinReplace = 
+                                          deltaBinReplace, 
+                                          areaCutOff = areaCutOff)
 
-        saved_squares_final = []; color_bars = c2 # use orig colorbars
-        for ss in saved_squares:
-            saved_squares_final.append(ss)
-        #for cc in c1:
-        #    color_bars.append(cc)
+    # HOG
+    selem = disk(hog_disk_radius)
+    hogShmear = filters.rank.mean(util.img_as_ubyte(mag.copy()/mag.max()), selem=selem)
+    saved_squares_hog, c4 = find_squares_auto_one(hogShmear.copy(), 
+                                          deltaBin = deltaBin, 
+                                          deltaBinReplace = 
+                                          deltaBinReplace, 
+                                          areaCutOff = areaCutOff)
 
-        for ss in saved_squares_orig:
-            saved_squares_final.append(ss)
-        #for cc in c2:
-        #    color_bars.append(cc)
+    saved_squares_final = []; color_bars = c2 # use orig colorbars
+    for ss in saved_squares:
+        saved_squares_final.append(ss)
+    #for cc in c1:
+    #    color_bars.append(cc)
 
-        for ss in saved_squares_img:
-            saved_squares_final.append(ss)
-        #for cc in c3:
-        #    color_bars.append(cc)
+    for ss in saved_squares_orig:
+        saved_squares_final.append(ss)
+    #for cc in c2:
+    #    color_bars.append(cc)
 
-        for ss in saved_squares_hog:
-            saved_squares_final.append(ss)
-        #for cc in c4:
-        #    color_bars.append(cc)
+    for ss in saved_squares_img:
+        saved_squares_final.append(ss)
+    #for cc in c3:
+    #    color_bars.append(cc)
 
-        return saved_squares_final, color_bars
-    else:
-        return [], []
+    for ss in saved_squares_hog:
+        saved_squares_final.append(ss)
+    #for cc in c4:
+    #    color_bars.append(cc)
+
+    return saved_squares_final, color_bars
+#    else:
+#        return [], []
 
 
 
