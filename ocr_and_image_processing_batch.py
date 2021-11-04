@@ -1,10 +1,12 @@
 import config
 
+debug = False
+
 # YOU NEED TO DO download_ocr_and_pdfminer_whole_pages_batch.py BEFORE THIS ONE
 # god help me I'm adding tiffs -- but ONLY for annotated pages!!
 
 # use tiff for OCR?  else, jpeg
-use_tiff = True 
+###use_tiff = True 
 
 
 
@@ -43,7 +45,7 @@ mod_output = 10
 
 # OCR params
 #config="-l eng --oem 1 --psm 12"
-config="--oem 1 --psm 12"
+configOCR="--oem 1 --psm 12"
 
 
 pdffigures_dpi = 300 # this makes around the right size
@@ -59,13 +61,19 @@ pdffigures_dpi = 300 # this makes around the right size
 import numpy as np
 import yt
 import time  
+
 from wand.image import Image as WandImage
+from wand.color import Color
+from PIL import Image
+from os import remove
+
+import pytesseract
 
 if inParallel:
     yt.enable_parallelism()
     
 from ocr_and_image_processing_utils import get_already_ocr_processed, find_pickle_file_name, \
-   get_random_page_list
+   get_random_page_list, find_squares_auto, cull_squares_and_dewarp
 
 
 # import numpy as np
@@ -111,7 +119,6 @@ from ocr_and_image_processing_utils import get_already_ocr_processed, find_pickl
 # import pandas as pd
 
 # #from pdf2image import convert_from_path # this doesn't do great
-# from wand.color import Color
 
 # from pdfminer.pdfparser import PDFParser
 # from pdfminer.pdfdocument import PDFDocument
@@ -175,18 +182,8 @@ start_time = time.time()
 if yt.is_root(): print('START: ', time.ctime(start_time))
 times_tracking = np.array([]) # I don't think this is used anymore...
 
-import sys; sys.exit()
-
 
 for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):    
-    saved_squares_all_pages = []; ws_all_pages = []; results_def_all_pages=[]
-    rotations_all_pages=[]; lineNums_all_pages=[];confidences_all_pages=[]
-    ocr_par_all_pages=[]; links_all_pages=[];PDFlinkStorage_all_pages=[]
-    pageNumStorage_all_pages=[];
-    htmlText_all_pages=[];
-    centers_in_all_pages = []; centers_out_all_pages = []
-    centers_in_1_all_pages = []; centers_out_1_all_pages = []
-
     sto.result_id = iw # id for parallel storage
 
     ######################## GET PDF AND MAKE IMAGE ###################
@@ -194,36 +191,105 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
     # read PDF file into memory, if using PDFs
     if pdfarts is not None:
         wimgPDF = WandImage(filename=ws[iw] +'[' + str(int(pageNums[iw])) + ']', 
-                            resolution=pdffigures_dpi*2, format='pdf') 
+                            resolution=pdffigures_dpi*2, format='pdf') #2x DPI which shrinks later
         thisSeq = wimgPDF.sequence
-    else: # bitmaps
+    else: # bitmaps, formatting for whatfollows
         thisSeq = [ws[iw]]
         
+    imPDF = thisSeq[0] # load PDF page into memory
+    iimPDF = pageNums[iw] # get page number as well
+
+    if pdfarts is not None: # have PDFs
+        checkws = ws[iw].split('/')[-1].split('.pdf')[0] # for outputting file
         
+        # make sure we do our best to capture accurate text/images
+        imPDF.resize(width=int(0.5*imPDF.width),height=int(0.5*imPDF.height))
+        imPDF.background_color = Color("white")
+        imPDF.alpha_channel = 'remove'
+        WandImage(imPDF).save(filename=config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg')
+        del imPDF
+        
+        # also for tempTiff -- have to redo here
+        wimgPDF = WandImage(filename=ws[iw] +'[' + str(int(pageNums[iw])) + ']', 
+                            resolution=pdffigures_dpi*2, format='pdf') #2x DPI which shrinks later
+        thisSeq = wimgPDF.sequence
+        imPDF = thisSeq[0]
+        imPDF.resize(width=int(0.5*imPDF.width),height=int(0.5*imPDF.height))
+        imPDF.background_color = Color("white")
+        imPDF.alpha_channel = 'remove'
+        
+        # save a temp TIFF file for OCR
+        tmpFile = config.tmp_storage_dir + checkws + '_p'+str(iimPDF) + '.tiff'
+        WandImage(imPDF).save(filename=tmpFile)
+        del imPDF
+        
+        imOCRName = tmpFile
+        imgImageProc = config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
+    else: # bitmaps or jpegs -- no tiffs!
+        if 'bmp' in ws[iw]:
+            checkws = ws[iw].split('/')[-1].split('.bmp')[0] # for outputting file
+        elif 'jpeg' in ws[iw]:
+            checkws = ws[iw].split('/')[-1].split('.jpeg')[0] # for outputting file  
+        else:
+            checkws = ws[iw].split('/')[-1].split('.jpg')[0] # for outputting file  
+        # read in and copy to jpeg 
+        im = Image.open(ws[iw])
+        im.save(config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg', quality=95)
+        imOCRName = config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
+        imgImageProc = config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
+        del im
+
+    if debug: print('reading in image:', checkws + '_p'+str(iimPDF) + '.jpeg')
+    
+    # OCR the tiff image
+    # use hocr to grab rotations of text
+    with Image.open(imOCRName).convert('RGB') as textImg:
+        if debug: print('starting OCR...')
+        hocr = pytesseract.image_to_pdf_or_hocr(textImg,  config="--oem 1 --psm 12", extension='hocr')
+        if debug: print('done finding OCR')
+        # translate to text to find namespace for xpath
+        htmlText = hocr.decode('utf-8')  
+    
+    # onto square finding
+    # open img in grayscale 
+    with Image.open(imgImageProc) as img:
+        # find all the squares on the page -> use this to de-warp
+        if debug: print('finding squares...')
+        saved_squares, color_bars = find_squares_auto(np.array(img.convert('L')).astype('uint8'))
+        if debug: print('done finding squares')
+
+        # final culling of squares & saving of de-warped images
+        if debug: print('culling squares....')
+        saved_squares_culled, cin1,cout1 = cull_squares_and_dewarp(np.array(img.convert('RGB')), saved_squares.copy())
+
     import sys; sys.exit()
+    
+    # remove tmp TIFF image for storage reasons if doing PDF processing
+    if pdfarts is not None: # have PDFs
+        remove(imOCRName)
         
     for iimPDF2, imPDF in enumerate(thisSeq):
         iimPDF = pageNums[iw] # just overrite for single page
-        if pdfarts is not None: # have PDFs
-            # make sure we do our best to capture accurate text/images
-            imPDF.resize(width=int(0.5*imPDF.width),height=int(0.5*imPDF.height))
-            imPDF.background_color = Color("white")
-            imPDF.alpha_channel = 'remove'
+#         if pdfarts is not None: # have PDFs
+#             # make sure we do our best to capture accurate text/images
+#             imPDF.resize(width=int(0.5*imPDF.width),height=int(0.5*imPDF.height))
+#             imPDF.background_color = Color("white")
+#             imPDF.alpha_channel = 'remove'
 
-            checkws = ws[iw].split('/')[-1].split('.pdf')[0] # for outputting file
-            WandImage(imPDF).save(filename=images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg')
-        else: # bitmaps or jpegs
-            if 'bmp' in ws[iw]:
-                checkws = ws[iw].split('/')[-1].split('.bmp')[0] # for outputting file
-            elif 'jpeg' in ws[iw]:
-                checkws = ws[iw].split('/')[-1].split('.jpeg')[0] # for outputting file  
-            else:
-                checkws = ws[iw].split('/')[-1].split('.jpg')[0] # for outputting file  
-            # read in and copy to jpeg 
-            im = Image.open(ws[iw])
-            im.save(images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg', quality=95)
-            #im.save(images_pdf + checkws + '_p'+str(iimPDF) + '.tiff', quality=95)
-            del im
+#             checkws = ws[iw].split('/')[-1].split('.pdf')[0] # for outputting file
+#             WandImage(imPDF).save(filename=images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg')
+#         else: # bitmaps or jpegs
+#             if 'bmp' in ws[iw]:
+#                 checkws = ws[iw].split('/')[-1].split('.bmp')[0] # for outputting file
+#             elif 'jpeg' in ws[iw]:
+#                 checkws = ws[iw].split('/')[-1].split('.jpeg')[0] # for outputting file  
+#             else:
+#                 checkws = ws[iw].split('/')[-1].split('.jpg')[0] # for outputting file  
+#             # read in and copy to jpeg 
+#             im = Image.open(ws[iw])
+#             im.save(images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg', quality=95)
+#             #im.save(images_pdf + checkws + '_p'+str(iimPDF) + '.tiff', quality=95)
+#             del im
         
         ws_all_pages.append(images_pdf + checkws + '_p'+str(iimPDF) + '.jpeg')
 
