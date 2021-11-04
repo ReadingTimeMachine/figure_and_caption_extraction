@@ -29,7 +29,10 @@ nRandom_ocr_image = 1500
 # pulled from full_article_pdfs_dir
 
 # do you want to use a list of files to process?
-ocr_list_file = None # set to none if no and you want to pull randomly
+ocr_list_file = '/Users/jillnaiman/Downloads/tmp/presavelist.txt'
+ # set to none if no and you want to pull randomly
+# will overwrite nRandom_ocr_image
+# 2 columns: filename, pageNum (filename is the full path to the PDF file)
 
 # default name for ocr-processing & image results -- take # will increase each time this is run
 pickle_file_head = 'full_ocr_newPDFs_TIFF_take'

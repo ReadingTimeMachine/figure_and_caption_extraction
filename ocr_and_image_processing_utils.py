@@ -10,6 +10,7 @@ from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfinterp import resolve1
+import math
 
 def get_already_ocr_processed():
     fileCheckArr = [config.ocr_results_dir+config.pickle_file_head + '*.pickle']
@@ -23,17 +24,13 @@ def get_already_ocr_processed():
         else:
             fs = glob(f)
             for ff in fs:
-                fileCheckArr2.append(ff.split('/')[-1])
+                fileCheckArr2.append(ff)
     for cp in fileCheckArr2:
         with open(cp, 'rb') as f:
-            wsout, full_run_squares, full_run_ocr, full_run_rotations, \
-                full_run_lineNums, full_run_confidences, full_run_paragraphs, \
-                full_run_links, full_run_gifLinkStorage, full_run_PDFlinkStorage, \
-                full_run_pageNumStorage, full_run_downloadLinkStorage,\
-                full_run_htmlText,_,_,_,_ = pickle.load(f)
-            # splits
-            for i,w in enumerate(wsout):
-                wsout[i] = w.split('/')[-1].split('.jpeg')[0]
+            wsout, _, _, _, _, _, _,_, _ = pickle.load(f)
+        # splits
+        for i,w in enumerate(wsout):
+            wsout[i] = w.split('/')[-1].split('.jpeg')[0]
 
             wsAlreadyDone.extend(wsout)
     return wsAlreadyDone

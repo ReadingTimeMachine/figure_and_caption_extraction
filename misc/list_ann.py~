@@ -1,0 +1,5 @@
+from glob import glob
+import numpy as np
+
+fann = '/Users/jillnaiman/tmpMegaYolo/binaries/yolo_512x512_cap_math_ann/*xml'
+

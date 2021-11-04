@@ -66,6 +66,7 @@ from wand.image import Image as WandImage
 from wand.color import Color
 from PIL import Image
 from os import remove
+import pickle
 
 import pytesseract
 
@@ -162,7 +163,17 @@ pickle_file_name = find_pickle_file_name()
 if yt.is_root(): print('working with pickle file:', pickle_file_name)
 
 # get randomly selected articles and pages
-ws, pageNums, pdfarts = get_random_page_list(wsAlreadyDone)
+if config.ocr_list_file is None:
+    ws, pageNums, pdfarts = get_random_page_list(wsAlreadyDone)
+else:
+    if yt.is_root(): print('Using a OCR list -- ', config.ocr_list_file)
+    import pandas as pd
+    df = pd.read_csv(config.ocr_list_file)
+    ws = df['filename'].values
+    pageNums = df['pageNum'].values
+    pdfarts = ws.copy()
+    if yt.is_root(): print('have ', len(ws), ' entries')
+    
 
 # debug overwrite
 #ws = [full_article_pdfs + '1984ApJ___282__345R.pdf'] 
@@ -171,7 +182,7 @@ ws, pageNums, pdfarts = get_random_page_list(wsAlreadyDone)
 wsInds = np.arange(0,len(ws))
     
 # debug
-wsInds = wsInds[:2]
+#wsInds = wsInds[:6]
 #wsInds = wsInds[90:]
 
 
@@ -266,6 +277,8 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
     # remove tmp TIFF image for storage reasons if doing PDF processing
     if pdfarts is not None: # have PDFs
         remove(imOCRName)
+        
+    #import sys; sys.exit()
         
 #     for iimPDF2, imPDF in enumerate(thisSeq):
 #         iimPDF = pageNums[iw] # just overrite for single page
@@ -459,26 +472,17 @@ if yt.is_root():
     full_run_hocr = []; centers_in = []; centers_out = []; color_bars = []
     full_run_pdf = []
   
-    for ns, vals in sorted(my_storage.items()):
-        if vals is not None:
-            for v in vals[0]:
-                wsout.append(v)
-            for v in vals[1]:
-                full_run_pdf.append(v)
-            for v in vals[2]:
-                full_run_hocr.append(v)
-            for v in vals[3]:
-                full_run_ocr.append(v)
-            for v in vals[4]:
-                full_run_rotations.append(v)
-            for v in vals[5]:
-                full_run_squares.append(v)
-            for v in vals[6]:
-                color_bars.append(v)
-            for v in vals[7]:
-                centers_in.append(v)
-            for v in vals[8]:
-                centers_out.append(v)
+    for ns, v in sorted(my_storage.items()):
+        if v is not None:
+            wsout.append(v[0])
+            full_run_pdf.append(v[1])
+            full_run_hocr.append(v[2])
+            full_run_ocr.append(v[3])
+            full_run_rotations.append(v[4])
+            full_run_squares.append(v[5])
+            color_bars.append(v[6])
+            centers_in.append(v[7])
+            centers_out.append(v[8])
 
         
     # do a little test save here - locations of squares and figure caption boxes
