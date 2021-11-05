@@ -11,10 +11,14 @@ images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocaliza
 ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/OCR_processing/'
 
 # 3. where should we store generated features and annotations?
-save_binary_dir = '/Users/jillnaiman/MegaYolo/binaries/'
+save_binary_dir = '/Users/jillnaiman/MegaYolo/'
 
 # 4. where are MakeSense.ai annotations stored (as .csv files)
 make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations/'
+
+# 5. What jar file for pdffigures2?
+#pdffigures_jar_path = '/Users/jillnaiman/Downloads/ScanBank/bin/pdffigures2-assembly-0.1.0.jar' # use scanbank's
+pdffigures_jar_path = '/Users/jillnaiman/figure_and_caption_extraction/bin/pdffigures2-assembly-0.1.0.jar' # use ours
 
 # X. What is a good temporary storage directory?
 tmp_storage_dir = '/Users/jillnaiman/Downloads/tmp/'
@@ -35,7 +39,7 @@ nRandom_ocr_image = 1500
 # pulled from full_article_pdfs_dir
 
 # do you want to use a list of files to process?
-ocr_list_file = None #'/Users/jillnaiman/Downloads/tmp/presavelist.txt'
+ocr_list_file = None #'/Users/jillnaiman/Downloads/tmp/presavelist.txt' # (see copy in misc folder)
  # set to none if no and you want to pull randomly
 # will overwrite nRandom_ocr_image
 # 2 columns: filename, pageNum (filename is the full path to the PDF file)
@@ -49,9 +53,24 @@ pickle_file_head = 'full_ocr_newPDFs_TIFF_take'
 # default filename for annotations directory
 ann_name = 'yolo_'
 # sometimes annotations have gone wrong, before or after processing -- where is the list of this? (in make_sens_dir)
-bad_skews_file = 'more_bad_ann.csv'
+bad_skews_file = 'more_bad_ann.csv' # see copy in misc folder
 # 'filename' and then a list w/o any file extension or directory location
 
+# what tags to ignore in creating annotations? for example math formulas or colorbars
+#ignore_ann_list = ['math formula', 'table caption', 'colorbar', 'sub fig caption']
+ignore_ann_list = ['table caption', 'colorbar', 'sub fig caption']
+
+# do you want to plot out diagnostics (images) -- this will slow things down
+plot_diagnostics = False # will plot to tmp directory + '/tmpAnnDiags/'
+
+# features list -- see paper for more details
+feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
+                'punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
+
+# check for NaN's?  This slows things down, but is probably good for you :D
+check_nans = True
+# check that we can parse everything OK?
+check_parse = True
 
 # ------  Yolo Parameters ---------
 
