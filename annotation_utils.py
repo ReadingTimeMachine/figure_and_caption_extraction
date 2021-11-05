@@ -97,3 +97,67 @@ def collect_ocr_process_results(ocrFiles, debug = True):
         rotations.extend(full_run_rotations)
         
     return ws, paragraphs, squares, html, rotations
+
+
+
+
+def get_makesense_info_and_years():
+    msf = glob(config.make_sense_dir + 'labels_*csv')
+    mysquares = []; myfnames = []; myws=[]; myhs=[] 
+    for f in msf:
+        d = pd.read_csv(f, names=['class','x','y', 'w','h','fname','wm','hm'])
+        # collapse onto unique fig names
+        fns = d['fname'].unique()
+        for ff in fns:
+            mys = []#; mycs = []
+            d2 = d.loc[d['fname']==ff]
+            ff2 = ff[:ff.rfind('.')+1]
+            if ff2[-1] == '.': ff2 = ff2[:-1]
+            myfnames.append(ff2)
+            for index, row in d2.iterrows():
+                mys.append((row['x'],row['y'],row['w'],row['h'], row['class'].replace('_',' ')))
+                w = row['wm']; h = row['hm']
+            mysquares.append(mys); myws.append(w); myhs.append(h)
+    # double check that these are also ones with features
+    myfnames1 = []; mysquares1 = []; myws1 = []; myhs1 = []
+    # check that we actually have these... for some reason
+    for ww,ss,wsw,hsw in zip(myfnames,mysquares,myws,myhs):
+        if ww+'.jpeg' in df.index.values.tolist():
+            myfnames1.append(ww); mysquares1.append(ss)
+            myws1.append(wsw); myhs1.append(hsw)
+        else:
+            if is_root(): print('---- for some reason', ww, 'is not in this list -----')
+    # all together
+    dfMakeSense = pd.DataFrame({'filename':myfnames1, 'squares':mysquares1, 'w':myws1, 'h':myhs1})
+    dd = pd.DataFrame({'filename':myfnames1}) # to put in format we had before
+    dd = dd.drop_duplicates(subset='filename')
+    if is_root(): print('unique =',len(dd), 'pages')
+    dd = dd['filename'].values
+    msdd = dfMakeSense['filename'].values.tolist()
+    msw = dfMakeSense['w'].values; msh = dfMakeSense['h'].values
+    dfMakeSense = dfMakeSense.sort_values('filename')
+    return dfMakeSense
+        
+# get all years in these annotations AND the unique years
+def get_years(dd):
+    years = np.array([]).astype('int') # store years
+    years_list = []; pdflist = []
+    for ii, ff in enumerate(dd):
+        f = '/'+ff+'.' # for weirdness
+        pdfbase = ff
+        if len(pdfbase) > 0 and pdfbase[:4].isdigit():
+            # store years
+            #years = np.append(years, int(pdfbase[:4]))
+            #years = np.unique(years)
+            years_list.append(int(pdfbase[:4]))
+            #pdflist.append(dlinks[ind])
+            pdflist.append(config.full_article_pdfs_dir + pdfbase.split('_p')[0]+'.pdf')
+        else:
+            if is_root(): print('no pdf for', f)
+            #years = np.append(years, -1)
+            #years = np.unique(years)
+            years_list.append(-1)
+
+    years_list = np.array(years_list)
+    years = np.unique(years_list)
+    return years,years_list

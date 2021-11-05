@@ -16,6 +16,7 @@ from threading import Lock
 from lxml import etree
 import os
 import shutil
+import pandas as pd
 
 from annotation_utils import get_all_ocr_files, make_ann_directories, collect_ocr_process_results
 
@@ -26,6 +27,11 @@ ocrFiles = get_all_ocr_files()
 # get important quantities from these files
 if yt.is_root(): print('retreiving OCR data, this can take a moment...')
 ws, paragraphs, squares, html, rotations = collect_ocr_process_results(ocrFiles)
+# create dataframe
+df = pd.DataFrame({'ws':ws, 'paragraphs':paragraphs, 'squares':squares, 
+                   'hocr':html, 'rotation':rotations})#, 'pdfwords':pdfwords})
+df = df.drop_duplicates(subset='ws')
+df = df.set_index('ws')
 
 # make all file directories
 fileStorage = config.save_binary_dir
