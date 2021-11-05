@@ -144,7 +144,7 @@ def get_random_page_list(wsAlreadyDone):
 
 # -------------- parsing some results from OCR for later square finding --------
 
-def angles_results_from_ocr(hocr, return_lines=False):
+def angles_results_from_ocr(hocr, return_lines=False, return_confidences=False):
     htmlText = hocr.decode('utf-8')  
     results_def = []
     rotations = [] # keep if rotated text
@@ -209,10 +209,16 @@ def angles_results_from_ocr(hocr, return_lines=False):
         lineNums.append(l)
 
     if return_lines:
-        return results_def, rotations, lines
+        if not return_confidences:
+            return results_def, rotations, lines
+        else:
+            return results_def, rotations, lines, confidences
     else:
-        return results_def, rotations
-
+        if not return_confidences:
+            return results_def, rotations
+        else:
+            return results_def, rotations, confidences
+            
 
 # ---------- square finding with image processing ------------------
 def angle_cos(p0, p1, p2):
