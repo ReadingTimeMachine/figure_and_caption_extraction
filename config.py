@@ -10,6 +10,12 @@ images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocaliza
 # 2. where to store OCR & image processing results?
 ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/OCR_processing/'
 
+# 3. where should we store generated features and annotations?
+save_binary_dir = '/Users/jillnaiman/MegaYolo/binaries/'
+
+# 4. where are MakeSense.ai annotations stored (as .csv files)
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations/'
+
 # X. What is a good temporary storage directory?
 tmp_storage_dir = '/Users/jillnaiman/Downloads/tmp/'
 
@@ -29,7 +35,7 @@ nRandom_ocr_image = 1500
 # pulled from full_article_pdfs_dir
 
 # do you want to use a list of files to process?
-ocr_list_file = '/Users/jillnaiman/Downloads/tmp/presavelist.txt'
+ocr_list_file = None #'/Users/jillnaiman/Downloads/tmp/presavelist.txt'
  # set to none if no and you want to pull randomly
 # will overwrite nRandom_ocr_image
 # 2 columns: filename, pageNum (filename is the full path to the PDF file)
@@ -37,4 +43,18 @@ ocr_list_file = '/Users/jillnaiman/Downloads/tmp/presavelist.txt'
 # default name for ocr-processing & image results -- take # will increase each time this is run
 pickle_file_head = 'full_ocr_newPDFs_TIFF_take'
 # NOTE: delete all these files if you want to start over (in ocr_results_dir)
+
+# ------- Annotation Processing & Feature Generation ---------
+
+# default filename for annotations directory
+ann_name = 'yolo_'
+# sometimes annotations have gone wrong, before or after processing -- where is the list of this? (in make_sens_dir)
+bad_skews_file = 'more_bad_ann.csv'
+# 'filename' and then a list w/o any file extension or directory location
+
+
+# ------  Yolo Parameters ---------
+
+IMAGE_W = 512
+IMAGE_H = 512
 
