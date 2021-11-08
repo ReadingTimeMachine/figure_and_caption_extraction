@@ -62,7 +62,7 @@ def collect_ocr_process_results(ocrFiles, debug = True):
         full_run_htmlText = []; full_run_paragraphs = []
         for ihocr,hocr in enumerate(full_run_hocr):
             if debug: 
-                if ihocr%200 == 0 : print('on', ihocr,'of',len(full_run_hocr))
+                if ihocr%500 == 0 : print('on', ihocr,'of',len(full_run_hocr))
             # translate to text to find namespace for xpath
             htmlText = hocr.decode('utf-8')
             full_run_htmlText.append(htmlText)
@@ -101,7 +101,7 @@ def collect_ocr_process_results(ocrFiles, debug = True):
 
 
 
-def get_makesense_info_and_years():
+def get_makesense_info_and_years(df):
     msf = glob(config.make_sense_dir + 'labels_*csv')
     mysquares = []; myfnames = []; myws=[]; myhs=[] 
     for f in msf:
@@ -161,3 +161,43 @@ def get_years(dd):
     years_list = np.array(years_list)
     years = np.unique(years_list)
     return years,years_list
+
+def get_cross_index(d,df,img_resize):
+    """
+    d - subset dataframe from a makesense data frame
+    df - full list of OCR results
+    """
+    # get image -- with some checks
+    baseName = config.images_jpeg_dir +d['filename'].values[0]
+    if os.path.isfile(baseName + '.jpeg'):
+        fname = baseName + '.jpeg'
+    elif os.path.isfile(baseName + '.jpg'):
+        fname = baseName + '.jpg'
+    else:
+        try:
+            fname = glob(baseName + '*')[0]
+        except:
+            print('no file found! stopping...')
+            import sys; sys.exit()
+    if config.plot_diagnostics: # want to plot diagnostic files
+        # create images to plot upon
+        imgDiag = Image.open(fname)
+        imgDiagResize = cv.resize(np.array(imgDiag).astype(np.uint8),
+                                 img_resize,fx=0, fy=0, 
+                                 interpolation = cv.INTER_NEAREST)            
+    # get height, width of orig image
+    # reshape to this
+    fracxDiag = d['w'].values[0]*1.0/img_resize[0]
+    fracyDiag = d['h'].values[0]*1.0/img_resize[1]
+    # in order to check for file in other list
+    indh = fname.split('/')[-1]
+    
+    # grab OCR
+    goOn = True
+    try:
+        hocr = df.loc[indh]['hocr']
+    except:
+        goOn = False
+        print('no index for :', indh)
+        
+    return goOn, hocr, indh, fracxDiag, fracyDiag, fname

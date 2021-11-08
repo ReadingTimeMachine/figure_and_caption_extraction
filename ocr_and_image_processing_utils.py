@@ -144,8 +144,13 @@ def get_random_page_list(wsAlreadyDone):
 
 # -------------- parsing some results from OCR for later square finding --------
 
-def angles_results_from_ocr(hocr, return_lines=False, return_confidences=False):
-    htmlText = hocr.decode('utf-8')  
+def angles_results_from_ocr(hocr, return_extras=False):
+    # if not string yet:
+    if type(hocr) != str:
+        htmlText = hocr.decode('utf-8')
+    else:
+        htmlText = hocr#.copy()
+        hocr = hocr.encode()
     results_def = []
     rotations = [] # keep if rotated text
     lineNums = [] # store line numbers
@@ -158,11 +163,13 @@ def angles_results_from_ocr(hocr, return_lines=False, return_confidences=False):
         if 'xmlns' in l:
             nameSpace = l.split('xmlns="')[1].split('"')[0]
             break
+            
     tree = etree.fromstring(hocr)
     ns = {'tei': nameSpace}
 
     # grab words
     words = tree.xpath("//tei:span[@class='ocrx_word']/text()", namespaces=ns)
+    lines_ocr = tree.xpath("//tei:span[@class='ocr_line']/@title", namespaces=ns)
 
     # grab bounding boxes too
     bboxesText = tree.xpath("//tei:span[@class='ocrx_word']/@title", namespaces=ns)
@@ -200,7 +207,7 @@ def angles_results_from_ocr(hocr, return_lines=False, return_confidences=False):
             sys.exit()
         lines.append(int(l[2]))
 
-    # put it all together
+    # put it all together -- are lineNums even used??
     for text, bb, rot,l in zip(words,bboxes,angles,lines):
         x = bb[0]; y = bb[1]
         w = bb[2]-x; h = bb[3]-y
@@ -208,16 +215,14 @@ def angles_results_from_ocr(hocr, return_lines=False, return_confidences=False):
         rotations.append(rot)
         lineNums.append(l)
 
-    if return_lines:
-        if not return_confidences:
-            return results_def, rotations, lines
-        else:
-            return results_def, rotations, lines, confidences
+    if not return_extras:
+        return results_def, rotations
     else:
-        if not return_confidences:
-            return results_def, rotations
-        else:
-            return results_def, rotations, confidences
+        return results_def, rotations, confidences, words, lines_ocr, ocr_par, bboxes
+        # words = text sometimes
+        # lines_ocr = lines in feature gen
+        # ocr_par is bbox_par sometimes, bboxes is bboxes_words sometimes
+
             
 
 # ---------- square finding with image processing ------------------
