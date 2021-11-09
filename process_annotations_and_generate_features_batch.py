@@ -19,13 +19,15 @@ import shutil
 import pandas as pd
 import cv2 as cv
 import numpy as np
-from scipy import stats
+import xml.etree.ElementTree as ET
 
 from annotation_utils import get_all_ocr_files, make_ann_directories, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years, get_cross_index, get_pdffigures_info, get_annotation_name, \
-   true_box_caption_mod
+   true_box_caption_mod, parse_annotation
 
 from ocr_and_image_processing_utils import angles_results_from_ocr
+
+from feature_generation_utils import generate_single_feature
 
 # general debug
 debug = False
@@ -104,14 +106,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     if iw%mod_output == 0: print('On ' + str(iw) + ' of ' + str(len(dfMakeSense['filename'].values)))
 
     sto.result_id = iw
-    
-    # some flags to see if we have
-    ##gotPDF = False; gotPDFraw = False
-    
-    #gotSomethings = []
+        
     img_resize=(config.IMAGE_H, config.IMAGE_W)
-    #icc = 0 # debugging
-    #ii = iw; ff = dd[ii] # old code translation
     
     # subset dataframe
     d = dfMakeSense.loc[dfMakeSense['filename']==dfMakeSense['filename'].values[iw]]
@@ -136,10 +132,11 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     
     # cross index this makesense data frame with the OCR processing results
     # goOn lets us know if we should continue or not
-    goOn, hocr, indh, fracxDiag, fracyDiag, fname = get_cross_index(d,df,img_resize)
+    goOn, dfsingle, indh, fracxDiag, fracyDiag, fname = get_cross_index(d,df,img_resize)
     if not goOn: continue
 
-    _, rotation, _, _, _, bbox_par, bboxes_words = angles_results_from_ocr(hocr, return_extras=True)
+    _, rotation, _, _, _, bbox_par, bboxes_words = angles_results_from_ocr(dfsingle['hocr'], 
+                                                                           return_extras=True)
         
     bboxes_combined = []
     for ibb, bp in enumerate(bboxes_words): 
@@ -193,6 +190,11 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         continue
         
         
+    # if we've made it this far, let's generate features
+    feature_name = generate_single_feature(dfsingle)
+    #import sys; sys.exit()
+    
+    
     # write file header
     fo = open(aloc,"w")
     sto.result = [aloc]
@@ -228,7 +230,6 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
                                                   page,d['filename'].values[0],
                                                   d,pdffigures_dpi=pdffigures_dpi)
         
-
     # if we have any PDF boxes, write them out:
     for fp in figsThisPage:
         x1 = fp['regionBoundary']['x1'] 
@@ -352,6 +353,67 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         del imgDiagResize        
 
         
+        
+        
+if yt.is_root():
+    print('Done with generation...')
+    if config.check_nans:
+        print('... also checking nans ...')
+    if config.check_parse:
+        print('... also checking parsability of annotations ...')
+
+    annotations = []
+    for ns, vals in sorted(my_storage.items()):
+        if vals is not None:
+            annotations.append(vals[0])
+        
+    X_full = np.array(annotations)
+
+    # get all labels
+    LABELS = [] # collect all labels
+    for ann in X_full:
+        tree = ET.parse(ann)
+        for elem in tree.iter(): 
+            if 'filename' in elem.tag:
+                fname = elem.text
+            if 'object' in elem.tag:
+                for attr in list(elem):
+                    if 'name' in attr.tag:
+                        LABELS.append(attr.text)
+    # endevor to parse the full annotation
+    LABELS = np.unique(LABELS).tolist()    
+    
+    # copy all x-full
+    shapes = []; 
+    for ann in X_full:
+        tree = ET.parse(ann)
+        for elem in tree.iter(): 
+            if 'filename' in elem.tag:
+                fname = elem.text
+                # check NaN?
+                # if check_nans:
+                #     noFile = True
+                #     try:
+                #         image_np = np.load(fileStorage+'binaries/'+ fname.split('/')[-1])['arr_0']
+                #     except:
+                #         noFile = False
+                #     if noFile:
+                #         image_np = image_np.astype(np.float32) / 255.0
+                #         if np.any(np.isnan(image_np)):
+                #             print('NaN found in', fname.split('/')[-1])
+                #         try:
+                #             shapes.append(image_np.shape[2])
+                #         except:
+                #             shapes.append(-1)
+        # endevor to parse the full annotation
+        if config.check_parse:
+            try:
+                iname, tb = parse_annotation([ann],LABELS,debug=True)
+            except:
+                print('trouble parsing for:', ann)
+    # check for same shapes
+    if len(np.unique(shapes)) > 1:
+        print('to many 3rd shapes:',np.unique(shapes))        
     #import sys; sys.exit()
 
         
