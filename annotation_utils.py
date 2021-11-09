@@ -7,6 +7,7 @@ from lxml import etree
 import pickle
 import numpy as np
 import json
+from pdf2image import convert_from_path
 
 from general_utils import isRectangleOverlap, iou_orig
 
@@ -60,7 +61,7 @@ def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
         full_run_htmlText = []; full_run_paragraphs = []
         for ihocr,hocr in enumerate(full_run_hocr):
             if debug: 
-                if ihocr%imod == 0 : print('--- OCR retrieval: on', ihocr,'of',len(full_run_hocr))
+                if ihocr%imod == 0 and is_root(): print('--- OCR retrieval: on', ihocr,'of',len(full_run_hocr))
             # translate to text to find namespace for xpath
             htmlText = hocr.decode('utf-8')
             full_run_htmlText.append(htmlText)
@@ -202,6 +203,8 @@ def get_cross_index(d,df,img_resize):
 
 
 def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72):
+    IMAGE_W = config.IMAGE_W
+    IMAGE_H = config.IMAGE_H
     figsThisPage = []; rawBoxThisPage =[]
     xc = -1; fracy = -1; 
     fracyYOLO, fracxYOLO = -1, -1
@@ -221,7 +224,7 @@ def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72):
                 rawBoxThisPage.append(fb)
 
         if (len(figsThisPage) > 0) or (len(rawBoxThisPage) > 0):
-            imgPDF = convert_from_path(pdfStorage+ff.split('_p')[0]+'.pdf', dpi=pdffigures_dpi, 
+            imgPDF = convert_from_path(config.full_article_pdfs_dir+ff.split('_p')[0]+'.pdf', dpi=pdffigures_dpi, 
                                        first_page=page+1,last_page=page+1)[0]
             # size of the pdffigures2 PDF conversion?
             imgPDFsize = imgPDF.size
@@ -354,4 +357,4 @@ def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap='overlap'):
     else:
         trueBoxOut.append(b)
         
-    return trueBoxOut
+    return trueBoxOut[0]

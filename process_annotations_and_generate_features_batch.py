@@ -19,12 +19,16 @@ import shutil
 import pandas as pd
 import cv2 as cv
 import numpy as np
+from scipy import stats
 
 from annotation_utils import get_all_ocr_files, make_ann_directories, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years, get_cross_index, get_pdffigures_info, get_annotation_name, \
    true_box_caption_mod
 
 from ocr_and_image_processing_utils import angles_results_from_ocr
+
+# general debug
+debug = False
 
 # ----------------------------------------------
 
@@ -164,8 +168,10 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
                     pdffigures_dir=imgDirPDF),
                 shell=True)  
             except:
-                print('----- ERROR: something wrong has occured with pdffigures2 ------')
-                print(' on #', ws[iw])
+                if debug:
+                    print('----- ERROR: something wrong has occured with pdffigures2 ------')
+                    print(' on #',iw, ws[iw])
+                pass
     else:
         print('no PDF for', fname.split('/')[-1])
 
@@ -297,9 +303,11 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     # dance to change a lonely sub-fig-caption into a caption by default. This is hidden in 
     # this function:
     objNames, objSquares = get_annotation_name(d,scount,sfcount,ccount)
+    # (other names, except ignored labels, are unchanged)
     
     for n,bs in zip(objNames, objSquares):
         fo.write("\t<object>\n")
+        fo.write("\t\t<name>"+n+"</name>\n") 
         fo.write("\t\t<bndbox>\n")
 
         b = true_box_caption_mod(bs,rotation,bboxes_combined) # shrink caption around OCR bounding boxes
@@ -307,14 +315,14 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         xmin = max([b[0]*1.0/d['w'].values[0]*config.IMAGE_W,0]) # have to rescale to output image size
         xmax = min([(b[0]+b[2])*1.0/d['w'].values[0]*config.IMAGE_W,config.IMAGE_W])
         ymin = max([b[1]*1.0/d['h'].values[0]*config.IMAGE_H,0])
-        ymax = min([(b[1]+b[3])*1.0/d['h'].values[0]*config.IMAGE_H,IMAGE_H])
+        ymax = min([(b[1]+b[3])*1.0/d['h'].values[0]*config.IMAGE_H,config.IMAGE_H])
         fo.write("\t\t\t<xmin>" + str(int(round(xmin))) + "</xmin>\n")
         fo.write("\t\t\t<ymin>" + str(int(round(ymin))) + "</ymin>\n")
         fo.write("\t\t\t<xmax>" + str(int(round(xmax))) + "</xmax>\n")
         fo.write("\t\t\t<ymax>" + str(int(round(ymax))) + "</ymax>\n")
         fo.write("\t\t</bndbox>\n")    
         fo.write("\t</object>\n") 
-        if plot_diagnostics:
+        if config.plot_diagnostics:
             # orig
             xmin1 = xmin; ymin1 = ymin; xmax1 = xmax; ymax1 = ymax
             b = borig
@@ -336,12 +344,12 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
 
 
 
-        fo.write("</annotation>\n")
-        fo.close() 
-        if plot_diagnostics:
-            Image.fromarray(imgDiagResize).save(diagnostics_file + 'orig_ann/' + ff + '.png')
-            imgDiag.close()
-            del imgDiagResize        
+    fo.write("</annotation>\n")
+    fo.close() 
+    if config.plot_diagnostics:
+        Image.fromarray(imgDiagResize).save(diagnostics_file + 'orig_ann/' + ff + '.png')
+        imgDiag.close()
+        del imgDiagResize        
 
         
     #import sys; sys.exit()
