@@ -1,8 +1,14 @@
-# process MakeSense.ai into annotations and features for mega-yolo training
+# redo features only -- allow for other lists of features
 import config
 
-pdffigures_dpi = 72 # this is the default DPI of coordinates for PDFs for pdffigures2 (docs say 150, but this is a LIE)
-reRun = False # only toggle on if you want to re-run all of pdffigures2 which can take a while
+# # this supercedes what is in the config file
+# feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
+#                 'punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
+
+feature_list = ['connected components','grayscale']
+# call these something new?
+binaries_file = 'model1'
+
 
 # ----------------------------------------------
 
@@ -19,7 +25,8 @@ import shutil
 import pandas as pd
 import cv2 as cv
 import numpy as np
-import xml.etree.ElementTree as ET
+#import xml.etree.ElementTree as ET
+from glob import glob
 
 from annotation_utils import get_all_ocr_files, make_ann_directories, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years, get_cross_index, get_pdffigures_info, get_annotation_name, \
@@ -45,62 +52,45 @@ df = pd.DataFrame({'ws':ws, 'paragraphs':paragraphs, 'squares':squares,
 df = df.drop_duplicates(subset='ws')
 df = df.set_index('ws')
 
-# make all file directories
-fileStorage = config.save_binary_dir
-imgDir, imgDirAnn, imgDirPDF, badskewsList = make_ann_directories()
-
-# for saving diagnostics, if you've chosen to do that
-diagnostics_file = config.tmp_storage_dir + 'tmpAnnDiags/'
+binaries_file2 = config.save_binary_dir + 'binaries'
+if len(binaries_file)>0: #add
+    binaries_file = binaries_file2 + '_' + binaries_file + '/'
+else:
+    binaries_file = binaries_file2 + '/'
 
 def create_stuff(lock):
-    if os.path.isfile(fileStorage + 'done'): os.remove(fileStorage + 'done') # test to make sure we don't move on in parallel too soon
+    if os.path.isfile(config.save_binary_dir + 'done'): os.remove(config.save_binary_dir + 'done') # test to make sure we don't move on in parallel too soon
     if yt.is_root():
         # check these all exist, but don't over write the directories like for annotaitons
-        if not os.path.exists(fileStorage):
-            os.mkdir(fileStorage)
-        if not os.path.exists(fileStorage+'binaries/'):
-            os.mkdir(fileStorage+'binaries/')  
-            
-        # delete all, remake
-        if not os.path.exists(imgDirAnn):
-            os.makedirs(imgDirAnn)
-        shutil.rmtree(imgDirAnn)
-        os.makedirs(imgDirAnn)
-        # if pdf things not there, then make it, but don't delete it if its there
-        if not os.path.exists(imgDirPDF):
-            os.makedirs(imgDirPDF)
-
-        if config.plot_diagnostics:
-            if not os.path.exists(diagnostics_file): # main file
-                os.makedirs(diagnostics_file)
-            ## delete, remake
-            shutil.rmtree(diagnostics_file)
-            os.makedirs(diagnostics_file)
+        if not os.path.exists(binaries_file):
+            os.mkdir(binaries_file)  
         # done
-        with open(fileStorage + 'done','w') as ffd:
+        with open(config.save_binary_dir + 'done','w') as ffd:
             print('done!',file=ffd)
-        print(fileStorage + 'done')
+        print(config.save_binary_dir + 'done')
 
 # in theory, this should stop the parallel stuff until the folder
 #. has been created, but I'm not 100% sure on this one
 my_lock = Lock()
 create_stuff(my_lock)
 
-# get make sense info
-dfMakeSense = get_makesense_info_and_years(df)
-
-# get years and years list
-years, years_list = get_years(dfMakeSense['filename'].values)
+# get annotations
+imgDirAnn = config.save_binary_dir + config.ann_name + str(int(config.IMAGE_H)) + 'x' + str(int(config.IMAGE_W))  + '_ann/'
+# get all annotations
+annotations = glob(imgDirAnn+'*.xml')
 
 # storage
 my_storage = {}
-wsInds = np.linspace(0,len(dfMakeSense['filename'].values)-1,len(dfMakeSense['filename'].values)).astype('int')
+wsInds = np.linspace(0,len(annotations)-1,len(annotations)).astype('int')
 # debug
 #wsInds = wsInds[:2]
 mod_output = 100
+import sys; sys.exit()
+                   
+                   
 
 # lets do this thing...
-if yt.is_root(): print('Making annotation files and features...')
+if yt.is_root(): print('Making new features...')
 
 for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     if iw%mod_output == 0: print('On ' + str(iw) + ' of ' + str(len(dfMakeSense['filename'].values)))

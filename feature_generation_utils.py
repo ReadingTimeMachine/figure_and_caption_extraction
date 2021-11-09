@@ -33,14 +33,17 @@ DEP_LIST = np.unique(np.append(['ROOT', 'acl', 'acomp', 'advcl', 'advmod', 'agen
 angles = np.array([0, 90, 180, 270]) #options
 steps = round(256./len(angles))
 
-def generate_single_feature(df):
+def generate_single_feature(df, feature_list = None):
     """
     df -- the subset dataframe for this page containing OCR data
+    feature_list -- optional, will be config.feature_list if set to None
     """
+    if feature_list is None: feature_list = config.feature_list
+    
     # how many features
     #feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
     #            'punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
-    n_features = len(config.feature_list)
+    n_features = len(feature_list)
     img_resize = (config.IMAGE_H, config.IMAGE_W)
 
     ifeature = 0 # keep count of where we are
@@ -237,17 +240,21 @@ def generate_single_feature(df):
             wh = []; ph = []; th=[]; dh=[]
 
 
-     
+    #-1. connected components 
+    if 'connected components' in feature_list:
+        imgOrig = img.copy()
+        imgOrig[:,:] = 255
+    
     
     # 1. save gray
-    if 'grayscale' in config.feature_list:
+    if 'grayscale' in feature_list:
         imgout[:,:,ifeature] = imgGray
         ifeature += 1
     del imgGray
     
     
     # 2. fontsize
-    if 'fontsize' in config.feature_list:
+    if 'fontsize' in feature_list:
         # rescale -- not 100% sure which one we want to use here -- using unscaled for now
         fontshere = np.array(fontshere)# - med
         if len(fontshere) > 1:
@@ -269,7 +276,7 @@ def generate_single_feature(df):
         
         
     # 3. carea boxes
-    if 'carea boxes' in config.feature_list:
+    if 'carea boxes' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         for b,a in bbox_carea:
@@ -279,7 +286,7 @@ def generate_single_feature(df):
     
     
     # 4. paragraph boxes
-    if 'paragraph boxes' in config.feature_list:
+    if 'paragraph boxes' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         for b,a,l in bbox_par:
@@ -289,7 +296,7 @@ def generate_single_feature(df):
     
     # 5. fraction of numbers in a word & 6. fraction of letters in a word & 7. punctuation
     maxTag = 150 # max number of "color" band
-    if 'fraction of numbers in a word' in config.feature_list:
+    if 'fraction of numbers in a word' in feature_list:
         if nmax == 0: nmax = 1.0
         imgOrig = img.copy()
         imgOrig[:,:] = 255
@@ -298,7 +305,7 @@ def generate_single_feature(df):
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
         ifeature+=1
     
-    if 'fraction of letters in a word' in config.feature_list:
+    if 'fraction of letters in a word' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         if lmax == 0: lmax = 1.0
@@ -307,7 +314,7 @@ def generate_single_feature(df):
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
         ifeature+=1
         
-    if 'punctuation' in config.feature_list:
+    if 'punctuation' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         for b,n,l,s,p in bboxesw: # numbers, letters, spaces, punc
@@ -332,7 +339,7 @@ def generate_single_feature(df):
         
         
     # 8. x_ascenders
-    if 'x_ascenders' in config.feature_list:
+    if 'x_ascenders' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         decendershere = np.array(decendershere)
@@ -348,7 +355,7 @@ def generate_single_feature(df):
         ifeature += 1
         
     # 9. x_decenders
-    if 'x_decenders' in config.feature_list:
+    if 'x_decenders' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         ascendershere = np.array(ascendershere)
@@ -363,7 +370,7 @@ def generate_single_feature(df):
         ifeature += 1
         
     # 10. text angles
-    if 'text angles' in config.feature_list:
+    if 'text angles' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         for b,t,c,ang in bboxesw_conf:
@@ -373,7 +380,7 @@ def generate_single_feature(df):
         ifeature+=1
     
     # 11. confidence levels
-    if 'word confidences' in config.feature_list:
+    if 'word confidences' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         for b,t,s,a in bboxesw_conf:
@@ -383,7 +390,7 @@ def generate_single_feature(df):
 
 
     # 12. Spacy POS
-    if 'Spacy POS' in config.feature_list:
+    if 'Spacy POS' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         for b in bbox_spacy:
@@ -392,7 +399,7 @@ def generate_single_feature(df):
         ifeature += 1
         
     # 13. Spacy TAG
-    if 'Spacy TAGs' in config.feature_list:
+    if 'Spacy TAGs' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         for b in bbox_spacy:
@@ -401,7 +408,7 @@ def generate_single_feature(df):
         ifeature += 1
         
     # 14. Spacy DEP
-    if 'Spacy DEPs' in config.feature_list:
+    if 'Spacy DEPs' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         for b in bbox_spacy:
