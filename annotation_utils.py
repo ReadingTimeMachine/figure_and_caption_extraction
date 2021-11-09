@@ -6,7 +6,9 @@ from yt import is_root
 from lxml import etree
 import pickle
 import numpy as np
+import json
 
+from general_utils import isRectangleOverlap, iou_orig
 
 def get_all_ocr_files():
     ocrFiles = []
@@ -30,11 +32,7 @@ def make_ann_directories():
     # this one would have been made in parallel_run_pdffigures2.py
     imgDirPDF = fileStorage + config.ann_name + str(int(IMAGE_H)) + 'x' + str(int(IMAGE_W))  + '_pdffigures2/'
 
-    # check these all exist
-    if not os.path.exists(fileStorage):
-        os.mkdir(fileStorage)
-    if not os.path.exists(fileStorage+'binaries/'):
-        os.mkdir(fileStorage+'binaries/')
+    imgDir = fileStorage + 'binaries/'
 
     # get bad skews
     if config.bad_skews_file is not None:
@@ -44,10 +42,10 @@ def make_ann_directories():
     else:
         badskewsList = [-1]
         
-    return imgDirAnn, imgDirPDF, badskewsList
+    return imgDir, imgDirAnn, imgDirPDF, badskewsList
 
 
-def collect_ocr_process_results(ocrFiles, debug = True):
+def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
     # we'll need this to grab only the text
     paragraphs = []; ws = []; squares = []; paragraphs_unskewed = []; pdfwords = []; html = []
     rotations = []
@@ -62,7 +60,7 @@ def collect_ocr_process_results(ocrFiles, debug = True):
         full_run_htmlText = []; full_run_paragraphs = []
         for ihocr,hocr in enumerate(full_run_hocr):
             if debug: 
-                if ihocr%500 == 0 : print('on', ihocr,'of',len(full_run_hocr))
+                if ihocr%imod == 0 : print('--- OCR retrieval: on', ihocr,'of',len(full_run_hocr))
             # translate to text to find namespace for xpath
             htmlText = hocr.decode('utf-8')
             full_run_htmlText.append(htmlText)
@@ -201,3 +199,159 @@ def get_cross_index(d,df,img_resize):
         print('no index for :', indh)
         
     return goOn, hocr, indh, fracxDiag, fracyDiag, fname
+
+
+def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72):
+    figsThisPage = []; rawBoxThisPage =[]
+    xc = -1; fracy = -1; 
+    fracyYOLO, fracxYOLO = -1, -1
+    if os.path.isfile(jsonfile):
+        # read in pdffigures2 json
+        with open(jsonfile,'r') as ff3:
+            fj = json.loads(ff3.read())    
+        # only want objects on our specific page
+        figsThisPage = []
+        for fb in fj['figures']:
+            if fb['page'] == page:
+                figsThisPage.append(fb)
+        # also track raw boxes
+        rawBoxThisPage = []
+        for fb in fj['regionless-captions']:
+            if fb['page'] == page:
+                rawBoxThisPage.append(fb)
+
+        if (len(figsThisPage) > 0) or (len(rawBoxThisPage) > 0):
+            imgPDF = convert_from_path(pdfStorage+ff.split('_p')[0]+'.pdf', dpi=pdffigures_dpi, 
+                                       first_page=page+1,last_page=page+1)[0]
+            # size of the pdffigures2 PDF conversion?
+            imgPDFsize = imgPDF.size
+
+            imgScanSize = (d['w'].values[0]*1.0,d['h'].values[0]*1.0) # this order for historic purposes
+
+            # also, what is ratio of YOLO image to other?
+            fracxYOLO = IMAGE_W*1.0/imgScanSize[0]; fracyYOLO = IMAGE_H*1.0/imgScanSize[1]
+
+            # check ratios -- scanned pages can be subsets of full PDFs
+            rDPI = imgPDFsize[0]/imgPDFsize[1]; rImg = imgScanSize[0]/imgScanSize[1]
+            if rDPI == rImg:
+                xc = 0
+            else: # we have a border that has been cut and need to re-size
+                dX = rDPI*imgScanSize[1] # dX1/dY1 * dY2
+                xc = (dX-imgScanSize[0])*0.5
+            # also for PDFs
+            rPDF = imgPDFsize[0]/imgPDFsize[1]
+            if rPDF == rImg:
+                xcpdf = 0
+            else:
+                dXPDF = rPDF*imgScanSize[1]
+                xcpdf = (dXPDF-imgScanSize[0])*0.5
+
+            fracy = imgPDFsize[1]*1.0/imgScanSize[1]
+
+    return figsThisPage, rawBoxThisPage, xc, fracy, fracyYOLO, fracxYOLO
+
+
+def get_annotation_name(d,scount,sfcount,ccount):
+    # take out any overlapping subfigs
+    taken_sqs = []; subsq = []
+    for s in d['squares'].values:
+        for ss in s: # weird formatting
+            if ss[-1] != 'sub fig caption':
+                taken_sqs.append(ss)
+            else:
+                subsq.append(ss)
+    for ss in subsq: # check how much overlapping with other things
+        x1min = ss[0]; y1min = ss[1]; x1max = ss[0]+ss[2]; y1max = ss[1]+ss[3]
+        w1,h1 = x1max-x1min,y1max-y1min
+        x1,y1 = x1min+0.5*w1, y1min+0.5*h1
+        noOverlapTaken = False
+        for ts in taken_sqs:
+            x2min = ts[0]; y2min = ts[1]; x2max = ts[0]+ts[2]; y2max = ts[1]+ts[3]
+            w2,h2 = x2max-x2min,y2max-y2min
+            x2,y2 = x2min+0.5*w2, y2min+0.5*h2
+            inter, union, iou = iou_orig(x1, y1, w1, h1, x2, y2, w2, h2, 
+                                             return_individual = True)
+            #print(inter/(w1*h1))
+            if (inter/(w1*h1)) > 0.25: # 25% of area or less is overlapping, otherwise, we have a hit
+                noOverlapTaken = True
+        if not noOverlapTaken:
+            taken_sqs.append(ss)
+
+    #for s in d['squares'].values:
+    #    for b in s: # no idea... formatting somewhere
+    diagLabs = []
+    for b in taken_sqs:
+        gotSomething = True ; notSubfig = True    
+        if 'sub fig' in b[-1]: notSubfig = False
+        # look for some things that we are ignoring
+        # NOTE: some of this is redundant!!
+        if b[-1] == 'no label': return [''],[]
+        #    notSubfig = False
+        #else:
+            #if labslabs[LABELS.index(b[-1])] == -1: notSubfig = False
+        #if ignore_mathformula and 'math' in b[-1]: notSubfig = False
+        if b[-1] in config.ignore_ann_list: #return '' # in ignore list?
+            diagLabs.append('')
+        if notSubfig or ('sub fig' in b[-1] and (scount <= sfcount) and (ccount == 0) and b[-1] != 'no label'): # this is overly convoluted
+            diagLab = ''
+            if (scount <= sfcount) and (ccount == 0): # call captions sub-figs
+                if b[-1] == 'sub fig caption':
+                    diagLab = 'figure caption'
+                else:
+                    diagLab = b[-1]
+            else:
+                diagLab = b[-1]
+        diagLabs.append(diagLab)
+    return diagLab, taken_sqs
+
+
+def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap='overlap'):
+    x1min = b[0]; y1min = b[1]; x1max = b[0]+b[2]; y1max = b[1]+b[3]
+    trueBoxOut = []; borig = [b].copy()[0]
+    captionBox = []
+    if 'caption' in b[-1].lower():
+        indIou = [1e10,1e10,-1e10,-1e10]
+        indIou2 = indIou.copy(); #indIou2[0] = 2e10
+        indIou2[0] *= 2; indIou2[1] *= 2; indIou2[2] *= 2; indIou2[3] *= 2
+        # don't expand super far in y direction, only x
+        i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
+        if stats.mode(rotation).mode[0] != 90:
+            i10 = indIou[1]; i11 = indIou[3]; i20 = indIou2[1]; i21 = indIou2[2]
+        while (i10 != i20) and (i11 != i21):
+        #if True:
+            indIou2 = indIou
+            i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
+            if stats.mode(rotation).mode[0] != 90:
+                i10 = indIou[1]; i11 = indIou[3]; i20 = indIou2[1]; i21 = indIou2[2]
+            for ibb,bb in enumerate(bboxes_combined):
+                x2min, y2min, x2max, y2max = bb
+                # is within....vs...
+                #true_overlap = 'overlap'
+                if true_overlap == 'overlap':
+                    isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                       (x2min,y2min,x2max,y2max))
+                    #center is within
+                elif true_overlap == 'center':
+                    x2 = 0.5*(x2min+x2max); y2 = 0.5*(y2min+y2max)
+                    isOverlapping = (x2 <= x1max) and (x2 >= x1min) and (y2 <= y1max) and (y2 >= y1min)
+                # using whichever condition -- change box sizes
+                if isOverlapping:
+                    xo = indIou[0]; yo = indIou[1]; xo1 = indIou[2]; yo1 = indIou[3]
+                    indIou = [ min([xo,bb[0]]), min([yo,bb[1]]), 
+                              max([xo1,bb[2]]), max([yo1,bb[3]])]
+                    #print(indIou)
+                    captionBox.append((bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1]))
+            if indIou[0] != 1e10: # found 1 that overlapped
+                if stats.mode(rotation).mode[0] == 90: # right-side up
+                    x1min, x1max = indIou[0],indIou[2]
+                else:
+                    y1min, y1max = indIou[1],indIou[3]            
+        if indIou[0] != 1e10: # found 1 that overlapped
+            trueBoxOut.append((indIou[0],indIou[1],indIou[2]-indIou[0],indIou[3]-indIou[1], b[4]))
+            #captionBox.append((indIou[0],indIou[1],indIou[2]-indIou[0],indIou[3]-indIou[1]))
+        else:
+            trueBoxOut.append(b)
+    else:
+        trueBoxOut.append(b)
+        
+    return trueBoxOut
