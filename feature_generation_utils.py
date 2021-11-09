@@ -57,6 +57,8 @@ def generate_single_feature(df, feature_list = None):
     imgout = np.zeros([img_resize[0],img_resize[1],n_features])
     # all white
     imgout[:,:,:] = 255
+    # place holder
+    imgOrig = []
     
     # ------- ADD other FEATURES --------
     # we'll parse everything and then just use what is requested
@@ -240,10 +242,11 @@ def generate_single_feature(df, feature_list = None):
             wh = []; ph = []; th=[]; dh=[]
 
 
-    #-1. connected components 
-    if 'connected components' in feature_list:
-        imgOrig = img.copy()
-        imgOrig[:,:] = 255
+#     #-1. connected components 
+#     if 'connected components' in feature_list:
+#         imgOrig = img.copy()
+#         imgOrig[:,:] = 255
+#         **HERE**
     
     
     # 1. save gray
