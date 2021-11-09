@@ -96,7 +96,7 @@ years, years_list = get_years(dfMakeSense['filename'].values)
 my_storage = {}
 wsInds = np.linspace(0,len(dfMakeSense['filename'].values)-1,len(dfMakeSense['filename'].values)).astype('int')
 # debug
-#wsInds = wsInds[:5]
+#wsInds = wsInds[:2]
 mod_output = 100
 
 # lets do this thing...
@@ -216,7 +216,6 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     jsonbase = fname.split('/')[-1].split('_p')[0]+'.json'
     jsonfile = imgDirPDF + jsonbase
 
-    #doGoOn = True
     try:
         page = int(d['filename'].values[0].split('_p')[-1])
     except:
@@ -390,21 +389,21 @@ if yt.is_root():
         for elem in tree.iter(): 
             if 'filename' in elem.tag:
                 fname = elem.text
-                # check NaN?
-                # if check_nans:
-                #     noFile = True
-                #     try:
-                #         image_np = np.load(fileStorage+'binaries/'+ fname.split('/')[-1])['arr_0']
-                #     except:
-                #         noFile = False
-                #     if noFile:
-                #         image_np = image_np.astype(np.float32) / 255.0
-                #         if np.any(np.isnan(image_np)):
-                #             print('NaN found in', fname.split('/')[-1])
-                #         try:
-                #             shapes.append(image_np.shape[2])
-                #         except:
-                #             shapes.append(-1)
+                #check NaN?
+                if config.check_nans:
+                    noFile = True
+                    try:
+                        image_np = np.load(config.save_binary_dir+'binaries/'+ fname.split('/')[-1])['arr_0']
+                    except:
+                        noFile = False
+                    if noFile:
+                        image_np = image_np.astype(np.float32) / 255.0
+                        if np.any(np.isnan(image_np)):
+                            print('NaN found in', fname.split('/')[-1])
+                        try:
+                            shapes.append(image_np.shape[2])
+                        except:
+                            shapes.append(-1)
         # endevor to parse the full annotation
         if config.check_parse:
             try:
@@ -414,158 +413,3 @@ if yt.is_root():
     # check for same shapes
     if len(np.unique(shapes)) > 1:
         print('to many 3rd shapes:',np.unique(shapes))        
-    #import sys; sys.exit()
-
-        
-
-
-
-#             if use_makesense:
-#                 # take out any overlapping subfigs
-#                 taken_sqs = []; subsq = []
-#                 for s in d['squares'].values:
-#                     for ss in s: # weird formatting
-#                         if ss[-1] != 'sub fig caption':
-#                             taken_sqs.append(ss)
-#                         else:
-#                             subsq.append(ss)
-#                 for ss in subsq: # check how much overlapping with other things
-#                     x1min = ss[0]; y1min = ss[1]; x1max = ss[0]+ss[2]; y1max = ss[1]+ss[3]
-#                     w1,h1 = x1max-x1min,y1max-y1min
-#                     x1,y1 = x1min+0.5*w1, y1min+0.5*h1
-#                     noOverlapTaken = False
-#                     for ts in taken_sqs:
-#                         x2min = ts[0]; y2min = ts[1]; x2max = ts[0]+ts[2]; y2max = ts[1]+ts[3]
-#                         w2,h2 = x2max-x2min,y2max-y2min
-#                         x2,y2 = x2min+0.5*w2, y2min+0.5*h2
-#                         inter, union, iou = iou_orig(x1, y1, w1, h1, x2, y2, w2, h2, 
-#                                                          return_individual = True)
-#                         #print(inter/(w1*h1))
-#                         if (inter/(w1*h1)) > 0.25: # 25% of area or less is overlapping, otherwise, we have a hit
-#                             noOverlapTaken = True
-#                     if not noOverlapTaken:
-#                         taken_sqs.append(ss)
-                    
-#                 #for s in d['squares'].values:
-#                 #    for b in s: # no idea... formatting somewhere
-#                 if True: # bad formatting, fix, I know
-#                     for b in taken_sqs:
-#                         gotSomething = True ; notSubfig = True    
-#                         if 'sub fig' in b[-1]: notSubfig = False
-#                         # look for some things that we are ignoring
-#                         # NOTE: some of this is redundant!!
-#                         if b[-1] == 'NotSure' or b[-1] == 'no label': # not sure then don't tag it!
-#                             notSubfig = False
-#                         else:
-#                             if labslabs[LABELS.index(b[-1])] == -1: notSubfig = False
-#                         if ignore_mathformula and 'math' in b[-1]: notSubfig = False
-#                         #if '1938ApJ____87__559S_p5' in ff: import sys; sys.exit()
-#                         if notSubfig or ('sub fig' in b[-1] and (scount <= sfcount) and (ccount == 0) and b[-1] != 'no label'): # this is overly convoluted
-#                             fo.write("\t<object>\n")
-#                             diagLab = ''
-#                             if (scount <= sfcount) and (ccount == 0): # call captions sub-figs
-#                                 if b[-1] == 'sub fig caption':
-#                                     fo.write("\t\t<name>"+'figure caption'+"</name>\n") 
-#                                     diagLab = 'figure caption'
-#                                 else:
-#                                     fo.write("\t\t<name>"+b[-1]+"</name>\n") 
-#                                     diagLab = b[-1]
-#                             else:
-#                                 fo.write("\t\t<name>"+b[-1]+"</name>\n")
-#                                 diagLab = b[-1]
-#                             fo.write("\t\t<bndbox>\n")
-                            # update bounding boxes
-                            #l = b[-1]
-                            #x1min = b[0]*fracx; y1min = b[1]*fracy; x1max = b[2]*fracx; y1max = b[3]*fracy # inside?
-                            # x1min = b[0]; y1min = b[1]; x1max = b[0]+b[2]; y1max = b[1]+b[3]
-                            # trueBoxOut = []; borig = [b].copy()[0]
-                            # captionBox = []
-                            # if 'caption' in b[-1].lower():
-                            #     indIou = [1e10,1e10,-1e10,-1e10]
-                            #     indIou2 = indIou.copy(); #indIou2[0] = 2e10
-                            #     indIou2[0] *= 2; indIou2[1] *= 2; indIou2[2] *= 2; indIou2[3] *= 2
-                            #     # don't expand super far in y direction, only x
-                            #     i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
-                            #     if stats.mode(rotation).mode[0] != 90:
-                            #         i10 = indIou[1]; i11 = indIou[3]; i20 = indIou2[1]; i21 = indIou2[2]
-                            #     while (i10 != i20) and (i11 != i21):
-                            #     #if True:
-                            #         indIou2 = indIou
-                            #         i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
-                            #         if stats.mode(rotation).mode[0] != 90:
-                            #             i10 = indIou[1]; i11 = indIou[3]; i20 = indIou2[1]; i21 = indIou2[2]
-                            #         for ibb,bb in enumerate(bboxes_combined):
-                            #             x2min, y2min, x2max, y2max = bb
-                            #             # is within....vs...
-                            #             #true_overlap = 'overlap'
-                            #             if true_overlap == 'overlap':
-                            #                 isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
-                            #                 #center is within
-                            #             elif true_overlap == 'center':
-                            #                 x2 = 0.5*(x2min+x2max); y2 = 0.5*(y2min+y2max)
-                            #                 isOverlapping = (x2 <= x1max) and (x2 >= x1min) and (y2 <= y1max) and (y2 >= y1min)
-                            #             # using whichever condition -- change box sizes
-                            #             if isOverlapping:
-                            #                 xo = indIou[0]; yo = indIou[1]; xo1 = indIou[2]; yo1 = indIou[3]
-                            #                 indIou = [ min([xo,bb[0]]), min([yo,bb[1]]), 
-                            #                           max([xo1,bb[2]]), max([yo1,bb[3]])]
-                            #                 #print(indIou)
-                            #                 captionBox.append((bb[0],bb[1],bb[2]-bb[0],bb[3]-bb[1]))
-                            #         if indIou[0] != 1e10: # found 1 that overlapped
-                            #             if stats.mode(rotation).mode[0] == 90: # right-side up
-                            #                 x1min, x1max = indIou[0],indIou[2]
-                            #             else:
-                            #                 y1min, y1max = indIou[1],indIou[3]            
-                            #     if indIou[0] != 1e10: # found 1 that overlapped
-                            #         trueBoxOut.append((indIou[0],indIou[1],indIou[2]-indIou[0],indIou[3]-indIou[1], b[4]))
-                            #         #captionBox.append((indIou[0],indIou[1],indIou[2]-indIou[0],indIou[3]-indIou[1]))
-                            #     else:
-                            #         trueBoxOut.append(b)
-                            # else:
-                            #     trueBoxOut.append(b)
-
-
-#                             b = trueBoxOut[0]
-#                             xmin = max([b[0]*1.0/d['w'].values[0]*IMAGE_W-xborder,0]) # have to rescale to output image size
-#                             xmax = min([(b[0]+b[2])*1.0/d['w'].values[0]*IMAGE_W+xborder,IMAGE_W])
-#                             ymin = max([b[1]*1.0/d['h'].values[0]*IMAGE_H-yborder,0])
-#                             ymax = min([(b[1]+b[3])*1.0/d['h'].values[0]*IMAGE_H+yborder,IMAGE_H])
-#                             fo.write("\t\t\t<xmin>" + str(int(round(xmin))) + "</xmin>\n")
-#                             fo.write("\t\t\t<ymin>" + str(int(round(ymin))) + "</ymin>\n")
-#                             fo.write("\t\t\t<xmax>" + str(int(round(xmax))) + "</xmax>\n")
-#                             fo.write("\t\t\t<ymax>" + str(int(round(ymax))) + "</ymax>\n")
-#                             fo.write("\t\t</bndbox>\n")    
-#                             fo.write("\t</object>\n") 
-#                             if plot_diagnostics:
-#                                 # orig
-#                                 xmin1 = xmin; ymin1 = ymin; xmax1 = xmax; ymax1 = ymax
-#                                 b = borig
-#                                 xmin = max([b[0]*1.0/d['w'].values[0]*IMAGE_W-xborder,0]) # have to rescale to output image size
-#                                 xmax = min([(b[0]+b[2])*1.0/d['w'].values[0]*IMAGE_W+xborder,IMAGE_W])
-#                                 ymin = max([b[1]*1.0/d['h'].values[0]*IMAGE_H-yborder,0])
-#                                 ymax = min([(b[1]+b[3])*1.0/d['h'].values[0]*IMAGE_H+yborder,IMAGE_H])
-#                                 #cv.rectangle(imgDiagResize, (round(xmin), round(ymin)), (round(xmax),round(ymax)), (0, 255, 255), 1)   
-#                                 #ax[0].text(xmin, ymax, diagLab,bbox=dict(facecolor='blue'))
-#                                 for b in captionBox:
-#                                     xmin = max([b[0]*1.0/d['w'].values[0]*IMAGE_W-xborder,0]) # have to rescale to output image size
-#                                     xmax = min([(b[0]+b[2])*1.0/d['w'].values[0]*IMAGE_W+xborder,IMAGE_W])
-#                                     ymin = max([b[1]*1.0/d['h'].values[0]*IMAGE_H-yborder,0])
-#                                     ymax = min([(b[1]+b[3])*1.0/d['h'].values[0]*IMAGE_H+yborder,IMAGE_H])
-#                                     cv.rectangle(imgDiagResize, (round(xmin), round(ymin)), (round(xmax),round(ymax)), (125, 255, 0), 1)   
-#                                 cv.rectangle(imgDiagResize, (round(xmin1), round(ymin1)), (round(xmax1),round(ymax1)), (255, 0, 0), 1)  
-#                                 #ax1.text(x.numpy(), y.numpy(), np.array(LABELS)[myclasses][i], bbox=dict(facecolor=colorLabel))
-#                                 cv.putText(imgDiagResize,diagLab,(round(xmax1),round(ymax1)), cv.FONT_HERSHEY_SIMPLEX, 0.25, (255,0,0))
-
-
-
-#             fo.write("</annotation>\n")
-#             fo.close() 
-#             if plot_diagnostics:
-#                 Image.fromarray(imgDiagResize).save(diagnostics_file + 'orig_ann/' + ff + '.png')
-#                 imgDiag.close()
-#                 del imgDiagResize
-                #import sys; sys.exit()
-            #if '4a809d73-8fe3-451a-9ff9-5e0a6a48a3d5' in f: import sys; sys.exit()
-            #if '1fef1f64-8f8f-4da9-ab97-d26183d5111e' in f: 
-            #    import sys; sys.exit()
-            #if icc > 1: import sys; sys.exit()
