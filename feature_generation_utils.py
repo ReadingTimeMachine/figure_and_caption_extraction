@@ -432,3 +432,6 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
     del imgout
     del imgOrig
     return binary_dir+fname+'.npz'
+
+
+

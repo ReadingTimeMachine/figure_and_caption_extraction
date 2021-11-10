@@ -1,4 +1,5 @@
 # stores ongoing stuff for mega-yolo annotation
+import config
 
 import numpy as np
 import xml.etree.ElementTree as ET
@@ -8,6 +9,9 @@ from tensorflow.keras import backend
 from tensorflow.keras import layers
 import glob
 import pickle
+from general_utils import parse_annotation
+import imgaug as ia
+from imgaug import augmenters as iaa
 
 # some parameters for different architectures of YOLO
 width_vec = [0.50, 0.75, 1.0, 1.25]
@@ -1073,3 +1077,239 @@ def train_test_valid_split(X, y, train_size = 0.75, valid_size = 0.15, test_size
     else: # gotta return links to images
         return [X_train, y_train, X_valid, y_valid, X_test, y_test, links_train, links_valid, links_test]
         
+        
+        
+########## DATA PREP #####################
+
+def csv_gen(split, splitsDir = None):
+    if splitsDir is None: splitsDir = config.tmp_storage_dir
+    ftrain = open(splitsDir+'train.csv','r')
+    fvalid = open(splitsDir+'valid.csv','r')
+    ftest = open(splitsDir+'test.csv','r')    
+    while True:
+    #for i in range(100000):
+        if b'train' in bytes(split, encoding='utf8'): # NOTE, must be bytes here!!!
+            line = ftrain.readline()
+            if line == "": # if EOF => loop back to start
+                ftrain.seek(0)
+                line = ftrain.readline()
+        elif b'valid' in bytes(split, encoding='utf8'):
+            line = fvalid.readline()
+            if line == "": # if EOF => loop back to start
+                fvalid.seek(0)
+                line = fvalid.readline()
+        elif b'test' in bytes(split, encoding='utf8'):
+            line = ftest.readline()
+            if line == "": # if EOF => loop back to start
+                ftest.seek(0)
+                line = ftest.readline()
+                # make sure if we are evaluating with the test set 
+                #  we don't loop back to the start of the file
+                break 
+        else:
+            print('NOPE!')
+            sys.exit()
+        yield line
+        
+
+
+# def dataset_gen(split, dataset_generator_csv, batch_size, feature_dir,annotation_dir):
+#     while True:
+#         true_boxes = []; imgs = []; files = []
+        
+#         while len(files) < batch_size:
+#             line = next(dataset_generator_csv)
+#             # if type(split) == str:
+#             #     if b
+#             #     # if b'train' in bytes(split, encoding='utf8'): # NOTE, must be bytes here!!!
+#             #     #     line = next(train_gen_csv)
+#             #     # elif b'valid' in bytes(split, encoding='utf8'):
+#             #     #     line = next(valid_gen_csv)
+#             #     # elif b'test' in bytes(split, encoding='utf8'):
+#             #     #     line = next(test_gen_csv)
+#             # else:
+#             #     if b'train' in split: # NOTE, must be bytes here!!!
+#             #         line = next(train_gen_csv)
+#             #     elif b'valid' in split:
+#             #         line = next(valid_gen_csv)
+#             #     elif b'test' in split:
+#             #         line = next(test_gen_csv)
+            
+#             files.append(line.strip())
+
+#         # parse and get full names
+#         try:
+#             imgs_name, bbox = parse_annotation(files, LABELS, 
+#                                                feature_dir=feature_dir,
+#                                                annotation_dir=annotation_dir)
+#         except:
+#             print('error parsing:', imgs_name)
+#         # do a debug check
+#         for im in imgs_name:
+#             if '.npz' not in im:
+#                 print('no np file')
+#                 import sys; sys.exit()
+        
+#         # read in and keep images -- npy files
+#         for im in imgs_name:
+#             b = np.load(im)['arr_0']
+            
+#             ########### DEBUGGING ##########
+#             #b = b[:,:,:3]
+#             ################################
+            
+#             # convert 0-1
+#             b = b/255.0
+#             imgs.append(b)
+        
+#         # finally, format for output
+#         y_true1, y_true2, y_true3 = [],[],[]
+#         for b in bbox:
+#             y1,y2,y3= process_box(b[:,:4], b[:,4].astype('int'),anchors,CLASS)
+#             y_true1.append(y1); y_true2.append(y2); y_true3.append(y3)
+        
+#         img = tf.cast(np.array(imgs), tf.float32)        
+#         yield img, tf.cast(y_true1, tf.float32), tf.cast(y_true2, tf.float32), tf.cast(y_true3, tf.float32)
+        
+
+# def dataset_gen_for_aug(split, batch_size, gen_in, 
+#                         feature_dir, annotation_dir): # for training/validation datasets
+#     while True:
+#         true_boxes = []; imgs = []; files = []
+        
+#         while len(files) < batch_size:
+#             line = next(gen_in)
+#             # if type(split) == str:
+#             #     if b'train' in bytes(split, encoding='utf8'): # NOTE, must be bytes here!!!
+#             #         line = next(train_gen_csv)
+#             #     elif b'valid' in bytes(split, encoding='utf8'):
+#             #         line = next(valid_gen_csv)
+#             #     elif b'test' in bytes(split, encoding='utf8'):
+#             #         line = next(test_gen_csv)
+#             # else:
+#             #     if b'train' in split: # NOTE, must be bytes here!!!
+#             #         line = next(train_gen_csv)
+#             #     elif b'valid' in split:
+#             #         line = next(valid_gen_csv)
+#             #     elif b'test' in split:
+#             #         line = next(test_gen_csv)
+            
+#             files.append(line.strip())
+
+#         # parse and get full names
+#         imgs_name, bbox = parse_annotation(files, LABELS, 
+#                                                feature_dir=feature_dir,
+#                                                annotation_dir=annotation_dir)
+
+#         # do a debug check
+#         for im in imgs_name:
+#             if '.npz' not in im:
+#                 print('no np file')
+#                 import sys; sys.exit()
+        
+#         # read in and keep images -- npy files
+#         for im in imgs_name:
+#             b = np.load(im)['arr_0']
+#             # convert 0-1
+#             b = b/255.0
+#             imgs.append(b)
+                
+#         img = tf.cast(np.array(imgs), tf.float32)        
+#         yield img, tf.cast(bbox, tf.float32)
+        
+
+# def get_dataset(split, gen_in, labels, batch_size, 
+#                 annotation_dir='', feature_dir='', use_aug=True):
+#     if use_aug and ('test' not in split.lower()):
+#         dataset = tf.data.Dataset.from_generator(dataset_gen_for_aug, 
+#                                                  args=[split, batch_size, gen_in, 
+#                                                        annotation_dir, feature_dir],
+#                                                  output_types = (tf.float32, tf.float32))
+#     else:
+#         dataset = tf.data.Dataset.from_generator(dataset_gen, 
+#                                                  args=[split, batch_size, gen_in, 
+#                                                       annotation_dir, feature_dir],
+#                                              output_types = (tf.float32, tf.float32, 
+#                                                              tf.float32, tf.float32))
+                                             
+#     dataset = dataset.prefetch(10)
+    
+#     # maybe?
+#     iterator = iter(dataset)
+
+#     #return dataset
+#     return iterator
+
+
+def augmentation_generator(yolo_dataset, anchors, CLASS, flipUpDown=False):
+    '''
+    Augmented batch generator from a yolo dataset
+
+    Parameters
+    ----------
+    - YOLO dataset
+    
+    Returns
+    -------
+    - augmented batch : tensor (shape : batch_size, IMAGE_W, IMAGE_H, 3)
+        batch : tupple(images, annotations)
+        batch[0] : images : tensor (shape : batch_size, IMAGE_W, IMAGE_H, 3)
+        batch[1] : annotations : tensor (shape : batch_size, max annot, 5)
+    '''
+    for batch in yolo_dataset:
+        # conversion tensor->numpy
+        img = batch[0].numpy()
+        boxes = batch[1].numpy()
+        # conversion bbox numpy->ia object
+        ia_boxes = []
+        for i in range(img.shape[0]):
+            ia_bbs = [ia.BoundingBox(x1=bb[0],
+                                       y1=bb[1],
+                                       x2=bb[2],
+                                       y2=bb[3]) for bb in boxes[i]
+                      if (bb[0] + bb[1] +bb[2] + bb[3] > 0)]
+            ia_boxes.append(ia.BoundingBoxesOnImage(ia_bbs, shape=(config.IMAGE_W, config.IMAGE_H)))
+        # data augmentation
+        if flipUpDown:
+            seq = iaa.Sequential([
+              iaa.Fliplr(0.5),
+              iaa.Flipud(0.5),
+              iaa.Multiply((0.4, 1.6)), # change brightness
+              iaa.Affine(rotate=[0,90,270])
+              #iaa.ContrastNormalization((0.5, 1.5)),
+              #iaa.Affine(translate_px={"x": (-100,100), "y": (-100,100)}, scale=(0.7, 1.30))
+              ])
+        else:
+            seq = iaa.Sequential([
+              iaa.Fliplr(0.5),
+              iaa.Multiply((0.4, 1.6)), # change brightness
+              #iaa.ContrastNormalization((0.5, 1.5)),
+              #iaa.Affine(translate_px={"x": (-100,100), "y": (-100,100)}, scale=(0.7, 1.30))
+              iaa.Affine(rotate=[0,90,270])
+              ])
+
+        #seq = iaa.Sequential([])
+        seq_det = seq.to_deterministic()
+        img_aug = seq_det.augment_images(img)
+        img_aug = np.clip(img_aug, 0, 1)
+        boxes_aug = seq_det.augment_bounding_boxes(ia_boxes)
+        # conversion ia object -> bbox numpy
+        for i in range(img.shape[0]):
+            boxes_aug[i] = boxes_aug[i].remove_out_of_image().clip_out_of_image()
+            for j, bb in enumerate(boxes_aug[i].bounding_boxes):
+                boxes[i,j,0] = bb.x1
+                boxes[i,j,1] = bb.y1
+                boxes[i,j,2] = bb.x2
+                boxes[i,j,3] = bb.y2
+        # conversion numpy->tensor
+        #batch = (tf.convert_to_tensor(img_aug), tf.convert_to_tensor(boxes))
+        #batch = (img_aug, boxes)
+        #yield batch
+                # finally, format for output
+        y_true1, y_true2, y_true3 = [],[],[]
+        for b in boxes:
+            y1,y2,y3= process_box(b[:,:4], b[:,4].astype('int'),anchors,CLASS)
+            y_true1.append(y1); y_true2.append(y2); y_true3.append(y3)
+        
+        img = tf.cast(np.array(img_aug), tf.float32)    
+        yield img, tf.cast(y_true1, tf.float32), tf.cast(y_true2, tf.float32), tf.cast(y_true3, tf.float32)
