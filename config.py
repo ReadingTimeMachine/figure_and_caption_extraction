@@ -20,9 +20,14 @@ make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalizat
 #pdffigures_jar_path = '/Users/jillnaiman/Downloads/ScanBank/bin/pdffigures2-assembly-0.1.0.jar' # use scanbank's
 pdffigures_jar_path = '/Users/jillnaiman/figure_and_caption_extraction/bin/pdffigures2-assembly-0.1.0.jar' # use ours
 
+# 6. Where to store weights
+save_weights_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/'
+
 # X. What is a good temporary storage directory?
 tmp_storage_dir = '/Users/jillnaiman/Downloads/tmp/'
 
+## Some google directories
+main_google_dir = "/content/gdrive/My Drive/Colab Notebooks/scienceDigitization/"
 
 
 ####### Parameters for pipeline #########

@@ -33,12 +33,14 @@ DEP_LIST = np.unique(np.append(['ROOT', 'acl', 'acomp', 'advcl', 'advmod', 'agen
 angles = np.array([0, 90, 180, 270]) #options
 steps = round(256./len(angles))
 
-def generate_single_feature(df, feature_list = None):
+def generate_single_feature(df, feature_list = None, debug=False, binary_dir = None):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
+    binary_dir -- optional, will default to config.save_binary_dir + 'binaries/'
     """
     if feature_list is None: feature_list = config.feature_list
+    if binary_dir is None: binary_dir = config.save_binary_dir+'binaries/'
     
     # how many features
     #feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
@@ -424,9 +426,9 @@ def generate_single_feature(df, feature_list = None):
     fname = fname[:fname.rfind('.')]
     
     # binary save
-    with open(config.save_binary_dir+'binaries/'+fname+'.npz', 'wb') as f:
+    with open(binary_dir+fname+'.npz', 'wb') as f:
         np.savez_compressed(f, imgout) # 20 M/file
 
     del imgout
     del imgOrig
-    return config.save_binary_dir+fname+'.npz'
+    return binary_dir+fname+'.npz'
