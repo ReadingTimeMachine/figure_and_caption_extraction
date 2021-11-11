@@ -33,7 +33,7 @@ DEP_LIST = np.unique(np.append(['ROOT', 'acl', 'acomp', 'advcl', 'advmod', 'agen
 angles = np.array([0, 90, 180, 270]) #options
 steps = round(256./len(angles))
 
-def generate_single_feature(df, feature_list = None, debug=False, binary_dir = None):
+def generate_single_feature(df, feature_list = None, debug=False, binary_dir = None, feature_invert=None):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
@@ -41,6 +41,10 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
     """
     if feature_list is None: feature_list = config.feature_list
     if binary_dir is None: binary_dir = config.save_binary_dir+'binaries/'
+    if feature_invert is None: feature_invert = config.feature_invert
+    
+    background = 255
+    if feature_invert: background = 0
     
     # how many features
     #feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
@@ -52,13 +56,17 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
     
     # read in image as grayscale -- use for all features to replace
     img = np.array(Image.open(config.images_jpeg_dir+df.name).convert('L'))
+    # invert?
+    if feature_invert: img = 255-img
     # interpolate to size
-    imgGray = cv.resize(np.array(img).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+    imgGray = cv.resize(np.array(img).astype(np.uint8),
+                        img_resize,fx=0, fy=0, 
+                        interpolation = cv.INTER_NEAREST)
     # save this image
     #imgout = np.zeros([imgGray.shape[0],imgGray.shape[1], n_features]) # to save all features
     imgout = np.zeros([img_resize[0],img_resize[1],n_features])
     # all white
-    imgout[:,:,:] = 255
+    imgout[:,:,:] = background
     # place holder
     imgOrig = []
     
@@ -262,30 +270,37 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
     if 'fontsize' in feature_list:
         # rescale -- not 100% sure which one we want to use here -- using unscaled for now
         fontshere = np.array(fontshere)# - med
+        # subtract median
+        fontshere -= np.median(fontshere)
         if len(fontshere) > 1:
             if fontshere.max() != fontshere.min():
                 scales_unscaled = (fontshere-fontshere.min())/(fontshere.max()-fontshere.min())
             else:
                 scales_unscaled = fontshere.copy()
-                scales_unscaled[:] = 255
+                scales_unscaled[:] = background
         else:
-            scales_unscaled = [np.array(255)]
+            scales_unscaled = [np.array(background)]
         # get img and plot
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         # fill
         for b,su in zip(bboxes,scales_unscaled):
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-255*su))
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+            if feature_invert:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255*su))
+            else:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-255*su))
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature+=1
         
         
     # 3. carea boxes
     if 'carea boxes' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         for b,a in bbox_carea:
-            imgOrig[b[1]:b[3], b[0]:b[2]] = 0    
+            imgOrig[b[1]:b[3], b[0]:b[2]] = 255-background    
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
         ifeature+=1
     
@@ -293,54 +308,56 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
     # 4. paragraph boxes
     if 'paragraph boxes' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         for b,a,l in bbox_par:
-            imgOrig[b[1]:b[3], b[0]:b[2]] = 0    
+            imgOrig[b[1]:b[3], b[0]:b[2]] = 255-background    
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
         ifeature += 1
     
     # 5. fraction of numbers in a word & 6. fraction of letters in a word & 7. punctuation
-    maxTag = 150 # max number of "color" band
+    maxTag = 125 # max number of "color" band
     if 'fraction of numbers in a word' in feature_list:
         if nmax == 0: nmax = 1.0
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         for b,n,l,s,p in bboxesw: # numbers, letters, spaces, punc
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(n/nmax*maxTag))
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+            if feature_invert:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(n/nmax*maxTag+maxTag)) # always be increasing, just change where we start
+            else:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(n/nmax*maxTag))
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature+=1
     
     if 'fraction of letters in a word' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         if lmax == 0: lmax = 1.0
         for b,n,l,s,p in bboxesw: # numbers, letters, spaces, punc
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(l/lmax*maxTag))
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+            if feature_invert:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(l/lmax*maxTag+maxTag))
+            else:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(l/lmax*maxTag))
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature+=1
         
     if 'punctuation' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         for b,n,l,s,p in bboxesw: # numbers, letters, spaces, punc
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(p*maxTag))
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+            if feature_invert:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(p*maxTag+maxTag))
+            else:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(p*maxTag))
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature+=1
         
-    # imgOrig2 = imgOrig.copy(); imgOrig3 = imgOrig.copy()
-    # # fill
-    # if nmax == 0: nmax = 1.0
-    # # max band color band
-    # maxTag = 150 # max number of "color" band
-    # for b,n,l,s,p in bboxesw: # numbers, letters, spaces, punc
-    #     imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(n/nmax*maxTag))
-    #     imgOrig2[b[1]:b[3], b[0]:b[2]] = int(round(l/lmax*maxTag))
-    #     imgOrig3[b[1]:b[3], b[0]:b[2]] = int(round(p*maxTag))
-    # imgout[:,:,4] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
-    # imgout[:,:,5] = cv.resize(np.array(imgOrig2).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
-    # imgout[:,:,6] = cv.resize(np.array(imgOrig3).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
-    # del imgOrig2
-    # del imgOrig3
+
         
         
     # 8. x_ascenders
@@ -349,14 +366,23 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
         imgOrig[:,:] = 255
         decendershere = np.array(decendershere)
         #scales_decenders = (decendershere-min_dec)/(max_dec-min_dec)
-        min_dec = decendershere.min(); max_dec = decendershere.max()
+        #min_dec = decendershere.min(); max_dec = decendershere.max(); 
+        med_dec = np.median(decendershere)
+        #if min_dec == max_dec: min_dec = 0; max_dec = 1
+        #scales_decenders = (decendershere-min_dec)/(max_dec-min_dec) # around the median
+        scales_decenders = (decendershere-med_dec) # around the median
+        min_dec = scales_decenders.min(); max_dec = scales_decenders.max()
         if min_dec == max_dec: min_dec = 0; max_dec = 1
-        scales_decenders = (decendershere-min_dec)/(max_dec-min_dec)
+        scales_decenders = (scales_decenders-min_dec)/(max_dec-min_dec) # reshift to start at 0
         scales_decenders[scales_decenders<0] = 0
         scales_decenders[scales_decenders>1] = 1
         for b,s in zip(bboxes,scales_decenders):
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+            #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
+            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255)) # x_ascenders should always be low colors   
+        if feature_invert: imgOrig = 255-imgOrig
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature += 1
         
     # 9. x_decenders
@@ -364,32 +390,48 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         ascendershere = np.array(ascendershere)
+        # min_asc = ascendershere.min(); max_asc = ascendershere.max()
+        # if min_asc == max_asc: min_asc = 0; max_asc = 1
+        # scales_ascenders = (ascendershere-min_asc)/(max_asc-min_asc)
+        ascendershere += np.median(ascendershere)
         min_asc = ascendershere.min(); max_asc = ascendershere.max()
-        if min_asc == max_asc: min_asc = 0; max_asc = 1
         scales_ascenders = (ascendershere-min_asc)/(max_asc-min_asc)
         scales_ascenders[scales_ascenders<0] = 0
         scales_ascenders[scales_ascenders>1] = 1
         for b,s in zip(bboxes,scales_ascenders):
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
-        ifeature += 1
+            #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
+            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255))    
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
+        if feature_invert: imgOrig = 255-imgOrig
+a        ifeature += 1
         
     # 10. text angles
     if 'text angles' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         for b,t,c,ang in bboxesw_conf:
             inda = np.where(ang == angles)[0][0]
+            # angle 0 = "normal"
             imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(min([inda*steps,255])))
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+            if not feature_invert: 
+                imgOrig[b[1]:b[3], b[0]:b[2]] = 255-imgOrig[b[1]:b[3], b[0]:b[2]]
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature+=1
     
     # 11. confidence levels
     if 'word confidences' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         for b,t,s,a in bboxesw_conf:
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-255*s/100.))
+            # default is bad-conf closer to background
+            if not feature_invert:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-255*s/100.))
+            else:
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255*s/100.))
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
         ifeature += 1
 
@@ -397,28 +439,40 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
     # 12. Spacy POS
     if 'Spacy POS' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
-        for b in bbox_spacy:
-            imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = b[4]+1
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+        imgOrig[:,:] = background
+        for b in bbox_spacy: # ideally, these should each be a layer, but...
+            imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = b[4]*(255//len(POS_LIST))
+            if feature_invert: 
+                imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = 255-imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]]
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature += 1
         
     # 13. Spacy TAG
     if 'Spacy TAGs' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         for b in bbox_spacy:
-            imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = b[5]+1
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+            imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = b[5]*(255//len(TAG_LIST))
+            if feature_invert: 
+                imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = 255-imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]]
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature += 1
         
     # 14. Spacy DEP
     if 'Spacy DEPs' in feature_list:
         imgOrig = img.copy()
-        imgOrig[:,:] = 255
+        imgOrig[:,:] = background
         for b in bbox_spacy:
-            imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = b[6]+1
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+            imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = b[6]*(255/len(DEP_LIST))
+            if feature_invert: 
+                imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]] = 255-imgOrig[b[1]:b[1]+b[3], b[0]:b[0]+b[2]]
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature += 1
         
     
