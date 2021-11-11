@@ -7,7 +7,7 @@ import config
 
 feature_list = ['grayscale']
 # call these something new?
-binaries_file = 'model1'
+binaries_file = 'model1_inverted'
 
 
 # ----------------------------------------------
@@ -30,11 +30,13 @@ from glob import glob
 
 from annotation_utils import get_all_ocr_files, make_ann_directories, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years, get_cross_index, get_pdffigures_info, get_annotation_name, \
-   true_box_caption_mod, parse_annotation
+   true_box_caption_mod
 
 from ocr_and_image_processing_utils import angles_results_from_ocr
 
 from feature_generation_utils import generate_single_feature
+
+from general_utils import parse_annotation
 
 # general debug
 debug = False

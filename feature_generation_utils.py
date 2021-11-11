@@ -272,6 +272,8 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
         fontshere = np.array(fontshere)# - med
         # subtract median
         fontshere -= np.median(fontshere)
+        # remove outliers
+        fontshere[fontshere > 5*np.std(fontshere)] = 0.0
         if len(fontshere) > 1:
             if fontshere.max() != fontshere.min():
                 scales_unscaled = (fontshere-fontshere.min())/(fontshere.max()-fontshere.min())
@@ -301,7 +303,9 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
         imgOrig[:,:] = background
         for b,a in bbox_carea:
             imgOrig[b[1]:b[3], b[0]:b[2]] = 255-background    
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature+=1
     
     
@@ -311,7 +315,9 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
         imgOrig[:,:] = background
         for b,a,l in bbox_par:
             imgOrig[b[1]:b[3], b[0]:b[2]] = 255-background    
-        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),img_resize,fx=0, fy=0, interpolation = cv.INTER_NEAREST)
+        imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
+                                         img_resize,fx=0, fy=0, 
+                                         interpolation = cv.INTER_NEAREST)
         ifeature += 1
     
     # 5. fraction of numbers in a word & 6. fraction of letters in a word & 7. punctuation
@@ -405,7 +411,7 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
                                          img_resize,fx=0, fy=0, 
                                          interpolation = cv.INTER_NEAREST)
         if feature_invert: imgOrig = 255-imgOrig
-a        ifeature += 1
+        ifeature += 1
         
     # 10. text angles
     if 'text angles' in feature_list:
