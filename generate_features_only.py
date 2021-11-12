@@ -7,7 +7,8 @@ import config
 
 feature_list = ['grayscale']
 # call these something new?
-binaries_file = 'model1_inverted'
+binaries_file = 'model1_inverted_palletized'
+mode = 'P' # "L" is default
 
 
 # ----------------------------------------------
@@ -106,6 +107,7 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     dfsingle = df.loc[fname+'.jpeg']
         
     # if we've made it this far, let's generate features
-    feature_name = generate_single_feature(dfsingle, feature_list = feature_list, binary_dir = binaries_file)
+    feature_name = generate_single_feature(dfsingle, feature_list = feature_list, 
+                                           binary_dir = binaries_file, mode=mode)
     
     #import sys; sys.exit()

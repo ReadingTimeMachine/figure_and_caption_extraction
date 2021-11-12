@@ -23,11 +23,13 @@ import xml.etree.ElementTree as ET
 
 from annotation_utils import get_all_ocr_files, make_ann_directories, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years, get_cross_index, get_pdffigures_info, get_annotation_name, \
-   true_box_caption_mod, parse_annotation
+   true_box_caption_mod
 
 from ocr_and_image_processing_utils import angles_results_from_ocr
 
 from feature_generation_utils import generate_single_feature
+
+from general_utils import parse_annotation
 
 # general debug
 debug = False
@@ -306,6 +308,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     # (other names, except ignored labels, are unchanged)
     
     for n,bs in zip(objNames, objSquares):
+        # just double check for table captions here
+        if 'table' in n and 'caption' in n: import sys; sys.exit()
         fo.write("\t<object>\n")
         fo.write("\t\t<name>"+n+"</name>\n") 
         fo.write("\t\t<bndbox>\n")

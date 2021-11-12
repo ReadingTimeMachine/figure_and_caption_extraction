@@ -298,7 +298,7 @@ def get_annotation_name(d,scount,sfcount,ccount):
         #if ignore_mathformula and 'math' in b[-1]: notSubfig = False
         if b[-1] in config.ignore_ann_list: #return '' # in ignore list?
             diagLabs.append('')
-        if notSubfig or ('sub fig' in b[-1] and (scount <= sfcount) and (ccount == 0) and b[-1] != 'no label'): # this is overly convoluted
+        elif notSubfig or ('sub fig' in b[-1] and (scount <= sfcount) and (ccount == 0) and b[-1] != 'no label'): # this is overly convoluted
             diagLab = ''
             if (scount <= sfcount) and (ccount == 0): # call captions sub-figs
                 if b[-1] == 'sub fig caption':

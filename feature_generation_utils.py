@@ -33,11 +33,15 @@ DEP_LIST = np.unique(np.append(['ROOT', 'acl', 'acomp', 'advcl', 'advmod', 'agen
 angles = np.array([0, 90, 180, 270]) #options
 steps = round(256./len(angles))
 
-def generate_single_feature(df, feature_list = None, debug=False, binary_dir = None, feature_invert=None):
+def generate_single_feature(df, feature_list = None, debug=False, 
+                            binary_dir = None, feature_invert=None, 
+                           mode='L'):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
     binary_dir -- optional, will default to config.save_binary_dir + 'binaries/'
+    feature_dir -- optional, will default to config.feature_invert
+    mode -- grayscale mode to read in image, will default to "L" for luminance, but can use "P" for palletized
     """
     if feature_list is None: feature_list = config.feature_list
     if binary_dir is None: binary_dir = config.save_binary_dir+'binaries/'
@@ -55,7 +59,7 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
     ifeature = 0 # keep count of where we are
     
     # read in image as grayscale -- use for all features to replace
-    img = np.array(Image.open(config.images_jpeg_dir+df.name).convert('L'))
+    img = np.array(Image.open(config.images_jpeg_dir+df.name).convert(mode))
     # invert?
     if feature_invert: img = 255-img
     # interpolate to size
@@ -273,7 +277,7 @@ def generate_single_feature(df, feature_list = None, debug=False, binary_dir = N
         # subtract median
         fontshere -= np.median(fontshere)
         # remove outliers
-        fontshere[fontshere > 5*np.std(fontshere)] = 0.0
+        fontshere[np.abs(fontshere) > 5*np.std(fontshere)] = 0.0
         if len(fontshere) > 1:
             if fontshere.max() != fontshere.min():
                 scales_unscaled = (fontshere-fontshere.min())/(fontshere.max()-fontshere.min())
