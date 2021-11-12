@@ -370,8 +370,8 @@ def generate_single_feature(df, feature_list = None, debug=False,
 
         
         
-    # 8. x_ascenders
-    if 'x_ascenders' in feature_list:
+    # 8. x_decenders
+    if 'x_decenders' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         decendershere = np.array(decendershere)
@@ -395,8 +395,8 @@ def generate_single_feature(df, feature_list = None, debug=False,
                                          interpolation = cv.INTER_NEAREST)
         ifeature += 1
         
-    # 9. x_decenders
-    if 'x_decenders' in feature_list:
+    # 9. x_ascenders
+    if 'x_ascenders' in feature_list:
         imgOrig = img.copy()
         imgOrig[:,:] = 255
         ascendershere = np.array(ascendershere)

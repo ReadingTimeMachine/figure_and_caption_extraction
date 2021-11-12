@@ -69,8 +69,10 @@ ignore_ann_list = ['table caption', 'colorbar', 'sub fig caption']
 plot_diagnostics = False # will plot to tmp directory + '/tmpAnnDiags/'
 
 # features list -- see paper for more details
-feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
-                'punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
+feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes',
+                'fraction of numbers in a word','fraction of letters in a word',
+                'punctuation','x_decenders','x_ascenders','text angles', 
+                'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
 
 # do we want to invert grayscale + other features or not?
 feature_invert = True
