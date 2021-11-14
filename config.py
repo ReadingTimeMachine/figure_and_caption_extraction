@@ -26,8 +26,12 @@ save_weights_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocaliz
 # X. What is a good temporary storage directory?
 tmp_storage_dir = '/Users/jillnaiman/Downloads/tmp/'
 
+# X. Diagnostic dir
+##mega_yolo_diag_dir = '/Users/jillnaiman/scienceDigitization/figure_localization/mega_yolo_model/diagnostics/'
+
+
 ## Some google directories
-main_google_dir = "/content/gdrive/My Drive/Colab Notebooks/scienceDigitization/"
+##main_google_dir = "/content/gdrive/My Drive/Colab Notebooks/scienceDigitization/"
 
 
 ####### Parameters for pipeline #########
@@ -87,3 +91,31 @@ check_parse = True
 IMAGE_W = 512
 IMAGE_H = 512
 
+version = 'l' # start small, 'x' won't fit otn google collab
+
+
+# -------- Post Processing ----------
+
+n_folds_cv = 5
+weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211111_model1/'
+weightsFile = 'training_1model1_model_l0.17215717.h5' # figure/table, fig/table captions
+benchmark = False # full run or benchmark run?
+
+scoreminVec = [0.1, 0.5, 0.95] #   = box_conf * box_class_prob => pick with CV!!!
+iouminVec = [0.1, 0.25, 0.6, 0.7, 0.75, 0.80, 0.9, 0.95] # 0.6 and 0.8 are from the ICDAR usual comparisons 
+
+store_diagnostics = False
+
+# from optimization: kh,kv
+kpar = (7,3)
+kparrot = (3,7)
+# for figuring out if we are rotated -- what is our cut for word confidences?
+ccut_rot = 90
+# for finding figs
+ccut_ocr_figcap = 20
+# len text
+len_text = 5
+len_text1 = 5
+len_text2 = 7
+# blur
+blurKernel = (3,3) # this or 9,9?
