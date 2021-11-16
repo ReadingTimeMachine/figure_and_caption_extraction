@@ -8,7 +8,24 @@ import config
 feature_list = ['grayscale']
 # call these something new?
 binaries_file = 'model1_inverted_palletized'
-mode = 'P' # "L" is default
+#mode = 'P' # "L" is default for grayscale formatting
+mode = 'L' # "L" is default for grayscale formatting
+
+feature_list = ['grayscale','fontsize']
+# call these something new?
+binaries_file = 'model2'
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders']
+# call these something new?
+binaries_file = 'model3'
+
+# feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word','punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
+# maxTag = 50 # trial
+# binaries_file = 'maxTag50'
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences']
+# call these something new?
+binaries_file = 'model4'
 
 
 # ----------------------------------------------
@@ -108,6 +125,6 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         
     # if we've made it this far, let's generate features
     feature_name = generate_single_feature(dfsingle, feature_list = feature_list, 
-                                           binary_dir = binaries_file, mode=mode)
+                                           binary_dir = binaries_file, mode=mode, maxTag=maxTag)
     
     #import sys; sys.exit()

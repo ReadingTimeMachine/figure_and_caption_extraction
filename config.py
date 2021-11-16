@@ -92,6 +92,11 @@ IMAGE_W = 512
 IMAGE_H = 512
 
 version = 'l' # start small, 'x' won't fit otn google collab
+width_vec = [0.50, 0.75, 1.0, 1.25]
+depth_vec = [0.33, 0.67, 1.0, 1.33]
+versions = ['s', 'm', 'l', 'x']
+threshold = 0.3
+max_boxes = 150
 
 
 # -------- Post Processing ----------

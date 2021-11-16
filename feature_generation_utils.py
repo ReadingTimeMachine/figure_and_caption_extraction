@@ -35,13 +35,14 @@ steps = round(256./len(angles))
 
 def generate_single_feature(df, feature_list = None, debug=False, 
                             binary_dir = None, feature_invert=None, 
-                           mode='L'):
+                           mode='L',maxTag = 125):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
     binary_dir -- optional, will default to config.save_binary_dir + 'binaries/'
     feature_dir -- optional, will default to config.feature_invert
     mode -- grayscale mode to read in image, will default to "L" for luminance, but can use "P" for palletized
+    maxTag -- max number of "color" bands for # of letters & numbers in a word & punctuation
     """
     if feature_list is None: feature_list = config.feature_list
     if binary_dir is None: binary_dir = config.save_binary_dir+'binaries/'
@@ -325,7 +326,6 @@ def generate_single_feature(df, feature_list = None, debug=False,
         ifeature += 1
     
     # 5. fraction of numbers in a word & 6. fraction of letters in a word & 7. punctuation
-    maxTag = 125 # max number of "color" band
     if 'fraction of numbers in a word' in feature_list:
         if nmax == 0: nmax = 1.0
         imgOrig = img.copy()

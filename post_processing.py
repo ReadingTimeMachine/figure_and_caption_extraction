@@ -14,14 +14,14 @@ import config
 
 
 # from config file
-classDir_main_to = config.save_binary_dir + config.ann_name + str(config.IMAGE_H) + 'x' + str(config.IMAGE_W) + '_ann/'
+annotation_dir = config.save_binary_dir + config.ann_name + str(config.IMAGE_H) + 'x' + str(config.IMAGE_W) + '_ann/'
 
 #'/Users/jillnaiman/MegaYolo/yolo_512x512_ann/'
 
 if binary_dirs is None: binary_dirs = 'binaries/'
 
-classDir_main_to_imgs = config.save_binary_dir + binary_dirs
-binariesDir = classDir_main_to_imgs
+#classDir_main_to_imgs = config.save_binary_dir + binary_dirs
+feature_dir = config.save_binary_dir + binary_dirs
 
 pickle_dir = config.ocr_results_dir
 makeSenseDir = config.make_sense_dir
@@ -55,9 +55,11 @@ anchorsFile = weightsFileDir + 'anchors.pickle'
 import yt
 import pandas as pd
 import pickle
+import numpy as np
 from annotation_utils import get_all_ocr_files, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years
-from post_processing_utils import parse_annotations_to_labels
+from post_processing_utils import parse_annotations_to_labels, build_predict, \
+   get_true_boxes
 #################################################
 
 if store_diagnostics:
@@ -91,7 +93,7 @@ with open(saveFileAnchors, 'rb') as f:
 
     
 LABELS, labels, slabels, \
-  CLASS, annotations, Y_full = parse_annotations_to_labels(classDir_main_to, 
+  CLASS, annotations, Y_full = parse_annotations_to_labels(annotation_dir, 
                                                            testListFile, 
                                                            benchmark=benchmark)
 
@@ -135,3 +137,40 @@ sortp = np.argsort(inds)
 ann_inds = np.array(ann_inds)[sortp]
 
 wsInds = np.arange(0,len(annotations))
+
+
+
+# run the thing
+iMod = 10
+
+for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
+    TPv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # true positivies in each category (each cateogry of *true* boxes)
+    FPv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # false positivies, each category (each category of *found* boxes)
+    FNv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # false negatives, each category (each category of *true* boxes)
+    MISSCLASSv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # found, but not the right type
+    THROWNOUTv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # found, but culled out
+    totalTruev = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # count numbers in category
+    
+    # by year
+    TPyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # true positivies in each category (each cateogry of *true* boxes)
+    FPyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # false positivies, each category (each category of *found* boxes)
+    FNyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # false negatives, each category (each category of *true* boxes)
+    MISSCLASSyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # found, but not the right type
+    THROWNOUTyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # found, but culled out
+    totalTrueyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # count numbers in category
+    
+    a = annotations[icombo] # which annotation
+    k_cv = ann_inds[icombo] # which fold?
+
+    # run model
+    if icombo%iMod == 0:
+        print('on ', icombo, ' of ', len(annotations)-1)
+        
+    # there is a lot of mess here that gets and formats all true boxes and 
+    #. all of the OCR data
+    imgs_name, pdfboxes, pdfrawboxes,years_ind = get_true_boxes(a,LABELS,
+                                                       badskews,badannotations,
+                                                       annotation_dir=annotation_dir,
+                                                      feature_dir=feature_dir)
+        
+    import sys; sys.exit()
