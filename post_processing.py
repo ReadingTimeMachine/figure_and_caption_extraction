@@ -59,7 +59,7 @@ import numpy as np
 from annotation_utils import get_all_ocr_files, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years
 from post_processing_utils import parse_annotations_to_labels, build_predict, \
-   get_true_boxes
+   get_true_boxes, get_ocr_results
 #################################################
 
 if store_diagnostics:
@@ -172,5 +172,9 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                        badskews,badannotations,
                                                        annotation_dir=annotation_dir,
                                                       feature_dir=feature_dir)
+    
+    # get OCR results and parse them, open image for image processing
+    backtorgb, rotatedImage,bbox_hocr,\
+      bboxes_words,bbsq,rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df)
         
     import sys; sys.exit()

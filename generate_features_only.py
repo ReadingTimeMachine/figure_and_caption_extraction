@@ -19,13 +19,22 @@ feature_list = ['grayscale','fontsize','x_ascenders','x_decenders']
 # call these something new?
 binaries_file = 'model3'
 
-# feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word','punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
-# maxTag = 50 # trial
-# binaries_file = 'maxTag50'
-
 feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences']
 # call these something new?
 binaries_file = 'model4'
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation']
+# call these something new?
+binaries_file = 'model5'
+maxTag = 50 # trial? for fractin of ___ and punctuation
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation']
+# call these something new?
+binaries_file = 'model5_maxTag125'
+maxTag = 125 # trial? for fractin of ___ and punctuation
+
 
 
 # ----------------------------------------------

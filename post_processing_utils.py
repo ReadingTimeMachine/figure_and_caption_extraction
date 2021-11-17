@@ -1,5 +1,9 @@
 from glob import glob
+
+# do we need both of these?...
 import xml.etree.ElementTree as ET
+from lxml import etree
+
 from scipy import stats
 import numpy as np
 import tensorflow as tf
@@ -7,10 +11,12 @@ from tensorflow.keras import backend
 from tensorflow.keras import layers
 import pickle
 import os
+from PIL import Image
 
 # stuff
 import config
 from general_utils import parse_annotation
+
 
 depth_vec = config.depth_vec
 versions = config.versions
@@ -595,3 +601,158 @@ def get_true_boxes(a,LABELS, badskews, badannotations, annotation_dir='', featur
     years_ind.append(year)
     
     return imgs_name, pdfboxes, pdfrawboxes,years_ind
+
+
+def get_ocr_results(imgs_name, dfMakeSense,dfsave):
+    ########### LOAD IMAGE FEATURES AND IMAGE DATA #####################
+    
+    # feature file
+    image_np = np.load(imgs_name[0])['arr_0']
+    image_np = image_np.astype(np.float32) / 255.0    
+    
+    # OCR file/data
+    ff = imgs_name[0].split('/')[-1].split('.npz')[0]
+    # get height, width of orig image
+    try:
+        indff = dfMakeSense.loc[dfMakeSense['filename']==ff].index[0]
+    except:
+        print('we have an issue here!!')
+        print(ff)
+        import sys; sys.exit()
+    # reshape to this
+    dfMS = dfMakeSense.loc[dfMakeSense['filename']==ff]
+    #fracx = msw[indff]*1.0/image_np.shape[1]
+    #fracy = msh[indff]*1.0/image_np.shape[0]
+    fracx = dfMS['w']*1.0/image_np.shape[1]
+    fracy = dfMS['h']*1.0/image_np.shape[0]
+    # check for file
+    if os.path.isfile(config.images_jpeg_dir+ff+'.jpeg'):
+        indh = ff+'.jpeg'
+    elif os.path.isfile(config.images_jpeg_dir+ff+'.jpg'):
+        indh = ff+'.jpg'
+    else:
+        # find correct hocr index
+        ff = glob.glob(config.images_jpeg_dir+ff + '*')
+        if len(ff) == 0:
+            print('have issue! here in looking for thing.')
+            import sys; sys.exit()
+        else:
+            indh = ff[0].split('/')[-1]                
+    # grab OCR
+    goOn = True
+    try:
+        hocr = dfsave.loc[indh]['hocr']
+    except:
+        print('NO hocr for', indh)
+        goOn = False
+    if goOn:
+        # paragraphs from OCR
+        bbox_par = []
+        nameSpace = ''
+        for l in hocr.split('\n'):
+            if 'xmlns' in l:
+                nameSpace = l.split('xmlns="')[1].split('"')[0]
+                break
+        ns = {'tei': nameSpace}
+        tree = etree.fromstring(hocr.encode())
+        # get paragraphs
+        lines = tree.xpath("//tei:p[@class='ocr_par']/@title", namespaces=ns)
+        langs = tree.xpath("//tei:p[@class='ocr_par']/@lang", namespaces=ns)
+        for l,la in zip(lines,langs):
+            x = l.split(' ')
+            b = np.array(x[1:]).astype('int')
+            area = (b[3]-b[1])*(b[2]-b[0])
+            bbox_par.append((b,area,la))
+
+        # get words
+        bboxes_words = []
+        lines = tree.xpath("//tei:span[@class='ocrx_word']/@title", namespaces=ns)
+        text = tree.xpath("//tei:span[@class='ocrx_word']/text()", namespaces=ns)
+        # get words
+        for t,l in zip(text,lines):
+            x = l.split(';') # each entry
+            for y in x:
+                if 'bbox' in y:
+                    z = y.strip()
+                    arr=y.split()
+                    b = np.array(arr[1:]).astype('int')
+                elif 'x_wconf' in y:# also confidence
+                    c = y.split('x_wconf')[-1].strip()
+            bboxes_words.append((b,t,int(c))) 
+
+        # squares from image processing
+        # grab squares
+        shere = dfsave.loc[indh]['squares']    
+        bbsq = []
+        for ss in shere:
+            if len(ss) > 0:
+                x,y,w,h = cv.boundingRect(ss) # in orig page
+                bbsq.append((x,y,x+w,y+h))
+
+        # grab rotation
+        rotation = dfsave.loc[indh]['rotation']
+        
+        #---------------- image processing figure captions -----------------------
+        # some of this is repeat, but for finding captions with image processing:
+        bbox_hocr = []
+        for i,word in enumerate(tree.xpath("//tei:span[@class='ocrx_word']", namespaces=ns)):
+            myangle = word.xpath("../@title", namespaces=ns) # this should be line tag
+            par = word.xpath("./@title", namespaces=ns)[0]
+            bb = np.array(par.split(';')[0].split(' ')[1:]).astype('int').tolist()
+            c = int(par.split('x_wconf')[-1])
+            t = word.xpath("./text()",namespaces=ns)[0]
+            if len(myangle) > 1:
+                print('HAVE TOO MANY PARENTS')
+            if 'textangle' in myangle[0]:
+                # grab text angle
+                textangle = float(myangle[0].split('textangle')[1].split(';')[0])
+            else:
+                textangle = 0.0
+            # find associated paragraph
+            par = word.xpath("../../@title", namespaces=ns)[0]
+            bbpar = np.array(par.split(';')[0].split(' ')[1:]).astype('int').tolist()
+            # and carea
+            car = word.xpath("../../../@title", namespaces=ns)[0]
+            bbcar = np.array(car.split(';')[0].split(' ')[1:]).astype('int').tolist()
+            # replace a few obvious things
+            # this cleaning should be layed out in a config
+            text = t.replace('Fic.', 'Fig.')
+            text = text.replace('Frc.', 'Fig.')
+            text = text.replace('FIC.', 'FIG.')
+            if len(text) == 3:
+                text = text.replace('Fic', 'Fig.')
+
+            # put in x,y,w,h format
+            bb[2] = bb[2]-bb[0]; bb[3] = bb[3]-bb[1]
+            bbpar[2] = bbpar[2]-bbpar[0]; bbpar[3] = bbpar[3]-bbpar[1]
+            bbcar[2] = bbcar[2]-bbcar[0]; bbcar[3] = bbcar[3]-bbcar[1]
+            bbox_hocr.append((bb,t,c,textangle,bbpar,bbcar))  
+            
+        # error checking: find rotation two ways -- this should also be in the annotation generation step
+        rots = []
+        for (x,y,w,h),text,c,r,_,_ in bbox_hocr:
+            if c>=config.ccut_rot:
+                if (len(text) > 0):  
+                    rots.append(r)
+        
+        if len(rots) > 0:
+            rotatedAngleOCR = stats.mode(rots).mode[0]
+             
+        backtorgb = np.array(Image.open(config.images_jpeg_dir+indh).convert('RGB'))
+        try:
+            newdata=pytesseract.image_to_osd(backtorgb.copy())
+            rotationImage = int(re.search('(?<=Rotate: )\d+', newdata).group(0))
+        except:
+            print('something bad has happened with image_to_osd on', indh)
+            rotationImage = -1
+        if rotationImage > 0:
+            rotatedImage = True
+        else:
+            rotatedImage = False
+        if rotationImage != rotatedAngleOCR and rotatedAngleOCR != 90:
+            print(indh,'something has happened with rotation -- page says angle =',
+                  rotationImage, 'words say angle =', rotatedAngleOCR)  
+        if rotatedAngleOCR > 0: rotatedImage = True # also by words
+        rot = rotatedImage
+        
+        return backtorgb, rotatedImage,bbox_hocr,bboxes_words,bbsq,rotation,bbox_par
