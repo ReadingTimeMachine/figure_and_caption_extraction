@@ -603,11 +603,11 @@ def get_true_boxes(a,LABELS, badskews, badannotations, annotation_dir='', featur
 
     years_ind.append(year)
     
-    return imgs_name, pdfboxes, pdfrawboxes,years_ind
+    return imgs_name, pdfboxes, pdfrawboxes,years_ind, truebox
 
 
+########### LOAD IMAGE FEATURES AND IMAGE DATA #####################
 def get_ocr_results(imgs_name, dfMakeSense,dfsave):
-    ########### LOAD IMAGE FEATURES AND IMAGE DATA #####################
     
     # feature file
     image_np = np.load(imgs_name[0])['arr_0']
@@ -758,7 +758,7 @@ def get_ocr_results(imgs_name, dfMakeSense,dfsave):
         if rotatedAngleOCR > 0: rotatedImage = True # also by words
         rot = rotatedImage
         
-        return backtorgb, image_np, rotatedImage, bbox_hocr, \
+        return backtorgb, image_np, rotatedImage, rotatedAngleOCR, bbox_hocr, \
           bboxes_words, bbsq, rotation, bbox_par
     
     
@@ -1143,3 +1143,297 @@ def clean_found_overlap_with_ocr(boxes_heur, labels_heur, scores_heur,bboxes_wor
     boxesOut = np.array(boxesOut)
     boxes_par_found = boxesOut; labels_par_found = labelsOut; scores_par_found=scoresOut
     return boxes_par_found, labels_par_found, scores_par_found
+
+
+def clean_true_overlap_with_ocr(truebox, bboxes_words,bbox_par,rotation, LABELS, dfMS):
+    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    bboxes_combined = []
+    for ibb, bp in enumerate(bboxes_words): 
+        bb,texts,confs = bp 
+        bboxes_combined.append(bb)
+    for ibb, bp in enumerate(bbox_par): # these are also xmin,ymin,xmax,ymax -- found w/OCR, original page size
+        bb,aa,ll = bp    
+        bboxes_combined.append(bb)
+
+    #for annotated boxes: ALSO get overlap with figure caption from WORDS
+    # --> annotated boxes can also be much larger than the words so make sure all things are INSIDE
+    trueBoxOut = []; pars_in_true_box = []
+    # find figure boxes so that we don't overlap with them
+    fig_boxes = []
+    for b in truebox:
+        if LABELS[int(b[4]-1)] == 'figure':
+            fig_boxes.append(b)
+    rot = 0
+    if len(rotation)>0: rot = stats.mode(rotation).mode[0]
+
+    # loop and update annotations        
+    for b in truebox: # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
+        l = LABELS[int(b[4]-1)]
+        # look for negatives -- not really necessary here
+        b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); 
+        b[2] = min([config.IMAGE_W,b[2]]); 
+        b[3] = min([config.IMAGE_H,b[3]])
+        # are we even dealing with a caption?
+        if 'caption' in l.lower():
+            x1min = b[0]*fracx; y1min = b[1]*fracy; x1max = b[2]*fracx; y1max = b[3]*fracy # inside?
+            indIou = [1e10,1e10,-1e10,-1e10]
+            indIou2 = indIou.copy(); #indIou2[0] = 2e10
+            indIou2[0] *= 2; indIou2[1] *= 2; indIou2[2] *= 2; indIou2[3] *= 2
+            # don't expand super far in y direction, only x
+            i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
+            if rot != 90:
+                i10 = indIou[1]; i11 = indIou[3]; i20 = indIou2[1]; i21 = indIou2[2]
+            while (i10 != i20) and (i11 != i21):
+                indIou2 = indIou
+                i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
+                if rot != 90:
+                    i10 = indIou[1]; i11 = indIou[3]; i20 = indIou2[1]; i21 = indIou2[2]
+                for ibb,bb in enumerate(bboxes_combined):
+                    x2min, y2min, x2max, y2max = bb
+                    # is within....vs...
+                    if config.true_overlap == 'overlap':
+                        isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                           (x2min,y2min,x2max,y2max))
+
+                        #center is within
+                    elif config.true_overlap == 'center':
+                        x2 = 0.5*(x2min+x2max); y2 = 0.5*(y2min+y2max)
+                        isOverlapping = (x2 <= x1max) and (x2 >= x1min) and (y2 <= y1max) and (y2 >= y1min)
+                    # using whichever condition -- change box sizes
+                    if isOverlapping:
+                        xo = indIou[0]; yo = indIou[1]; xo1 = indIou[2]; yo1 = indIou[3]
+                        indIou = [ min([xo,bb[0]]), min([yo,bb[1]]), 
+                                  max([xo1,bb[2]]), max([yo1,bb[3]])]
+                if indIou[0] != 1e10: # found 1 that overlapped
+                    if stats.mode(rotation).mode[0] == 90: # right-side up
+                        x1min, x1max = indIou[0],indIou[2]
+                    else:
+                        y1min, y1max = indIou[1],indIou[3]            
+  
+            if indIou[0] != 1e10: # found 1 that overlapped
+                trueBoxOut.append((indIou[0]/fracx,indIou[1]/fracy,indIou[2]/fracx,indIou[3]/fracy, b[4]))
+            else:
+                trueBoxOut.append(b)
+        ##### come back and do table!!! ####
+#         elif 'table' in l.lower():
+#             iouMax = -10; 
+#             indIou = []
+#             #for ibb, bp in enumerate(bboxes_words): # these are also xmin,ymin,xmax,ymax -- found w/OCR, original page size
+#             #    bb,texts,confs = bp
+#             for ibb, bp in enumerate(bbox_par): # these are also xmin,ymin,xmax,ymax -- found w/OCR, original page size
+#                 bb,aa,ll = bp
+#                 #x1min = b[0]*fracx; y1min = b[1]*fracy; x1max = b[2]*fracx; y1max = b[3]*fracy
+#                 x2min, y2min, x2max, y2max = bb
+#                 #isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
+#                 x2 = 0.5*(x2min+x2max); y2 = 0.5*(y2min+y2max)
+#                 isOverlapping = (x2 <= x1max) and (x2 >= x1min) and (y2 <= y1max) and (y2 >= y1min)
+#                 if isOverlapping:
+#                     if len(indIou) == 0:
+#                         #indIou = [ min([bb[0],x1min]),min([bb[1],y1min]),
+#                         #          max([bb[2],x1max]),max([bb[3],y1max]) ] 
+#                         indIou = [bb[0],bb[1],bb[2],bb[3]]
+#                     else:
+#                         xo = indIou[0]; yo = indIou[1]; xo1 = indIou[2]; yo1 = indIou[3]
+#                         #indIou = [ min([xo,bb[0],x1min]), min([yo,bb[1],y1min]), 
+#                         #          max([xo1,bb[2],x1max]), max([yo1,bb[3],y1max])]
+#                         indIou = [ min([xo,bb[0]]), min([yo,bb[1]]), 
+#                                   max([xo1,bb[2]]), max([yo1,bb[3]])]                    
+#             if len(indIou) > 0: # found 1 that overlapped
+#                 trueBoxOut.append((indIou[0]/fracx,indIou[1]/fracy,indIou[2]/fracx,indIou[3]/fracy, b[4]))
+#             else:
+#                 trueBoxOut.append(b)
+        else:
+            trueBoxOut.append(b)
+    # reset true box
+    truebox1 = np.array(trueBoxOut)
+    return truebox1
+
+        ########### CLEAN FIGURES BY CHECKING IF THEY OVERLAP WITH SQUARES -- IF NO FIG, TAKE SQUARE ############
+def clean_merge_squares(bbsq, boxes_par_found, labels_par_found, scores_par_found, LABELS, dfMS):
+    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    boxesOut = []; labelsOut = []; scoresOut = []
+    # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
+    for b,l,ss in zip(boxes_par_found, labels_par_found, scores_par_found): 
+        # look for negatives
+        b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); 
+        b[2] = min([config.IMAGE_W,b[2]]); 
+        b[3] = min([config.IMAGE_H,b[3]])
+        x1min = b[0]*fracx; y1min = b[1]*fracy; x1max = b[2]*fracx; y1max = b[3]*fracy
+        # are we even dealing with a caption?
+        if 'figure' == LABELS[int(l)].lower():
+            indIou = [1e10,1e10,-1e10,-1e10]
+            indIou2 = indIou.copy(); indIou2[0] = 2e10; iou1 = 1e10
+            for ibb,bb in enumerate(bbsq): # only do the once
+                x2min, y2min, x2max, y2max = bb
+                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                   (x2min,y2min,x2max,y2max))
+                if isOverlapping:
+                    xo = indIou[0]; yo = indIou[1]; xo1 = indIou[2]; yo1 = indIou[3]
+                    indIou = [ min([xo,bb[0],x1min]), min([yo,bb[1],y1min]), 
+                              max([xo1,bb[2],x1max]), max([yo1,bb[3],y1max])]
+
+            if indIou[0] != 1e10: # found 1 that overlapped
+                boxesOut.append((indIou[0]/fracx,indIou[1]/fracy,indIou[2]/fracx,indIou[3]/fracy))
+                labelsOut.append(l); scoresOut.append(ss)
+            else:
+                boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
+        else:
+            boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
+    # reset
+    boxesOut = np.array(boxesOut)
+    # replace
+    boxes_sq1 = boxesOut; labels_sq1 = labelsOut; scores_sq1 = scoresOut
+    return boxes_sq1, labels_sq1, scores_sq1
+
+
+
+################# CLEAN OBVIOUSLY BIG CAPTIONS ########################
+def clean_big_captions(boxes_sq1,labels_sq1,scores_sq1, LABELS):
+    boxes_sq = []; labels_sq = []; scores_sq = []
+    for b,l,s in zip(boxes_sq1,labels_sq1,scores_sq1):
+        area = (b[2]-b[0])*(b[3]-b[1])/(1.0*config.IMAGE_W*config.IMAGE_H)
+        # if small area OR not a figure caption
+        if area <= 0.75 or ((LABELS[int(l)] != 'figure caption' and l!=-2) or (l==-2)):
+            boxes_sq.append(b); labels_sq.append(l); scores_sq.append(s) 
+    return boxes_sq, labels_sq, scores_sq
+
+
+############### MATCH SQUARES TO CAPTIONS #############################
+def clean_match_fig_cap(boxes_sq,labels_sq,scores_sq, bbsq, 
+                        LABELS, rotatedImage, 
+                        rotatedAngleOCR,dfMS):
+    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    # take caption closest to the BOTTOM EDGE, NOT in a square
+    boxesOut = []; labelsOut = []; scoresOut = []
+    boxes_fig = []; boxes_cap = []; boxes_heur_cap = []
+    for b,l,s in zip(boxes_sq,labels_sq,scores_sq):
+        if LABELS[int(l)] == 'figure caption' and l!=-2:
+            boxes_cap.append((b,l,s))
+            # take out overlaps with image-processing squares here...
+        elif LABELS[int(l)] == 'figure' and l!=-2:
+            boxes_fig.append((b,l,s))
+        elif l == -2:
+            boxes_heur_cap.append((b,l,s))
+        else:
+            boxesOut.append(b)
+            scoresOut.append(s)
+            labelsOut.append(l)
+
+    icsave = []; icheursave = []; fig_cap_pair_reg = []; fig_cap_pair_heur = []
+    # find closest captions
+    for ibb,bb in enumerate(boxes_fig):
+        mind = 5e15; iout = -1
+        xc,yc = 0.5*(bb[0][0]+bb[0][2]),bb[0][3]
+        if rotatedImage:
+            xc, yc = bb[0][2], 0.5*(bb[0][1]+bb[0][3])
+        for ic,bc in enumerate(boxes_cap): # find closest to bottom, not inside a square
+            xcc,ycc= 0.5*(bc[0][0]+bc[0][2]),0.5*(bc[0][1]+bc[0][3])
+            d = np.sum(((xc-xcc)**2 + (yc-ycc)**2)**0.5)
+            if d < mind:
+                mind = d
+                iout = ic
+        if iout > -1: # if we found a mega-yolo-found caption, add it
+            icsave.append(iout)
+            fig_cap_pair_reg.append([ibb,iout])
+        else: # let's try heuristically found ones
+            #print('nope')
+            mind = 5e15; iout = -1
+            xc,yc = 0.5*(bb[0][0]+bb[0][2]),bb[0][3]
+            if rotatedImage:
+                xc, yc = bb[0][2], 0.5*(bb[0][1]+bb[0][3])
+            for ic,bc in enumerate(boxes_heur_cap): # find closest to bottom, not inside a square
+                xcc,ycc= 0.5*(bc[0][0]+bc[0][2]),0.5*(bc[0][1]+bc[0][3])
+                d = np.sum(((xc-xcc)**2 + (yc-ycc)**2)**0.5)
+                if d < mind:
+                    mind = d
+                    iout = ic
+            if iout > -1: # if we found a mega-yolo-found caption, add it
+                icheursave.append(iout)
+                fig_cap_pair_heur.append([ibb,iout])
+            else:
+                fig_cap_pair_heur.append([ibb,-1]) # nothing found
+
+    # check for overlaps
+    boxesOut2 = []; labelsOut2 = []; scoresOut2 = []
+    for f in fig_cap_pair_reg:
+        bf = boxes_fig[f[0]][0] # fig box
+        bc = boxes_cap[f[1]][0] # cap box
+        # add box
+        boxesOut2.append(bc)
+        labelsOut2.append(boxes_cap[f[1]][1])
+        scoresOut2.append(boxes_cap[f[1]][2])
+        isOverlapping = isRectangleOverlap(bf,bc)
+
+        if isOverlapping:
+            # which side is overlapping?
+            xcf,ycf = 0.5*(bf[0]+bf[2]), 0.5*(bf[1]+bf[3])
+            xcc,ycc = 0.5*(bc[0]+bc[2]), 0.5*(bc[1]+bc[3])
+            if ycf < ycc and rotatedAngleOCR == 0: # caption is on bottom
+                bf[3] = min([bf[3],bc[1]])
+                #print('yes on bottom')
+            elif xcf < xcc: # caption on right
+                bf[2] = min([bf[2],bc[0]])
+        boxesOut2.append(bf); labelsOut2.append(boxes_fig[f[0]][1])
+        scoresOut2.append(boxes_fig[f[0]][2])
+
+    # check for overlaps
+    for f in fig_cap_pair_heur:
+        if f[1] != -1: # have a associated caption
+            bf = boxes_fig[f[0]][0] # fig box
+            bc = boxes_heur_cap[f[1]][0] # cap box
+            boxesOut2.append(bc)
+            labelsOut2.append(LABELS.index('figure caption'))
+            scoresOut2.append(boxes_heur_cap[f[1]][2])
+            isOverlapping = isRectangleOverlap(bf,bc)
+
+            if isOverlapping:
+                # which side is overlapping?
+                xcf,ycf = 0.5*(bf[0]+bf[2]), 0.5*(bf[1]+bf[3])
+                xcc,ycc = 0.5*(bc[0]+bc[2]), 0.5*(bc[1]+bc[3])
+                if ycf < ycc and rotatedAngleOCR == 0: # caption is on bottom
+                    bf[3] = min([bf[3],bc[1]])
+                elif xcf < xcc: # caption on right
+                    bf[2] = min([bf[2],bc[0]])
+            boxesOut2.append(bf); labelsOut2.append(boxes_fig[f[0]][1])
+            scoresOut2.append(boxes_fig[f[0]][2])
+        else: # just a square, no caption
+            bf = boxes_fig[f[0]]
+            boxesOut2.append(bf[0])
+            labelsOut2.append(bf[1])
+            scoresOut2.append(bf[2])
+
+    for b,l,s in zip(boxesOut2,labelsOut2,scoresOut2):
+        boxesOut.append(b)
+        labelsOut.append(l)
+        scoresOut.append(s)
+
+    # alright, this is silly that we have to do this again
+    # sigh... expand by boxes
+    for ibox in range(len(boxesOut)):
+        x1min,y1min,x1max,y1max = boxesOut[ibox]
+        if labelsOut[ibox] == LABELS.index('figure'):
+            for ibb,bb in enumerate(bbsq): # only do the once
+                x2min, y2min, x2max, y2max = bb[0]/fracx, bb[1]/fracy, bb[2]/fracx, bb[3]/fracy
+                #isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
+                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                   (x2min,y2min,x2max,y2max))
+                if isOverlapping:
+                    boxesOut[ibox] = (min(x1min,x2min),min(y1min,y2min), 
+                                      max(x1max,x2max), max(y1max,y2max))           
+
+    # # alright, this is silly that we have to do this again
+    # # sigh... expand by boxes
+    # for ibox in range(len(boxesOut)):
+    #     x1min,y1min,x1max,y1max = boxesOut[ibox]
+    #     if labelsOut[ibox] == LABELS.index('figure'):
+    #         for ibb,bb in enumerate(bbsq): # only do the once
+    #             x2min, y2min, x2max, y2max = bb[0]/fracx, bb[1]/fracy, bb[2]/fracx, bb[3]/fracy
+    #             isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max))
+    #             if isOverlapping:
+    #                 boxesOut[ibox] = (min(x1min,x2min),min(y1min,y2min), max(x1max,x2max), max(y1max,y2max))       
+
+    boxes_sq = boxesOut; labels_sq = labelsOut; scores_sq = scoresOut   
+    return boxes_sq, labels_sq, scores_sq

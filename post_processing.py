@@ -61,7 +61,8 @@ from annotation_utils import get_all_ocr_files, collect_ocr_process_results, \
 from post_processing_utils import parse_annotations_to_labels, build_predict, \
    get_true_boxes, get_ocr_results, get_image_process_boxes, clean_overlapping_squares, \
    clean_merge_pdfsquares, clean_merge_heurstic_captions, add_heuristic_captions, \
-   clean_found_overlap_with_ocr
+   clean_found_overlap_with_ocr, clean_true_overlap_with_ocr, clean_merge_squares, \
+   clean_big_captions, clean_match_fig_cap
 #################################################
 
 if store_diagnostics:
@@ -170,13 +171,13 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
         
     # there is a lot of mess here that gets and formats all true boxes and 
     #. all of the OCR data
-    imgs_name, pdfboxes, pdfrawboxes,years_ind = get_true_boxes(a,LABELS,
+    imgs_name, pdfboxes, pdfrawboxes,years_ind, truebox = get_true_boxes(a,LABELS,
                                                        badskews,badannotations,
                                                        annotation_dir=annotation_dir,
                                                       feature_dir=feature_dir)
     
     # get OCR results and parse them, open image for image processing
-    backtorgb,image_np,rotatedImage,bbox_hocr,\
+    backtorgb,image_np,rotatedImage,rotatedAngleOCR,bbox_hocr,\
       bboxes_words,bbsq,rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df)
     
     # predict squares in 2 ways
@@ -229,7 +230,8 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
         
         
     # sometimes figures are found, but no captions -- check for "extra" 
-    # only heuristically found captions:
+    # only heuristically found captions, and use these as a last resort
+    # when matching figures to captions
     boxes_heur, labels_heur, scores_heur = add_heuristic_captions(bbox_figcap_pars,
                                                                   captionText_figcap,
                                                                   ibbOverlap,
@@ -244,5 +246,36 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                 scores_heur,bboxes_words,
                                                       bbox_par,rotation,
                                                       LABELS, dfMS)
+    
+    # do same excersize with trueboxes (already done really in processing annoations)
+    truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
+                                           bbox_par,rotation, 
+                                           LABELS, dfMS)
+    
+    # if figure boxes are smaller than image-processing found boxes, merge them; 
+    boxes_sq1, labels_sq1, scores_sq1 = clean_merge_squares(bbsq, 
+                                                            boxes_par_found, 
+                                                            labels_par_found, 
+                                                            scores_par_found, 
+                                                            LABELS, dfMS)
+    
+    # if there are any huge captions -- like 75% of the area of the page or more
+    #. these are wrong, so drop them
+    boxes_sq, labels_sq, scores_sq = clean_big_captions(boxes_sq1,
+                                                        labels_sq1,
+                                                        scores_sq1, 
+                                                        LABELS)
+    
+    # sometimes captions are slightly overlapping with figures -- split the 
+    # difference between those where they touch on the "bottom"
+    # Default to captions found with mega yolo, if there is a figure but 
+    #. no caption found, then see if there is a heuristically found caption
+    boxes_sq, labels_sq, scores_sq = clean_match_fig_cap(boxes_sq,labels_sq,
+                                                         scores_sq, bbsq, 
+                                                         LABELS, 
+                                                         rotatedImage, 
+                                                         rotatedAngleOCR,
+                                                         dfMS)
+    
     
     import sys; sys.exit()
