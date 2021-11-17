@@ -124,3 +124,4 @@ len_text1 = 5
 len_text2 = 7
 # blur
 blurKernel = (3,3) # this or 9,9?
+

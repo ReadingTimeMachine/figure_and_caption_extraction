@@ -12,10 +12,13 @@ from tensorflow.keras import layers
 import pickle
 import os
 from PIL import Image
+import cv2 as cv
+import regex
+import re
 
 # stuff
 import config
-from general_utils import parse_annotation
+from general_utils import parse_annotation, isRectangleOverlap
 
 
 depth_vec = config.depth_vec
@@ -755,4 +758,103 @@ def get_ocr_results(imgs_name, dfMakeSense,dfsave):
         if rotatedAngleOCR > 0: rotatedImage = True # also by words
         rot = rotatedImage
         
-        return backtorgb, rotatedImage,bbox_hocr,bboxes_words,bbsq,rotation,bbox_par
+        return backtorgb, image_np, rotatedImage, bbox_hocr, \
+          bboxes_words, bbsq, rotation, bbox_par
+    
+    
+# ------------- IMAGE PROCESSING ------------------------
+def get_image_process_boxes(backtorgb, bbox_hocr, rotatedImage):
+    # search for tags -- this should also be codified in a config file somewhere...
+    results_fig_hocr = []
+    # we will only do smearing on paragraphs probably, but just doing carea here until we're 100% decided
+    blocksImgCar = backtorgb.copy(); blocksImgPar = backtorgb.copy()
+    blocksImgCar[:,:,:] = 255; blocksImgPar[:,:,:] = 255
+    #del backtorgb
+    for (x,y,w,h),text,c,r,bbpar,bbcar in bbox_hocr:
+        # fuzzy search
+        if (len(text) > 0) and c >= config.ccut_ocr_figcap:    
+            if ('high' not in text.strip().lower()): # not 100% sure what this is about...
+                if len(text) < config.len_text:
+                    if regex.match( '(FIG){e<=1}', text, re.IGNORECASE ):
+                        results_fig_hocr.append( ((x,y,w,h), text,c,r,bbpar,bbcar) )
+                elif len(text) >= config.len_text1 and len(text) < config.len_text2:
+                    if regex.match( '(FIGURE){e<=2}', text, re.IGNORECASE ):
+                        results_fig_hocr.append( ((x,y,w,h), text,c,r,bbpar,bbcar) )
+                    elif regex.match( '(PLATE){e<=2}', text, re.IGNORECASE ):
+                        results_fig_hocr.append( ((x,y,w,h), text,c,r,bbpar,bbcar) )
+
+            # plot each paragraph
+            cv.rectangle( blocksImgPar, (bbpar[0], bbpar[1]), 
+                         (bbpar[0]+bbpar[2], bbpar[1]+bbpar[3]), (0, 0, 255), -1 )
+            # and each carea
+            cv.rectangle( blocksImgCar, (bbcar[0],bbcar[1]),
+                         (bbcar[0]+bbcar[2],bbcar[1]+bbcar[3]), (0, 0, 255), -1 )
+    del blocksImgCar # unless we decide to use
+
+    # draw contours for smeared paragraphs
+    kuse = config.kpar
+    # if image is rotated, un-rotate
+    if rotatedImage: # have rotated image -> rotate smear
+        kuse = config.kparrot
+
+    gray = cv.cvtColor(blocksImgPar, cv.COLOR_BGR2GRAY)
+    blur = cv.GaussianBlur(gray, config.blurKernel, 0)
+    thresh = cv.threshold(blur, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)[1]
+
+    # regular
+    kernel = cv.getStructuringElement(cv.MORPH_RECT, kuse)
+    dilate = cv.dilate(thresh, kernel, iterations=4)
+    cnts = cv.findContours(dilate, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    cnts = cnts[0] if len(cnts) == 2 else cnts[1] # not sure what this does, but ok
+
+    bbox_figcap_pars1 = []; figcap_rot1 = [] # these will store our bounding boxes from this method
+    for c in cnts:
+        x,y,w,h = cv.boundingRect(c)
+        # does this overlap with a fig tag'd word?
+        x1min = x; y1min = y; x1max = x+w; y1max = y+h
+        bboxOver = []#; rotOver = []
+        for (x2min,y2min,w2,h2),text,c,r,bbpar,bbcar in results_fig_hocr: 
+            x2max = x2min+w2; y2max = y2min+h2
+            isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max))
+            #isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
+            if isOverlapping: # if overlapping -- grab whole SMEARED paragraph
+                bboxOver.append( (x1min,y1min,x1max,y1max) ) # save rotation for finding "top" later
+        bbox_figcap_pars1.append(bboxOver)
+
+    # loop and fill
+    bbox_figcap_pars = []; captionText_figcap = []
+    for b in bbox_figcap_pars1:
+        if len(b)>0: # have a thing!
+            bb = np.unique(b,axis=0) # unique bounding boxes
+            if len(bb) > 1: 
+                print('we have issue')
+                import sys;sys.exit()
+            else: 
+                bb = bb[0]
+            # loop and get all text rotations
+            rr = []; captionTextHeur = []
+            x1min, y1min, x1max, y1max = bb
+            for (x2min,y2min,w,h),text,c,r,bbpar,bbcar in bbox_hocr:
+                x2max = x2min+w; y2max = y2min+h
+                #isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
+                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max))
+
+                if isOverlapping:
+                    rr.append(r)
+                    captionTextHeur.append( (x2min,y2min,x2max,y2max,text) )
+            rrr = stats.mode(rr).mode[0]
+            bbox_figcap_pars.append((bb[0],bb[1],bb[2],bb[3],rrr))
+            #import sys; sys.exit()
+            #if rrr != 0: import sys; sys.exit()
+            captionText_figcap.append(captionTextHeur)
+
+
+
+    del blur
+    del gray
+    del thresh
+    del dilate
+    del kernel
+    del blocksImgPar
+    
+    return captionText_figcap, bbox_figcap_pars

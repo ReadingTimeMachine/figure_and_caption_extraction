@@ -59,7 +59,7 @@ import numpy as np
 from annotation_utils import get_all_ocr_files, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years
 from post_processing_utils import parse_annotations_to_labels, build_predict, \
-   get_true_boxes, get_ocr_results
+   get_true_boxes, get_ocr_results, get_image_process_boxes
 #################################################
 
 if store_diagnostics:
@@ -104,7 +104,7 @@ if yt.is_root():
     
 # build the model
 model = build_predict(weightsFileDownload, anchorsFile, 
-                    binariesDir,LABELS,version='l', debug=False)
+                    feature_dir,LABELS,version='l', debug=False)
 model.load_weights(weightsFileDownload)
 
 if badskewList is not None:
@@ -174,7 +174,23 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                       feature_dir=feature_dir)
     
     # get OCR results and parse them, open image for image processing
-    backtorgb, rotatedImage,bbox_hocr,\
+    backtorgb,image_np,rotatedImage,bbox_hocr,\
       bboxes_words,bbsq,rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df)
+    
+    # predict squares in 2 ways
+    # 1. MEGA YOLO
+    boxes, scores, labels = model.predict(image_np[np.newaxis, ...])
+    boxes1, scores1, labels1 = np.squeeze(boxes, 0), np.squeeze(scores, 0), np.squeeze(labels, 0)
+
+    save_boxes = boxes.copy(); save_labels = labels.copy(); save_scores2 = scores.copy()
+
+    # only non -1 ones
+    boxes1 = boxes1[labels1>-1]
+    scores1 = scores1[labels1>-1]
+    labels1 = labels1[labels1>-1]    
+    
+    captionText_figcap, bbox_figcap_pars = get_image_process_boxes(backtorgb, 
+                                                                   bbox_hocr, 
+                                                                   rotatedImage)
         
     import sys; sys.exit()
