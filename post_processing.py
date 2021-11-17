@@ -59,7 +59,9 @@ import numpy as np
 from annotation_utils import get_all_ocr_files, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years
 from post_processing_utils import parse_annotations_to_labels, build_predict, \
-   get_true_boxes, get_ocr_results, get_image_process_boxes
+   get_true_boxes, get_ocr_results, get_image_process_boxes, clean_overlapping_squares, \
+   clean_merge_pdfsquares, clean_merge_heurstic_captions, add_heuristic_captions, \
+   clean_found_overlap_with_ocr
 #################################################
 
 if store_diagnostics:
@@ -189,8 +191,58 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     scores1 = scores1[labels1>-1]
     labels1 = labels1[labels1>-1]    
     
+    # get figures and captions from image processing
     captionText_figcap, bbox_figcap_pars = get_image_process_boxes(backtorgb, 
                                                                    bbox_hocr, 
                                                                    rotatedImage)
+    
+    # clean overlapping squares
+    # if squares are majorly overlapping, take the one with the highest score
+    sboxes_cleaned, slabels_cleaned, sscores_cleaned = clean_overlapping_squares(boxes1,
+                                                                                 scores1,
+                                                                                 labels1,
+                                                                                 imgs_name)
+    
+    # probably do this earlier and pass it...
+    ff = imgs_name[0].split('/')[-1].split('.npz')[0]
+    dfMS = dfMakeSense.loc[dfMakeSense['filename']==ff]
+
+    
+    # merge with any boxes that have been found with PDF mining
+    # found figures are generally not accurate, so ignore these, but do 
+    # assume any tables or figure captions are more accurate from PDF mining
+    boxes_pdf, labels_pdf, scores_pdf = clean_merge_pdfsquares(pdfboxes,
+                                                               pdfrawboxes,
+                                                               sboxes_cleaned, 
+                                                               slabels_cleaned, 
+                                                               sscores_cleaned, 
+                                                               LABELS, dfMS)
+    
+    # combine figure caption boxes with heuristically found ones
+    # -- often the heurstically found boxes are more accurate, especially 
+    # in the vertical direction
+    boxes_heur, labels_heur, scores_heur,\
+      ibbOverlap = clean_merge_heurstic_captions(boxes_pdf, 
+                                            labels_pdf, scores_pdf, 
+                                            bbox_figcap_pars, LABELS,dfMS)
+     
         
+        
+    # sometimes figures are found, but no captions -- check for "extra" 
+    # only heuristically found captions:
+    boxes_heur, labels_heur, scores_heur = add_heuristic_captions(bbox_figcap_pars,
+                                                                  captionText_figcap,
+                                                                  ibbOverlap,
+                                                                  boxes_heur, 
+                                                                  labels_heur, 
+                                                                  scores_heur, dfMS)
+    
+    # clean found boxes by paragraphs and words  -- if found box overlaps with 
+    #. an OCR box, include this box in the bounding box of captions
+    boxes_par_found, labels_par_found, \
+      scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
+                                                scores_heur,bboxes_words,
+                                                      bbox_par,rotation,
+                                                      LABELS, dfMS)
+    
     import sys; sys.exit()

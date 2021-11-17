@@ -125,3 +125,12 @@ len_text2 = 7
 # blur
 blurKernel = (3,3) # this or 9,9?
 
+# overlap or only centers overlapping for found boxes cleaning?
+found_overlap = 'overlap'
+true_overlap = 'center' # what about for true boxes?
+
+# for fuzzy-search of captions
+keyWords = ['(FIG){e<=1}','(FIG.){e<=1}', '(FIGURE){e<=2}', '(PLATE){e<=2}']
+lenMin = [   -1,               -1,           -1,                 5]
+# how far in to look?
+lookLength = 3

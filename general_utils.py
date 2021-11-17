@@ -234,3 +234,11 @@ def parse_annotation(split_file_list, labels, feature_dir = '',
         return imgs_name, true_boxes, pdf_true_boxes, pdf_raw_true_boxes
     else:
         return imgs_name, true_boxes
+
+    
+    
+    
+# a = vector with (xc,yc)
+# b = vector with (xc,yc)
+def manhattan(a, b):
+    return sum(abs(val1-val2) for val1, val2 in zip(a,b))
