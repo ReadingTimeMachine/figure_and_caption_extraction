@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from general_utils import isRectangleOverlap, iou_orig
 
 # FP/FN/TP calcs:
@@ -233,3 +234,120 @@ def calc_prec_rec_f1_cv(TPv,FPv,FNv,LABELS,scoreminVec,iouminVec):
             recall[:,i,j] = r
             f1[:,i,j] = f
     return precision, precision_std, recall, recall_std, f1, f1_std
+
+
+def print_metrics_table(totalTrue,TP,FP,FN,
+                        precision, precision_std, recall, recall_std,f1,f1_std,
+                        LABELS, scoremin, n_folds_cv, ioumin_per_label):
+    print('SCORE = ', scoremin, ' N_CV = ', n_folds_cv)
+
+    labelsMetric = ['Metric']
+    labelsMetric.extend(LABELS)
+    spacing = '%-15s'
+    strOut = ' '.join([spacing % (i,) for i in labelsMetric])
+    print(strOut)
+
+    out = ['iou cut']
+    for i in range(len(LABELS)):
+        out.append( str(ioumin_per_label[i]) )
+    strOut = ' '.join([spacing % (i,) for i in out])
+    print(strOut)
+
+    out = ['# of objs']
+    for i in range(len(LABELS)):
+        out.append( str(totalTrue[i]) )
+    strOut = ' '.join([spacing % (i,) for i in out])
+    print(strOut)
+
+    print('--------------------------------------------------------------------------------------------')
+
+    out = ['TP']
+    for i in range(len(LABELS)):
+        out.append( str(round(TP[i]/totalTrue[i]*100,1))+'%' )
+    strOut = ' '.join([spacing % (i,) for i in out])
+    print(strOut)
+
+    out = ['FP']
+    for i in range(len(LABELS)):
+        out.append( str(round(FP[i]/totalTrue[i]*100,1))+'%' )
+    strOut = ' '.join([spacing % (i,) for i in out])
+    print(strOut)
+
+    out = ['FN']
+    for i in range(len(LABELS)):
+        out.append( str(round(FN[i]/totalTrue[i]*100,1))+'%' )
+    strOut = ' '.join([spacing % (i,) for i in out])
+    print(strOut)
+
+    print('--------------------------------------------------------------------------------------------')
+    out = ['Precision'] # accuracy of positive predictions => number of true positives out of all of the things we label as positive
+    for i in range(len(LABELS)):
+        #iind = np.where(iouminVec == ioumin_per_label[i])[0]
+        #out.append( str(np.round(precision[i,sind,iind][0],1))+'+/-' +str(np.round(precision_std[i,sind,iind][0],1))+ '%' )
+        out.append( str(np.round(precision[i],1))+'+/-' +str(np.round(precision_std[i],1))+ '%' )
+    strOut = ' '.join([spacing % (i,) for i in out])
+    print(strOut)
+
+    out = ['Recall'] # true positive rate => number of true positives over all of the things that SHOULD be positive
+    for i in range(len(LABELS)):
+        #iind = np.where(iouminVec == ioumin_per_label[i])[0]
+        out.append( str(np.round(recall[i],1))+'+/-' +str(np.round(recall_std[i],1))+ '%' )
+    strOut = ' '.join([spacing % (i,) for i in out])
+    print(strOut)
+
+    out = ['F1']
+    for i in range(len(LABELS)):
+        #iind = np.where(iouminVec == ioumin_per_label[i])[0]
+        out.append( str(np.round(f1[i],1))+'+/-' +str(np.round(f1_std[i],1))+ '%' )
+    strOut = ' '.join([spacing % (i,) for i in out])
+    print(strOut)
+    
+    
+def get_years_dataframe(imgs_name,scoremin,ioumin,LABELS,
+                       truebox3,boxes_sq5,labels_sq5,scores_sq5):
+    years = []
+    for n in imgs_name:
+        years.append(n.split('/')[-1][:4])
+    years_u = np.unique(years).astype('int')
+    
+    TPyear = np.zeros([len(years_u),len(LABELS)])
+    FPyear = np.zeros([len(years_u),len(LABELS)])
+    FNyear = np.zeros([len(years_u),len(LABELS)])
+    TTyear = np.zeros([len(years_u),len(LABELS)])
+
+    for t,b,l,s,y in zip(truebox3,boxes_sq5,labels_sq5,scores_sq5,years):
+        TPv2, FPv2, FNv2, totalTruev2 = calc_base_metrics_allboxes_cv(LABELS,
+                                                                      [scoremin],
+                                                                      [ioumin],
+                                                                      [t],[b],[l],[s],
+                                                                      n_folds_cv=1)
+        # then fill
+        ind = np.where(years_u == int(y))[0]
+        TPyear[ind,:] += TPv2.flatten()
+        FPyear[ind,:] += FPv2.flatten()
+        FNyear[ind,:] += FNv2.flatten()
+        TTyear[ind,:] += totalTruev2.flatten()
+        
+    df = pd.DataFrame({'years':years_u})
+    df['years'] = pd.to_datetime(df['years'],format="%Y")
+
+    # total each year
+    for il,l in enumerate(LABELS):
+        df['total:'+l] = TTyear[:,il]
+
+    # true positive per year
+    for il,l in enumerate(LABELS):
+        colname = 'TP:' + l
+        df[colname] = TPyear[:,il]
+
+    # false positive each year
+    for il,l in enumerate(LABELS):
+        colname = 'FP:' + l
+        df[colname] = FPyear[:,il]
+
+    # false negative each year
+    for il,l in enumerate(LABELS):
+        colname = 'FN:' + l
+        df[colname] = FNyear[:,il]
+        
+    return df
