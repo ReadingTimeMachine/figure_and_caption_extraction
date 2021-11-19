@@ -1500,89 +1500,6 @@ def expand_true_boxes_fig_cap(truebox1, rotatedImage, LABELS):
     return truebox1
 
 
-# def expand_found_boxes_fig_cap2(boxes_sq, labels_sq, scores_sq, rotatedImage, LABELS, dfMS):
-#     fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
-#     fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
-#     # now, do for found boxes
-#     # Note: in theory, you can do this in the step above, but here I'm just doing them together 
-#     # for clarity (true vs found)
-#     boxes_fig = []; boxes_cap = []; boxes_others = []
-#     labels_fig = []; labels_cap = []; labels_other = []
-#     scores_fig = []; scores_cap = []; scores_other = []
-#     fig_cap_pair = []
-#     boxesOut = []; labelsOut = []; scoresOut = []
-#     for box,l,s in zip(boxes_sq, labels_sq, scores_sq):
-#         if LABELS[int(l)] == 'figure caption':
-#             boxes_cap.append(box)
-#             labels_cap.append(l); scores_cap.append(s)
-#         elif LABELS[int(l)] == 'figure':
-#             boxes_fig.append(box)
-#             labels_fig.append(l); scores_fig.append(s)
-#         else:
-#             boxes_others.append(box)
-#             labels_other.append(l); scores_other.append(s)
-
-#     # pair
-#     for ibb,bb in enumerate(boxes_fig):
-#         mind = 5e15; iout = -1
-#         xc,yc = 0.5*(bb[0]+bb[2]),bb[3]
-#         if rotatedImage:
-#             xc, yc = bb[2], 0.5*(bb[1]+bb[3])
-#         for ic,bc in enumerate(boxes_cap): # find closest to bottom, not inside a square
-#             xcc,ycc= 0.5*(bc[0]+bc[2]),0.5*(bc[1]+bc[3])
-#             d = np.sum(((xc-xcc)**2 + (yc-ycc)**2)**0.5)
-#             if d < mind:
-#                 mind = d
-#                 iout = ic
-#         if iout > -1: # if we found a mega-yolo-found caption, add it
-#             fig_cap_pair.append([ibb,iout])
-#         else: # if no, mark as no caption
-#             fig_cap_pair.append([ibb,-1]) # nothing found
-
-#     # expand fig->caption for overlaps
-#     # NOTE: this associates each figure with a caption -- i.e., no "floating" captions
-#     # floating figures are OK however
-#     for f in fig_cap_pair:
-#         bf = np.array(boxes_fig[f[0]]) # fig box
-#         if f[1] != -1: # have a associated caption
-#             bc = boxes_cap[f[1]].copy() # cap box
-#             boxesOut.append(bc) # either way, add it on
-#             labelsOut.append(labels_cap[f[1]])
-#             scoresOut.append(scores_cap[f[1]])
-#             # which side is caption on?
-#             xcf,ycf = 0.5*(bf[0]+bf[2]), 0.5*(bf[1]+bf[3])
-#             xcc,ycc = 0.5*(bc[0]+bc[2]), 0.5*(bc[1]+bc[3])
-#             xShift = (xcc-xcf)/config.IMAGE_W; yShift = -1.0*(ycc-ycf)/config.IMAGE_H
-#             theta = np.arctan2(yShift,xShift)*180/np.pi
-#             # arctan2 in range [-180,180]
-#             if (theta < -70) and (theta > -110): # caption on bottom
-#                 bf[0] = min(bc[0],bf[0]); bf[2] = max(bf[2],bc[2])
-#             elif (theta < 20) and (theta > -20): # caption on right
-#                 bf[1]=min(bc[1],bf[1]); bf[3]=max(bf[3],bc[3])
-#             elif (theta > 160) or (theta < -160):
-#                 bf[1]=min(bc[1],bf[1]); bf[3]=max(bf[3],bc[3])
-#         boxesOut.append(bf) # either way, add it on
-#         labelsOut.append(labels_fig[f[0]])
-#         scoresOut.append(scores_fig[f[0]])
-#     # for others
-#     for b,l,s in zip(boxes_others, labels_other, scores_other):
-#         boxesOut.append(b); labelsOut.append(l); 
-#         scoresOut.append(s)
-
-#     # yet again we have to do this... can we do this just once here?
-#     for ibox in range(len(boxesOut)):
-#         x1min,y1min,x1max,y1max = boxesOut[ibox]
-#         if labelsOut[ibox] == LABELS.index('figure'):
-#             for ibb,bb in enumerate(bbsq): # only do the once
-#                 x2min, y2min, x2max, y2max = bb[0]/fracx, bb[1]/fracy, bb[2]/fracx, bb[3]/fracy
-#                 isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
-#                                                    (x2min,y2min,x2max,y2max))
-#                 if isOverlapping:
-#                     boxesOut[ibox] = (min(x1min,x2min),min(y1min,y2min), 
-#                                       max(x1max,x2max), max(y1max,y2max))       
-#     boxes_sq = boxesOut.copy(); labels_sq = labelsOut.copy(); scores_sq = scoresOut.copy()
-#     return boxes_sq, labels_sq, scores_sq
-
 
 
 
@@ -1688,9 +1605,152 @@ def expand_found_boxes_fig_cap(boxes_sq, labels_sq, scores_sq, bbsq,
 
 
 
+def expand_true_area_above_cap(truebox1, rotatedImage, LABELS):
+    # so, it might be a little silly that we are doing this again, BUT maybe its not
+    boxes_true_fig = []; boxes_true_cap = []; true_others = []
+    fig_cap_pair_true = []
+    boxesOutTrue = []
+    # also, save fig+cap combos
+    ###boxesCombTrue = []; boxesCombFound = []
+    for it,tbox in enumerate(truebox1):
+        if LABELS[int(tbox[-1]-1)] == 'figure caption':
+            boxes_true_cap.append(tbox.copy())
+        elif LABELS[int(tbox[-1]-1)] == 'figure':
+            boxes_true_fig.append(tbox.copy())
+        else:
+            true_others.append(tbox.copy())
+
+    # pair
+    for ibb,bb in enumerate(boxes_true_fig):
+        mind = 5e15; iout = -1
+        xc,yc = 0.5*(bb[0]+bb[2]),bb[3]
+        if rotatedImage:
+            xc, yc = bb[2], 0.5*(bb[1]+bb[3])
+        for ic,bc in enumerate(boxes_true_cap): # find closest to bottom, not inside a square
+            xcc,ycc= 0.5*(bc[0]+bc[2]),0.5*(bc[1]+bc[3])
+            d = np.sum(((xc-xcc)**2 + (yc-ycc)**2)**0.5)
+            if d < mind:
+                mind = d
+                iout = ic
+        if iout > -1: # if we found a mega-yolo-found caption, add it
+            fig_cap_pair_true.append([ibb,iout])
+        else: # if no, mark as no caption
+            fig_cap_pair_true.append([ibb,-1]) # nothing found
+
+    # expand fig->caption for overlaps
+    # NOTE: this associates each figure with a caption -- i.e., no "floating" captions
+    # floating figures are OK however
+    for f in fig_cap_pair_true:
+        bf = boxes_true_fig[f[0]].copy() # fig box
+        if f[1] != -1: # have a associated caption
+            bc = boxes_true_cap[f[1]].copy() # cap box
+            boxesOutTrue.append(bc)     
+            # which side is caption on? 
+            xcf,ycf = 0.5*(bf[0]+bf[2]), 0.5*(bf[1]+bf[3])
+            xcc,ycc = 0.5*(bc[0]+bc[2]), 0.5*(bc[1]+bc[3])
+            xShift = (xcc-xcf)/config.IMAGE_W; yShift = -1.0*(ycc-ycf)/config.IMAGE_H
+            theta = np.arctan2(yShift,xShift)*180/np.pi
+            # arctan2 in range [-180,180]
+            if (theta < -70) and (theta > -110): # caption on bottom
+                bf[0] = min(bc[0],bf[0]); bf[2] = max(bf[2],bc[2])
+            elif (theta < 20) and (theta > -20): # caption on right
+                bf[1]=min(bc[1],bf[1]); bf[3]=max(bf[3],bc[3])
+            elif (theta > 160) or (theta < -160):
+                bf[1]=min(bc[1],bf[1]); bf[3]=max(bf[3],bc[3])
+        boxesOutTrue.append(bf) # either way, add it on
+    # tack on others as well
+    for tbox in true_others:
+        boxesOutTrue.append(tbox.copy())   
+
+    truebox1 = boxesOutTrue.copy() # replace
+    return truebox1
 
 
 
 
+def expand_found_area_above_cap(boxes_sq, labels_sq, scores_sq, bbsq, 
+                               rotatedImage, LABELS, dfMS):
+    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H 
+    # now, do for found boxes
+    # Note: in theory, you can do this in the step above, but here I'm just doing them together 
+    # for clarity (true vs found)
+    boxes_fig = []; boxes_cap = []; boxes_others = []
+    labels_fig = []; labels_cap = []; labels_other = []
+    scores_fig = []; scores_cap = []; scores_other = []
+    fig_cap_pair = []
+    boxesOut = []; labelsOut = []; scoresOut = []
+    for box,l,s in zip(boxes_sq, labels_sq, scores_sq):
+        if LABELS[int(l)] == 'figure caption':
+            boxes_cap.append(box)
+            labels_cap.append(l); scores_cap.append(s)
+        elif LABELS[int(l)] == 'figure':
+            boxes_fig.append(box)
+            labels_fig.append(l); scores_fig.append(s)
+        else:
+            boxes_others.append(box)
+            labels_other.append(l); scores_other.append(s)
 
+    # pair
+    for ibb,bb in enumerate(boxes_fig):
+        mind = 5e15; iout = -1
+        xc,yc = 0.5*(bb[0]+bb[2]),bb[3]
+        if rotatedImage:
+            xc, yc = bb[2], 0.5*(bb[1]+bb[3])
+        for ic,bc in enumerate(boxes_cap): # find closest to bottom, not inside a square
+            xcc,ycc= 0.5*(bc[0]+bc[2]),0.5*(bc[1]+bc[3])
+            d = np.sum(((xc-xcc)**2 + (yc-ycc)**2)**0.5)
+            if d < mind:
+                mind = d
+                iout = ic
+        if iout > -1: # if we found a mega-yolo-found caption, add it
+            fig_cap_pair.append([ibb,iout])
+        else: # if no, mark as no caption
+            fig_cap_pair.append([ibb,-1]) # nothing found
+
+    # expand fig->caption for overlaps
+    # NOTE: this associates each figure with a caption -- i.e., no "floating" captions
+    # floating figures are OK however
+    for f in fig_cap_pair:
+        bf = np.array(boxes_fig[f[0]]) # fig box
+        if f[1] != -1: # have a associated caption
+            bc = boxes_cap[f[1]].copy() # cap box
+            boxesOut.append(bc) # either way, add it on
+            labelsOut.append(labels_cap[f[1]])
+            scoresOut.append(scores_cap[f[1]])
+            # which side is caption on?
+            xcf,ycf = 0.5*(bf[0]+bf[2]), 0.5*(bf[1]+bf[3])
+            xcc,ycc = 0.5*(bc[0]+bc[2]), 0.5*(bc[1]+bc[3])
+            xShift = (xcc-xcf)/config.IMAGE_W; yShift = -1.0*(ycc-ycf)/config.IMAGE_H
+            #xShift = (xcf-xcc)/IMAGE_W; yShift = (ycf-ycc)/IMAGE_H
+            theta = np.arctan2(yShift,xShift)*180/np.pi
+            # arctan2 in range [-180,180]
+            if (theta < -70) and (theta > -110): # caption on bottom
+                bf[0] = min(bc[0],bf[0]); bf[2] = max(bf[2],bc[2])
+            elif (theta < 20) and (theta > -20): # caption on right
+                bf[1]=min(bc[1],bf[1]); bf[3]=max(bf[3],bc[3])
+            elif (theta > 160) or (theta < -160):
+                bf[1]=min(bc[1],bf[1]); bf[3]=max(bf[3],bc[3])
+        boxesOut.append(bf) # either way, add it on
+        labelsOut.append(labels_fig[f[0]])
+        scoresOut.append(scores_fig[f[0]])
+    # for others
+    for b,l,s in zip(boxes_others, labels_other, scores_other):
+        boxesOut.append(b); labelsOut.append(l); 
+        scoresOut.append(s)
+
+    # yet again we have to do this... can we do this just once here?
+    for ibox in range(len(boxesOut)):
+        x1min,y1min,x1max,y1max = boxesOut[ibox]
+        if labelsOut[ibox] == LABELS.index('figure'):
+            for ibb,bb in enumerate(bbsq): # only do the once
+                x2min, y2min, x2max, y2max = bb[0]/fracx, bb[1]/fracy, bb[2]/fracx, bb[3]/fracy
+                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                   (x2min,y2min,x2max,y2max))
+                if isOverlapping:
+                    boxesOut[ibox] = (min(x1min,x2min),
+                                      min(y1min,y2min), max(x1max,x2max), max(y1max,y2max))       
+
+    boxes_sq = boxesOut.copy(); labels_sq = labelsOut.copy(); scores_sq = scoresOut.copy()
+    return boxes_sq, labels_sq, scores_sq
 

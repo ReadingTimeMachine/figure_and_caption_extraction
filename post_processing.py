@@ -64,7 +64,7 @@ from post_processing_utils import parse_annotations_to_labels, build_predict, \
    clean_merge_pdfsquares, clean_merge_heurstic_captions, add_heuristic_captions, \
    clean_found_overlap_with_ocr, clean_true_overlap_with_ocr, clean_merge_squares, \
    clean_big_captions, clean_match_fig_cap, expand_true_boxes_fig_cap, \
-   expand_found_boxes_fig_cap
+   expand_found_boxes_fig_cap, expand_true_area_above_cap, expand_found_area_above_cap
 #, calc_metrics
 #################################################
 
@@ -145,7 +145,7 @@ my_storage = {}
 wsInds = np.arange(0,len(annotations))
 #wsInds = np.arange(0,6) # debug
 #wsInds = wsInds[1:]
-
+#wsInds = wsInds[:2]
 
 # run the thing
 iMod = 10
@@ -279,7 +279,6 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     # do this sort of thing for the true boxes true
     truebox2 = expand_true_boxes_fig_cap(truebox1, rotatedImage, LABELS)
     
-    # These are our final boxes!
     # again for found boxes?  I feel like maybe not the one above?
     boxes_sq4, labels_sq4, scores_sq4 = expand_found_boxes_fig_cap(boxes_sq3, 
                                                                 labels_sq3, 
@@ -288,7 +287,18 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                                 rotatedImage, 
                                                                 LABELS, dfMS)
     
+    # expand true boxes if area above caption is larger
+    truebox3 = expand_true_area_above_cap(truebox2, rotatedImage, LABELS)
+    # same for found
+    boxes_sq5, labels_sq5, scores_sq5 = expand_found_area_above_cap(boxes_sq4, 
+                                                                    labels_sq4, 
+                                                                    scores_sq4, 
+                                                                    bbsq,
+                                                                    rotatedImage, 
+                                                                    LABELS, dfMS)
+    
     sto.result_id = icombo
+    #if icombo==1: import sys; sys.exit()
     sto.result = [icombo,imgs_name[0], truebox, pdfboxes, pdfrawboxes, captionText_figcap, 
                   bbox_figcap_pars,
                   sboxes_cleaned, slabels_cleaned, sscores_cleaned, 
@@ -300,7 +310,8 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                  boxes_sq2, labels_sq2, scores_sq2,
                  boxes_sq3, labels_sq3, scores_sq3,
                  boxes_sq4, labels_sq4, scores_sq4,
-                 truebox1,truebox2,rotatedImage,LABELS]
+                 boxes_sq5, labels_sq5, scores_sq5,
+                 truebox1,truebox2,truebox3,rotatedImage,LABELS]
     
     
 if yt.is_root():
@@ -315,7 +326,8 @@ if yt.is_root():
     boxes_sq2, labels_sq2, scores_sq2 = [],[],[]
     boxes_sq3, labels_sq3, scores_sq3 = [],[],[]
     boxes_sq4, labels_sq4, scores_sq4 = [],[],[]
-    truebox1,truebox2,rotatedImage,LABELS = [],[],[],[]
+    boxes_sq5, labels_sq5, scores_sq5 = [],[],[]
+    truebox1,truebox2,truebox3,rotatedImage,LABELS = [],[],[],[],[]
     
     for ns,vals in sorted(my_storage.items()):
         if vals is not None:
@@ -353,10 +365,14 @@ if yt.is_root():
             boxes_sq4.append(vals[31])
             labels_sq4.append(vals[32])
             scores_sq4.append(vals[33])
-            truebox1.append(vals[34])
-            truebox2.append(vals[35])
-            rotatedImage.append(vals[36])
-            LABELS.append(vals[37])
+            boxes_sq5.append(vals[34])
+            labels_sq5.append(vals[35])
+            scores_sq5.append(vals[36])
+            truebox1.append(vals[37])
+            truebox2.append(vals[38])
+            truebox3.append(vals[39])
+            rotatedImage.append(vals[40])
+            LABELS.append(vals[41])
             
     # update labels
     LABELS = LABELS[0]
@@ -367,7 +383,7 @@ if yt.is_root():
             
     # build up filename
     pp = config.metric_results_dir
-    pp += binary_dirs.split('/')[-1]
+    pp += binary_dirs.split('/')[0]
     pp += '.pickle'
     with open(pp, 'wb') as ff:
         pickle.dump([icombo,imgs_name, truebox, pdfboxes, pdfrawboxes, captionText_figcap,\
@@ -381,5 +397,6 @@ if yt.is_root():
                      boxes_sq2, labels_sq2, scores_sq2,\
                      boxes_sq3, labels_sq3, scores_sq3,\
                      boxes_sq4, labels_sq4, scores_sq4,\
-                     truebox1,truebox2,rotatedImage,LABELS], ff)
+                     boxes_sq5, labels_sq5, scores_sq5,\
+                     truebox1,truebox2,truebox3,rotatedImage,LABELS], ff)
             

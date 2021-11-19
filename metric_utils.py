@@ -212,10 +212,10 @@ def calc_prec_rec_f1_cv(TPv,FPv,FNv,LABELS,scoreminVec,iouminVec):
     recall_std = np.zeros([len(LABELS), len(scoreminVec),len(iouminVec)])
     f1_std = np.zeros([len(LABELS), len(scoreminVec),len(iouminVec)])
 
-    #for j in range(len(iouminVec)):
-    #    for i in range(len(scoreminVec)):
-    for i in range(len(iouminVec)):
-        for j in range(len(scoreminVec)):
+    for j in range(len(iouminVec)):
+        for i in range(len(scoreminVec)):
+    #for i in range(len(iouminVec)):
+    #    for j in range(len(scoreminVec)):
             p = TPv[:,i,j]/(TPv[:,i,j]+FPv[:,i,j])*100
             p[TPv[:,i,j]+FPv[:,i,j]<=0] = 0
             r = TPv[:,i,j]/(TPv[:,i,j]+FNv[:,i,j])*100
