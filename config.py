@@ -26,6 +26,10 @@ save_weights_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocaliz
 # X. What is a good temporary storage directory?
 tmp_storage_dir = '/Users/jillnaiman/Downloads/tmp/'
 
+# 7. where to store results/metric results?
+metric_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/MetricsResults/'
+
+
 # X. Diagnostic dir
 ##mega_yolo_diag_dir = '/Users/jillnaiman/scienceDigitization/figure_localization/mega_yolo_model/diagnostics/'
 

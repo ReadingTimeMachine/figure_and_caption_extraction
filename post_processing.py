@@ -53,6 +53,7 @@ anchorsFile = weightsFileDir + 'anchors.pickle'
 
 #################################################
 import yt
+yt.enable_parallelism()
 import pandas as pd
 import pickle
 import numpy as np
@@ -62,7 +63,9 @@ from post_processing_utils import parse_annotations_to_labels, build_predict, \
    get_true_boxes, get_ocr_results, get_image_process_boxes, clean_overlapping_squares, \
    clean_merge_pdfsquares, clean_merge_heurstic_captions, add_heuristic_captions, \
    clean_found_overlap_with_ocr, clean_true_overlap_with_ocr, clean_merge_squares, \
-   clean_big_captions, clean_match_fig_cap
+   clean_big_captions, clean_match_fig_cap, expand_true_boxes_fig_cap, \
+   expand_found_boxes_fig_cap
+#, calc_metrics
 #################################################
 
 if store_diagnostics:
@@ -125,45 +128,32 @@ years, years_list = get_years(dfMakeSense['filename'].values)
 
 
 my_storage = {}
-# set up annotations CV arrays -- this will calculate spread around metrics
-inds = np.random.choice(range(len(annotations)),size=len(annotations), replace=False)
-# split into k-cv indicies
-ann_inds = []
-incr = len(annotations)//n_folds_cv
-for ix in range(n_folds_cv):
-    for inc in range(incr):
-        ann_inds.append(ix)
-while len(inds) > len(ann_inds): # while not perfectly split, add extras to random fold
-    ann_inds.append(np.random.randint(n_folds_cv))
-if len(inds) != len(ann_inds): print('issue here!!!'); import sys; sys.exit()
-sortp = np.argsort(inds)
-ann_inds = np.array(ann_inds)[sortp]
+# # set up annotations CV arrays -- this will calculate spread around metrics
+# inds = np.random.choice(range(len(annotations)),size=len(annotations), replace=False)
+# # split into k-cv indicies
+# ann_inds = []
+# incr = len(annotations)//n_folds_cv
+# for ix in range(n_folds_cv):
+#     for inc in range(incr):
+#         ann_inds.append(ix)
+# while len(inds) > len(ann_inds): # while not perfectly split, add extras to random fold
+#     ann_inds.append(np.random.randint(n_folds_cv))
+# if len(inds) != len(ann_inds): print('issue here!!!'); import sys; sys.exit()
+# sortp = np.argsort(inds)
+# ann_inds = np.array(ann_inds)[sortp]
 
 wsInds = np.arange(0,len(annotations))
-
+#wsInds = np.arange(0,6) # debug
+#wsInds = wsInds[1:]
 
 
 # run the thing
 iMod = 10
 
 for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
-    TPv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # true positivies in each category (each cateogry of *true* boxes)
-    FPv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # false positivies, each category (each category of *found* boxes)
-    FNv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # false negatives, each category (each category of *true* boxes)
-    MISSCLASSv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # found, but not the right type
-    THROWNOUTv = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # found, but culled out
-    totalTruev = np.zeros([len(LABELS), len(iouminVec), len(scoreminVec)]) # count numbers in category
-    
-    # by year
-    TPyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # true positivies in each category (each cateogry of *true* boxes)
-    FPyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # false positivies, each category (each category of *found* boxes)
-    FNyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # false negatives, each category (each category of *true* boxes)
-    MISSCLASSyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # found, but not the right type
-    THROWNOUTyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # found, but culled out
-    totalTrueyear = np.zeros([len(years),len(LABELS), len(iouminVec), len(scoreminVec)]) # count numbers in category
     
     a = annotations[icombo] # which annotation
-    k_cv = ann_inds[icombo] # which fold?
+    #k_cv = ann_inds[icombo] # which fold?
 
     # run model
     if icombo%iMod == 0:
@@ -176,6 +166,8 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                        annotation_dir=annotation_dir,
                                                       feature_dir=feature_dir)
     
+    #import sys; sys.exit()
+    
     # get OCR results and parse them, open image for image processing
     backtorgb,image_np,rotatedImage,rotatedAngleOCR,bbox_hocr,\
       bboxes_words,bbsq,rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df)
@@ -185,7 +177,7 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     boxes, scores, labels = model.predict(image_np[np.newaxis, ...])
     boxes1, scores1, labels1 = np.squeeze(boxes, 0), np.squeeze(scores, 0), np.squeeze(labels, 0)
 
-    save_boxes = boxes.copy(); save_labels = labels.copy(); save_scores2 = scores.copy()
+    #save_boxes = boxes.copy(); save_labels = labels.copy(); save_scores2 = scores.copy()
 
     # only non -1 ones
     boxes1 = boxes1[labels1>-1]
@@ -232,7 +224,7 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     # sometimes figures are found, but no captions -- check for "extra" 
     # only heuristically found captions, and use these as a last resort
     # when matching figures to captions
-    boxes_heur, labels_heur, scores_heur = add_heuristic_captions(bbox_figcap_pars,
+    boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
                                                                   captionText_figcap,
                                                                   ibbOverlap,
                                                                   boxes_heur, 
@@ -241,11 +233,17 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     
     # clean found boxes by paragraphs and words  -- if found box overlaps with 
     #. an OCR box, include this box in the bounding box of captions
+    # boxes_par_found, labels_par_found, \
+    #   scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
+    #                                             scores_heur,bboxes_words,
+    #                                                   bbox_par,rotation,
+    #                                                   LABELS, dfMS)
+    
     boxes_par_found, labels_par_found, \
-      scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
-                                                scores_heur,bboxes_words,
+      scores_par_found = clean_found_overlap_with_ocr(boxes_heur2, labels_heur2, 
+                                                scores_heur2,bboxes_words,
                                                       bbox_par,rotation,
-                                                      LABELS, dfMS)
+                                                      LABELS, dfMS)  
     
     # do same excersize with trueboxes (already done really in processing annoations)
     truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
@@ -261,7 +259,7 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     
     # if there are any huge captions -- like 75% of the area of the page or more
     #. these are wrong, so drop them
-    boxes_sq, labels_sq, scores_sq = clean_big_captions(boxes_sq1,
+    boxes_sq2, labels_sq2, scores_sq2 = clean_big_captions(boxes_sq1,
                                                         labels_sq1,
                                                         scores_sq1, 
                                                         LABELS)
@@ -270,12 +268,118 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     # difference between those where they touch on the "bottom"
     # Default to captions found with mega yolo, if there is a figure but 
     #. no caption found, then see if there is a heuristically found caption
-    boxes_sq, labels_sq, scores_sq = clean_match_fig_cap(boxes_sq,labels_sq,
-                                                         scores_sq, bbsq, 
+    boxes_sq3, labels_sq3, scores_sq3 = clean_match_fig_cap(boxes_sq2,
+                                                             labels_sq2,
+                                                         scores_sq2, bbsq, 
                                                          LABELS, 
                                                          rotatedImage, 
                                                          rotatedAngleOCR,
                                                          dfMS)
     
+    # do this sort of thing for the true boxes true
+    truebox2 = expand_true_boxes_fig_cap(truebox1, rotatedImage, LABELS)
     
-    import sys; sys.exit()
+    # These are our final boxes!
+    # again for found boxes?  I feel like maybe not the one above?
+    boxes_sq4, labels_sq4, scores_sq4 = expand_found_boxes_fig_cap(boxes_sq3, 
+                                                                labels_sq3, 
+                                                                scores_sq3,
+                                                                   bbsq,
+                                                                rotatedImage, 
+                                                                LABELS, dfMS)
+    
+    sto.result_id = icombo
+    sto.result = [icombo,imgs_name[0], truebox, pdfboxes, pdfrawboxes, captionText_figcap, 
+                  bbox_figcap_pars,
+                  sboxes_cleaned, slabels_cleaned, sscores_cleaned, 
+                 boxes_pdf, labels_pdf, scores_pdf, 
+                  boxes_heur, labels_heur, scores_heur,
+                 boxes_heur2, labels_heur2, scores_heur2,
+                 boxes_par_found, labels_par_found, scores_par_found,
+                 boxes_sq1, labels_sq1, scores_sq1,
+                 boxes_sq2, labels_sq2, scores_sq2,
+                 boxes_sq3, labels_sq3, scores_sq3,
+                 boxes_sq4, labels_sq4, scores_sq4,
+                 truebox1,truebox2,rotatedImage,LABELS]
+    
+    
+if yt.is_root():
+    icombo,imgs_name, truebox, pdfboxes, pdfrawboxes, captionText_figcap = [],[],[],[],[],[]
+    bbox_figcap_pars = []
+    sboxes_cleaned, slabels_cleaned, sscores_cleaned = [],[],[]
+    boxes_pdf, labels_pdf, scores_pdf = [], [],[]
+    boxes_heur, labels_heur, scores_heur = [], [], []
+    boxes_heur2, labels_heur2, scores_heur2 = [],[],[]
+    boxes_par_found, labels_par_found, scores_par_found = [],[],[]
+    boxes_sq1, labels_sq1, scores_sq1 = [],[],[]
+    boxes_sq2, labels_sq2, scores_sq2 = [],[],[]
+    boxes_sq3, labels_sq3, scores_sq3 = [],[],[]
+    boxes_sq4, labels_sq4, scores_sq4 = [],[],[]
+    truebox1,truebox2,rotatedImage,LABELS = [],[],[],[]
+    
+    for ns,vals in sorted(my_storage.items()):
+        if vals is not None:
+            icombo.append(vals[0])
+            imgs_name.append(vals[1])
+            truebox.append(vals[2])
+            pdfboxes.append(vals[3])
+            pdfrawboxes.append(vals[4])
+            captionText_figcap.append(vals[5])
+            bbox_figcap_pars.append(vals[6])
+            sboxes_cleaned.append(vals[7])
+            slabels_cleaned.append(vals[8])
+            sscores_cleaned.append(vals[9])
+            boxes_pdf.append(vals[10])
+            labels_pdf.append(vals[11])
+            scores_pdf.append(vals[12])
+            boxes_heur.append(vals[13])
+            labels_heur.append(vals[14])
+            scores_heur.append(vals[15])
+            boxes_heur2.append(vals[16])
+            labels_heur2.append(vals[17])
+            scores_heur2.append(vals[18])
+            boxes_par_found.append(vals[19])
+            labels_par_found.append(vals[20])
+            scores_par_found.append(vals[21])
+            boxes_sq1.append(vals[22])
+            labels_sq1.append(vals[23])
+            scores_sq1.append(vals[24])
+            boxes_sq2.append(vals[25])
+            labels_sq2.append(vals[26])
+            scores_sq2.append(vals[27])
+            boxes_sq3.append(vals[28])
+            labels_sq3.append(vals[29])
+            scores_sq3.append(vals[30])
+            boxes_sq4.append(vals[31])
+            labels_sq4.append(vals[32])
+            scores_sq4.append(vals[33])
+            truebox1.append(vals[34])
+            truebox2.append(vals[35])
+            rotatedImage.append(vals[36])
+            LABELS.append(vals[37])
+            
+    # update labels
+    LABELS = LABELS[0]
+            
+# binary_dirs = 'binaries_model1/'
+# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211111_model1/'
+# weightsFile = 'training_1model1_model_l0.17215717.h5' # figure/table, fig/table captions
+            
+    # build up filename
+    pp = config.metric_results_dir
+    pp += binary_dirs.split('/')[-1]
+    pp += '.pickle'
+    with open(pp, 'wb') as ff:
+        pickle.dump([icombo,imgs_name, truebox, pdfboxes, pdfrawboxes, captionText_figcap,\
+                     bbox_figcap_pars,\
+                     sboxes_cleaned, slabels_cleaned, sscores_cleaned,\
+                     boxes_pdf, labels_pdf, scores_pdf,\
+                     boxes_heur, labels_heur, scores_heur,\
+                     boxes_heur2, labels_heur2, scores_heur2,\
+                     boxes_par_found, labels_par_found, scores_par_found,\
+                     boxes_sq1, labels_sq1, scores_sq1,\
+                     boxes_sq2, labels_sq2, scores_sq2,\
+                     boxes_sq3, labels_sq3, scores_sq3,\
+                     boxes_sq4, labels_sq4, scores_sq4,\
+                     truebox1,truebox2,rotatedImage,LABELS], ff)
+            
