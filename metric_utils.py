@@ -70,6 +70,10 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
     true_found_pairs = []
     for ti,tl in zip(true_found_index, true_found_labels): # ti = [true index, found index]
         ind = int(tl[0]) # index is true's label
+        #if tl == -2: 
+        #    print('here')
+        #    import sys; sys.exit()
+            
         if ti[-1] == -1: # didn't find anything
             if iioumin != -1:
                 FNv[ind,iioumin,iscoremin] +=1
@@ -81,7 +85,8 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                     FNyear[years==year,ind] +=1
             # save as a true w/o a found
             true_found_pairs.append( (truebox1[ti[0]], -1) )
-        elif ti[-1] != -1 and tl[0] != tl[1]: # overlap of boxes, but wrong things -- count as FN for this true
+        # overlap of boxes, but wrong things -- count as FN for this true
+        elif ti[-1] != -1 and tl[0] != tl[1]: 
             if iioumin != -1:
                 FNv[ind,iioumin,iscoremin] +=1
                 if len(years)>0:
@@ -112,8 +117,12 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
     if len(boxes_sq) > len(trueCaps):
         for ib, b in enumerate(boxes_sq):
             if len(true_found_index) > 0: # we have some trues
-                if ib not in np.array(true_found_index)[:,1].tolist(): # but we don't have this particular found matched to a true
+                # but we don't have this particular found matched to a true
+                if ib not in np.array(true_found_index)[:,1].tolist(): 
                     ind = int(labels_sq[ib]) # label will be found label -- mark as a FP for this label
+                    # is this a heuristically found caption? if so -- tag it not with index -2, but cap
+                    if ind == -2:
+                        ind = LABELS.index('figure caption')
                     if iioumin != -1:
                         FPv[ind,iioumin,iscoremin] +=1
                         if len(years)>0:
@@ -130,6 +139,8 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                                                    labels_sq[ib])) )
             elif len(true_found_index) == 0: # there is nothing true, any founds are FP
                 ind = int(labels_sq[ib])
+                if ind == -2:
+                    ind = LABELS.index('figure caption')
                 if iioumin != -1:
                     FPv[ind,iioumin,iscoremin] +=1
                     if len(years)>0:
@@ -160,12 +171,13 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
         
 def calc_base_metrics_allboxes_cv(LABELS,scoreminVec,iouminVec,
                                   truebox2,boxes_sq4,labels_sq4,scores_sq4,
-                                  n_folds_cv=5):     
+                                  n_folds_cv=5, seed=None):     
     TPs = np.zeros([len(LABELS), len(scoreminVec),len(iouminVec),n_folds_cv])
     #TPs = np.zeros([len(LABELS), len(iouminVec),len(scoreminVec),n_folds_cv])
     totalTrues = TPs.copy(); FPs = TPs.copy(); FNs = TPs.copy()
 
-    # place randomly
+    # place randomly, unless reproducing
+    np.random.seed(seed)
     rinds = np.random.randint(0,n_folds_cv, len(truebox2))
 
     for iit in range(len(truebox2)):
