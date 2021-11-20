@@ -32,7 +32,7 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
 
     # make array of total number of boxes true/found, tag extra found with a FP tag
     # loop and find closest boxes
-    true_found_index = []; true_found_labels = []; trueCaps = []; foundCaps = []; #iouSave = []
+    true_found_index = []; true_found_labels = []; trueCaps = []; foundCaps = []; 
     for it,tbox in enumerate(truebox1): # if there really is a box
         w2, h2 = tbox[2]-tbox[0], tbox[3]-tbox[1]
         x2, y2 = tbox[0]+0.5*w2, tbox[1]+0.5*h2
@@ -62,7 +62,6 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                 indFound[-1] = ib
                 labelsFound[-1] = labels_sq[ib]
                 foundCapHere = b
-                #print('yes')
         true_found_index.append(indFound); true_found_labels.append(labelsFound); 
         if len(foundCapHere) > 0: foundCaps.append(foundCapHere)
         
@@ -103,24 +102,18 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                 if len(years)>0:
                     TPyear[years==year,ind] +=1
             #try:
-            true_found_pairs.append( (truebox1[ti[0]], (boxes_sq[ti[1]][0],boxes_sq[ti[1]][1],
-                                                    boxes_sq[ti[1]][2],boxes_sq[ti[1]][3],labels_sq[ti[1]])) )
-#             except:
-#                 print('ti',ti)
-#                 print(' ')
-#                 print('truebox',truebox1)
-#                 print(' ')
-#                 print('boxes_sq', boxes_sq)
-#                 print(' ')
-#                 print('labels_sq', labels_sq)
-#                 import sys; sys.exit()
+            true_found_pairs.append( (truebox1[ti[0]], (boxes_sq[ti[1]][0],
+                                                        boxes_sq[ti[1]][1],
+                                                        boxes_sq[ti[1]][2],
+                                                        boxes_sq[ti[1]][3],
+                                                        labels_sq[ti[1]])) )
             
     # do we have extra found boxes?
     if len(boxes_sq) > len(trueCaps):
         for ib, b in enumerate(boxes_sq):
             if len(true_found_index) > 0: # we have some trues
                 if ib not in np.array(true_found_index)[:,1].tolist(): # but we don't have this particular found matched to a true
-                    ind = labels_sq[ib] # label will be found label -- mark as a FP for this label
+                    ind = int(labels_sq[ib]) # label will be found label -- mark as a FP for this label
                     if iioumin != -1:
                         FPv[ind,iioumin,iscoremin] +=1
                         if len(years)>0:
@@ -130,10 +123,13 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                         if len(years)>0:
                             FPyear[years==year,ind] +=1
                     # mark as a found w/o a true
-                    true_found_pairs.append( (-1, (boxes_sq[ib][0],boxes_sq[ib][1],
-                                                    boxes_sq[ib][2],boxes_sq[ib][3],labels_sq[ib])) )
+                    true_found_pairs.append( (-1, (boxes_sq[ib][0],
+                                                   boxes_sq[ib][1],
+                                                    boxes_sq[ib][2],
+                                                   boxes_sq[ib][3],
+                                                   labels_sq[ib])) )
             elif len(true_found_index) == 0: # there is nothing true, any founds are FP
-                ind = labels_sq[ib]
+                ind = int(labels_sq[ib])
                 if iioumin != -1:
                     FPv[ind,iioumin,iscoremin] +=1
                     if len(years)>0:
@@ -143,8 +139,11 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                     if len(years)>0:
                         FPyear[years==year,ind] +=1
                 # mark as a found w/o a true
-                true_found_pairs.append( (-1, (boxes_sq[ib][0],boxes_sq[ib][1],
-                                                boxes_sq[ib][2],boxes_sq[ib][3],labels_sq[ib])) )
+                true_found_pairs.append( (-1, (boxes_sq[ib][0],
+                                               boxes_sq[ib][1],
+                                                boxes_sq[ib][2],
+                                               boxes_sq[ib][3],
+                                               labels_sq[ib])) )
 
                
     if len(years)>0:
@@ -215,13 +214,12 @@ def calc_prec_rec_f1_cv(TPv,FPv,FNv,LABELS,scoreminVec,iouminVec):
 
     for j in range(len(iouminVec)):
         for i in range(len(scoreminVec)):
-    #for i in range(len(iouminVec)):
-    #    for j in range(len(scoreminVec)):
-            p = TPv[:,i,j]/(TPv[:,i,j]+FPv[:,i,j])*100
-            p[TPv[:,i,j]+FPv[:,i,j]<=0] = 0
-            r = TPv[:,i,j]/(TPv[:,i,j]+FNv[:,i,j])*100
-            r[TPv[:,i,j]+FNv[:,i,j]<=0] = 0
-            f = 2.0*(r*p)/(r+p)
+            with np.errstate(invalid='ignore'): # take care of zeros later
+                p = TPv[:,i,j]/(TPv[:,i,j]+FPv[:,i,j])*100
+                p[TPv[:,i,j]+FPv[:,i,j]<=0] = 0
+                r = TPv[:,i,j]/(TPv[:,i,j]+FNv[:,i,j])*100
+                r[TPv[:,i,j]+FNv[:,i,j]<=0] = 0
+                f = 2.0*(r*p)/(r+p)
             f[r+p <=0] = 0
             precision_std[:,i,j] = np.std(p,axis=1)
             recall_std[:,i,j] = np.std(r,axis=1)
