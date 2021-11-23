@@ -948,7 +948,7 @@ def clean_merge_pdfsquares(pdfboxes,pdfrawboxes,sboxes_cleaned,
                     boxesOut.append((indIou[0]/fracx,indIou[1]/fracy,indIou[2]/fracx,indIou[3]/fracy))
                     labelsOut.append(l); scoresOut.append(ss)
                 else:
-                    boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
+                    boxesOut.append([x1min,y1min,x1max,y1max]); labelsOut.append(l); scoresOut.append(ss)
             elif 'table' in LABELS[int(l)].lower(): # merge into table
                 iouMax = -10; 
                 indIou = []
@@ -969,9 +969,11 @@ def clean_merge_pdfsquares(pdfboxes,pdfrawboxes,sboxes_cleaned,
                     boxesOut.append((indIou[0]/fracx,indIou[1]/fracy,indIou[2]/fracx,indIou[3]/fracy))
                     labelsOut.append(l); scoresOut.append(ss)
                 else:
-                    boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
+                    boxesOut.append([x1min/fracx,y1min/fracy,x1max/fracx,y1max/fracy]); 
+                    labelsOut.append(l); scoresOut.append(ss)
             else:
-                boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
+                boxesOut.append([x1min/fracx,y1min/fracy,x1max/fracx,y1max/fracy]); 
+                labelsOut.append(l); scoresOut.append(ss)
         # reset
         boxesOut = np.array(boxesOut)
         boxes = boxesOut; labels= labelsOut; scores=scoresOut
@@ -1055,9 +1057,11 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf, bbox_figcap
                                  bboxOverlap[2]/fracx,bboxOverlap[3]/fracy))
                 labelsOut.append(l); scoresOut.append(ss)
             else:
-                boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
+                boxesOut.append([x1min/fracx,y1min/fracy,x1max/fracx,y1max/fracy]); 
+                labelsOut.append(l); scoresOut.append(ss)
         else:
-            boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
+            boxesOut.append([x1min/fracx,y1min/fracy,x1max/fracx,y1max/fracy]); 
+            labelsOut.append(l); scoresOut.append(ss)
     # reset
     boxesOut = np.array(boxesOut)
     boxes_heur = boxesOut; labels_heur = labelsOut; scores_heur=scoresOut 
