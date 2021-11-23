@@ -1071,7 +1071,7 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf, bbox_figcap
 
         ##################### LOOK FOR HEURISTIC CAPTIONS NOT OTHERWISE FOUND #################
 def add_heuristic_captions(bbox_figcap_pars,captionText_figcap,ibbOverlap,
-                           boxes_heur, labels_heur, scores_heur, dfMS):
+                           boxes_heur_in, labels_heur_in, scores_heur_in, dfMS):
     fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
     fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
     # regex search terms for fuzzy search
@@ -1086,7 +1086,9 @@ def add_heuristic_captions(bbox_figcap_pars,captionText_figcap,ibbOverlap,
                         if regex.match( k, cap[-1], re.IGNORECASE ):
                             capInd.append(ibb)
 
-    boxes_heur = boxes_heur.tolist(); 
+    boxes_heur = boxes_heur_in.tolist().copy(); 
+    labels_heur = labels_heur_in.copy()
+    scores_heur = scores_heur_in.copy()
     if len(capInd) > 0:
         capInd = np.unique(capInd) # double count if multiple keywords found
         for ibb,bb in enumerate(bbox_figcap_pars):
