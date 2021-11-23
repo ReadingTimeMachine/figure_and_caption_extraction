@@ -243,17 +243,17 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     
     # clean found boxes by paragraphs and words  -- if found box overlaps with 
     #. an OCR box, include this box in the bounding box of captions
-    boxes_par_found, labels_par_found, \
-      scores_par_found = clean_found_overlap_with_ocr(boxes_heur2, labels_heur2, 
-                                                scores_heur2,bboxes_words,
-                                                      bbox_par,rotation,
-                                                      LABELS, dfMS)  
-    # other way:
     # boxes_par_found, labels_par_found, \
-    #   scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
-    #                                             scores_heur,bboxes_words,
+    #   scores_par_found = clean_found_overlap_with_ocr(boxes_heur2, labels_heur2, 
+    #                                             scores_heur2,bboxes_words,
     #                                                   bbox_par,rotation,
     #                                                   LABELS, dfMS)  
+    # other way:
+    boxes_par_found, labels_par_found, \
+      scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
+                                                scores_heur,bboxes_words,
+                                                      bbox_par,rotation,
+                                                      LABELS, dfMS)  
     
     # do same excersize with trueboxes (already done really in processing annoations)
     truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
@@ -286,9 +286,8 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                          rotatedAngleOCR,
                                                          dfMS)
     
-    # do this sort of thing for the true boxes true
+    # check for overlaps
     truebox2 = expand_true_boxes_fig_cap(truebox1, rotatedImage, LABELS)
-    
     # again for found boxes?  I feel like maybe not the one above?
     boxes_sq4, labels_sq4, scores_sq4 = expand_found_boxes_fig_cap(boxes_sq3, 
                                                                 labels_sq3, 

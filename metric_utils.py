@@ -3,7 +3,7 @@ import pandas as pd
 from general_utils import isRectangleOverlap, iou_orig
 
 # FP/FN/TP calcs:
-def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
+def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumin,
                 years=[], iioumin=-1, iscoremin=-1, 
                 TPyear = [], FPyear=[], totalTrueyear=[], FNyear=[], year=[],
                 totalTruev=[], TPv=[], FPv=[],FNv=[], return_pairs = False):
@@ -20,6 +20,9 @@ def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
     for il in range(len(labels_sq)):
         if labels_sq[il] == -2:
             labels_sq[il] = LABELS.index('figure caption')
+    #print(' ----- ')
+    #print(labels_sq_in,labels_sq)
+    boxes_sq = boxes_sq_in.copy(); scores_sq = scores_sq_in.copy()
     
     # checks
     if iioumin == -1 and iscoremin != -1: 
@@ -41,6 +44,8 @@ def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
     # loop and find closest boxes
     true_found_index = []; true_found_labels = []; trueCaps = []; foundCaps = []; 
     for it,tbox in enumerate(truebox1): # if there really is a box
+        #print(tbox)
+        #print(' ')
         w2, h2 = tbox[2]-tbox[0], tbox[3]-tbox[1]
         x2, y2 = tbox[0]+0.5*w2, tbox[1]+0.5*h2
         # just for found captions
@@ -51,7 +56,8 @@ def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
         else:
             totalTruev[int(tbox[4]-1)] += 1
             if len(years) >0:
-                totalTrueyear[years==year,int(tbox[4]-1)] += 1                
+                totalTrueyear[years==year,int(tbox[4]-1)] += 1 
+        #print(totalTruev)
             
         trueCaps.append(tbox)
         # find greatest IOU -- literally there is a better algorithm here to do this
@@ -68,6 +74,7 @@ def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
                 iouMax = iou1
                 indFound[-1] = ib
                 labelsFound[-1] = labels_sq[ib]
+                #print('labelsFound=',labelsFound[-1])
                 # if tagged as a heurstically-only found caption, mark as caption
                 #if labels_sq[ib] == -2:
                 #    labelsFound[-1] = LABELS.index('figure caption')
@@ -75,16 +82,13 @@ def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
         true_found_index.append(indFound); true_found_labels.append(labelsFound); 
         if len(foundCapHere) > 0: foundCaps.append(foundCapHere)
         
+    #print(true_found_index,true_found_labels,'here')
     # count
     # save pairs, unfound trues, miss-found founds
     true_found_pairs = []
-    for ti,tl in zip(true_found_index, true_found_labels): # ti = [true index, found index]
+    # ti = [true index, found index]
+    for ti,tl in zip(true_found_index, true_found_labels): 
         ind = int(tl[0]) # index is true's label
-        #if ind == -2: # this is tagged as a heuristic-only-found caption
-        #    ind = LABELS.index('figure caption')
-        #if tl == -2: 
-        #    print('here')
-        #    import sys; sys.exit()
             
         if ti[-1] == -1: # didn't find anything
             if iioumin != -1:
@@ -126,33 +130,22 @@ def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
                                                         labels_sq[ti[1]])) )
             
     # do we have extra found boxes?
-    if len(boxes_sq) > len(trueCaps):
-        for ib, b in enumerate(boxes_sq):
-            if len(true_found_index) > 0: # we have some trues
-                # but we don't have this particular found matched to a true
-                if ib not in np.array(true_found_index)[:,1].tolist(): 
-                    ind = int(labels_sq[ib]) # label will be found label -- mark as a FP for this label
-                    # is this a heuristically found caption? if so -- tag it not with index -2, but cap
-                    #if ind == -2:
-                    #    ind = LABELS.index('figure caption')
-                    if iioumin != -1:
-                        FPv[ind,iioumin,iscoremin] +=1
-                        if len(years)>0:
-                            FPyear[years==year,ind,iioumin,iscoremin] += 1
-                    else:
-                        FPv[ind] += 1
-                        if len(years)>0:
-                            FPyear[years==year,ind] +=1
-                    # mark as a found w/o a true
-                    true_found_pairs.append( (-1, (boxes_sq[ib][0],
-                                                   boxes_sq[ib][1],
-                                                    boxes_sq[ib][2],
-                                                   boxes_sq[ib][3],
-                                                   labels_sq[ib])) )
-            elif len(true_found_index) == 0: # there is nothing true, any founds are FP
-                ind = int(labels_sq[ib])
+    #print('bbox, truecap', len(boxes_sq), len(trueCaps))
+    #print('FPv here', FPv)
+    #if len(boxes_sq) > len(trueCaps):
+    #if True: # messy
+    #print(true_found_index)
+    #print('trufound',np.array(true_found_index)[:,1].tolist())
+    for ib, b in enumerate(boxes_sq):
+        if len(true_found_index) > 0: # we have some trues
+            # but we don't have this particular found matched to a true
+            if ib not in np.array(true_found_index)[:,1].tolist(): 
+                ind = int(labels_sq[ib]) # label will be found label -- mark as a FP for this label
+                #print('hi',labels_sq[ib])
+                # is this a heuristically found caption? if so -- tag it not with index -2, but cap
                 #if ind == -2:
                 #    ind = LABELS.index('figure caption')
+                #print('ind', ind)
                 if iioumin != -1:
                     FPv[ind,iioumin,iscoremin] +=1
                     if len(years)>0:
@@ -167,6 +160,25 @@ def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
                                                 boxes_sq[ib][2],
                                                boxes_sq[ib][3],
                                                labels_sq[ib])) )
+        elif len(true_found_index) == 0: # there is nothing true, any founds are FP
+            #print('no')
+            ind = int(labels_sq[ib])
+            #if ind == -2:
+            #    ind = LABELS.index('figure caption')
+            if iioumin != -1:
+                FPv[ind,iioumin,iscoremin] +=1
+                if len(years)>0:
+                    FPyear[years==year,ind,iioumin,iscoremin] += 1
+            else:
+                FPv[ind] += 1
+                if len(years)>0:
+                    FPyear[years==year,ind] +=1
+            # mark as a found w/o a true
+            true_found_pairs.append( (-1, (boxes_sq[ib][0],
+                                           boxes_sq[ib][1],
+                                            boxes_sq[ib][2],
+                                           boxes_sq[ib][3],
+                                           labels_sq[ib])) )
 
                
     if len(years)>0:
@@ -192,7 +204,7 @@ def calc_base_metrics_allboxes_cv(LABELS,scoreminVec,iouminVec,
     np.random.seed(seed)
     rinds = np.random.randint(0,n_folds_cv, len(truebox2))
 
-    for iit in range(len(truebox2)):
+    for iit in range(len(truebox2)): # an array of pages
         for iscore,scoremin in enumerate(scoreminVec):
             for iiou,ioumin in enumerate(iouminVec):
                 # truebox2 is fig-caption pairs, unwrap for this
@@ -200,6 +212,8 @@ def calc_base_metrics_allboxes_cv(LABELS,scoreminVec,iouminVec,
                 for t in truebox2[iit]:
                     #for t in tt:
                     tboxes.append(t)
+                #print(tboxes)
+                #print(' ')
                 # same same for found boxes
                 bboxes = []; llabels = []; sscores = []
                 for b,l,s in zip(boxes_sq4[iit],labels_sq4[iit],scores_sq4[iit]):
@@ -209,6 +223,7 @@ def calc_base_metrics_allboxes_cv(LABELS,scoreminVec,iouminVec,
 
                 totalTruev1, TPv1, FPv1, FNv1 = calc_metrics(tboxes, bboxes, llabels, 
                                                              sscores, LABELS,ioumin)
+                #print(FPv1)
                 # only the "fake" index
                 #totalTrues[:,iiou,iscore,rinds[iit]] += totalTruev1; 
                 totalTrues[:,iscore,iiou,rinds[iit]] += totalTruev1; 

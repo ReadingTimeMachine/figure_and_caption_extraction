@@ -1331,7 +1331,7 @@ def clean_big_captions(boxes_sq1,labels_sq1,scores_sq1, LABELS):
 ############### MATCH SQUARES TO CAPTIONS #############################
 def clean_match_fig_cap(boxes_sq,labels_sq,scores_sq, bbsq, 
                         LABELS, rotatedImage, 
-                        rotatedAngleOCR,dfMS):
+                        rotatedAngleOCR,dfMS,change_bottoms=False):
     fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
     fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
     # take caption closest to the BOTTOM EDGE, NOT in a square
@@ -1395,7 +1395,7 @@ def clean_match_fig_cap(boxes_sq,labels_sq,scores_sq, bbsq,
         scoresOut2.append(boxes_cap[f[1]][2])
         isOverlapping = isRectangleOverlap(bf,bc)
 
-        if isOverlapping:
+        if isOverlapping and change_bottoms:
             # which side is overlapping?
             xcf,ycf = 0.5*(bf[0]+bf[2]), 0.5*(bf[1]+bf[3])
             xcc,ycc = 0.5*(bc[0]+bc[2]), 0.5*(bc[1]+bc[3])
@@ -1417,7 +1417,7 @@ def clean_match_fig_cap(boxes_sq,labels_sq,scores_sq, bbsq,
             scoresOut2.append(boxes_heur_cap[f[1]][2])
             isOverlapping = isRectangleOverlap(bf,bc)
 
-            if isOverlapping:
+            if isOverlapping and change_bottoms:
                 # which side is overlapping?
                 xcf,ycf = 0.5*(bf[0]+bf[2]), 0.5*(bf[1]+bf[3])
                 xcc,ycc = 0.5*(bc[0]+bc[2]), 0.5*(bc[1]+bc[3])
@@ -1438,19 +1438,19 @@ def clean_match_fig_cap(boxes_sq,labels_sq,scores_sq, bbsq,
         labelsOut.append(l)
         scoresOut.append(s)
 
-    # alright, this is silly that we have to do this again
-    # sigh... expand by boxes
-    for ibox in range(len(boxesOut)):
-        x1min,y1min,x1max,y1max = boxesOut[ibox]
-        if labelsOut[ibox] == LABELS.index('figure'):
-            for ibb,bb in enumerate(bbsq): # only do the once
-                x2min, y2min, x2max, y2max = bb[0]/fracx, bb[1]/fracy, bb[2]/fracx, bb[3]/fracy
-                #isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
-                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
-                                                   (x2min,y2min,x2max,y2max))
-                if isOverlapping:
-                    boxesOut[ibox] = (min(x1min,x2min),min(y1min,y2min), 
-                                      max(x1max,x2max), max(y1max,y2max))           
+    # # alright, this is silly that we have to do this again
+    # # sigh... expand by boxes
+    # for ibox in range(len(boxesOut)):
+    #     x1min,y1min,x1max,y1max = boxesOut[ibox]
+    #     if labelsOut[ibox] == LABELS.index('figure'):
+    #         for ibb,bb in enumerate(bbsq): # only do the once
+    #             x2min, y2min, x2max, y2max = bb[0]/fracx, bb[1]/fracy, bb[2]/fracx, bb[3]/fracy
+    #             #isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
+    #             isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+    #                                                (x2min,y2min,x2max,y2max))
+    #             if isOverlapping:
+    #                 boxesOut[ibox] = (min(x1min,x2min),min(y1min,y2min), 
+    #                                   max(x1max,x2max), max(y1max,y2max))           
 
     # alright, this is silly that we have to do this again
     # sigh... expand by boxes
