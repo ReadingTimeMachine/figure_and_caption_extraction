@@ -873,7 +873,8 @@ def clean_overlapping_squares(boxes1,scores1,labels1,imgs_name):
             if ib2 < ib: # don't double count
                 x1min = b[0]; y1min = b[1]; x1max = b[2]; y1max = b[3]
                 x2min = b2[0]; y2min = b2[1]; x2max = b2[2]; y2max = b2[3]
-                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max))
+                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                   (x2min,y2min,x2max,y2max))
 
                 w1,h1 = x1max-x1min,y1max-y1min
                 x1,y1 = x1min+0.5*w1, y1min+0.5*h1
@@ -919,31 +920,30 @@ def clean_merge_pdfsquares(pdfboxes,pdfrawboxes,sboxes_cleaned,
     # mess with
     # if we have somthing, loop and get it
     if len(pdfcapboxes) > 0:
-        #import sys; sys.exit() **also use raws and figure captions!**
         boxesOut = []; labelsOut = []; scoresOut = []; tagged_pdf_box_ind = []
-        for b,l,ss in zip(sboxes_cleaned, slabels_cleaned, sscores_cleaned): # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
+        # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
+        for b,l,ss in zip(sboxes_cleaned, slabels_cleaned, sscores_cleaned): 
             # look for negatives
-            #b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); b[2] = min([image_np.shape[1],b[2]]); b[3] = min([image_np.shape[0],b[3]])
-            b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); b[2] = min([config.IMAGE_W,b[2]]); b[3] = min([config.IMAGE_H,b[3]])
-            x1min = b[0]*fracx; y1min = b[1]*fracy; x1max = b[2]*fracx; y1max = b[3]*fracy
+            x1min = max([0,b[0]])*fracx; y1min = max([0,b[1]])*fracy; 
+            x1max = min([config.IMAGE_W,b[2]])*fracx; y1max = min([config.IMAGE_H,b[3]])*fracy
             # are we even dealing with a figure caption?
             if 'figure caption' in LABELS[int(l)].lower():
                 iouMax = -10; 
                 indIou = []
-                for ibb,bb in enumerate(pdfcapboxes): # b in xmin,ymin,xmax,ymax in YOLO units -- IMAGE_W, IMAGE_H
+                for ibb,bb in enumerate(pdfcapboxes): # bb in xmin,ymin,xmax,ymax in YOLO units -- IMAGE_W, IMAGE_H
                     # multiply
                     x2min = bb[0] *fracx; y2min=bb[1]*fracy; x2max=bb[2]*fracx; y2max=bb[3]*fracy; ll = bb[4]
-                    #x2min, y2min, x2max, y2max,ll = bb
                     isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max)) \
                        and (bb[-1] == 'figure caption' or bb[-1] == 'raw')
                     if isOverlapping:
                         if len(indIou) == 0:
-                            indIou = [ min([x2min]),min([y2min]),max([x2max]),max([y2max]) ] # take max of overlap w/box -- annotations are bigger than captions often
+                            # take max of overlap w/box -- annotations are bigger than captions often
+                            indIou = [ min([x2min]),min([y2min]),max([x2max]),max([y2max]) ] 
                             tagged_pdf_box_ind.append(ibb)
                         else:
                             xo = indIou[0]; yo = indIou[1]; xo1 = indIou[2]; yo1 = indIou[3]
                             indIou = [ min([xo,x2min]), min([yo,y2min]), max([xo1,x2max]), max([yo1,y2max])]
-                            tagged_pdf_box_ind.append(ibb)
+                            tagged_pdf_box_ind.append(ibb) # tag that we found this box
                 if len(indIou) > 0: # found 1 that overlapped
                     boxesOut.append((indIou[0]/fracx,indIou[1]/fracy,indIou[2]/fracx,indIou[3]/fracy))
                     labelsOut.append(l); scoresOut.append(ss)
@@ -953,10 +953,9 @@ def clean_merge_pdfsquares(pdfboxes,pdfrawboxes,sboxes_cleaned,
                 iouMax = -10; 
                 indIou = []
                 for ibb,bb in enumerate(pdfcapboxes): # b in xmin,ymin,xmax,ymax in YOLO units -- IMAGE_W, IMAGE_H
-                    #x1min = b[0]*fracx; y1min = b[1]*fracy; x1max = b[2]*fracx; y1max = b[3]*fracy
                     x2min = bb[0] *fracx; y2min=bb[1]*fracy; x2max=bb[2]*fracx; y2max=bb[3]*fracy; ll = bb[4]
                     isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max)) \
-                       and (bb[-1] == 'figure caption' or bb[-1] == 'raw')
+                       and (bb[-1] == 'table' or bb[-1] == 'raw')
                     if isOverlapping:
                         if len(indIou) == 0:
                             indIou = [ min([x2min]),min([y2min,y1min]),
@@ -964,7 +963,6 @@ def clean_merge_pdfsquares(pdfboxes,pdfrawboxes,sboxes_cleaned,
                             tagged_pdf_box_ind.append(ibb)
                         else:
                             xo = indIou[0]; yo = indIou[1]; xo1 = indIou[2]; yo1 = indIou[3]
-                            #indIou = [ min([xo,bb[0],x1min]), min([yo,bb[1],y1min]), max([xo1,bb[2],x1max]), max([yo1,bb[3],y1max])]
                             indIou = [ min([xo,x2min]), min([yo,y2min,y1min]), max([xo1,x2max]), max([yo1,y2max,y1max])]
                             tagged_pdf_box_ind.append(ibb)
                 if len(indIou) > 0: # found 1 that overlapped
@@ -979,14 +977,35 @@ def clean_merge_pdfsquares(pdfboxes,pdfrawboxes,sboxes_cleaned,
         boxes = boxesOut; labels= labelsOut; scores=scoresOut
         # also, be sure to include PDFbox, and take unique... 
         boxes = boxes.tolist()
-        for ibb,bb in enumerate(pdfcapboxes): # only include ones we haven't included yet
-            if ibb not in tagged_pdf_box_ind and bb[-1] != 'figure': # ignore figure's from pdffigures2 -- not great solutions
-                #boxes.append([bb[0]*fracx,bb[1]*fracy,bb[2]*fracx,bb[3]/fracy])
-                boxes.append([bb[0],bb[1],bb[2],bb[3]])
-                labels = np.append(labels,LABELS.index(bb[-1]))
-                scores = np.append(scores,1.0)
-        boxes_pdf,uind = np.unique(np.array(boxes), axis=0, return_index=True) 
-        labels_pdf = np.array(labels)[uind]; scores_pdf = np.array(scores)[uind]
+        # this commented out is supposed to add other fig captions, but does not work well...
+        # for ibb,bb in enumerate(pdfcapboxes): # only include ones we haven't included yet
+        #     x2min = bb[0] *fracx; y2min=bb[1]*fracy; x2max=bb[2]*fracx; y2max=bb[3]*fracy; ll = bb[4]
+        #     #if ibb not in tagged_pdf_box_ind and bb[-1] != 'figure': # ignore figure's from pdffigures2 -- not great solutions
+        #     if ibb not in tagged_pdf_box_ind and (bb[-1] == 'figure caption' or bb[-1] == 'table'): # ignore figure's from pdffigures2 -- not great solutions
+        #         # check for overlaps with other boxes
+        #         isOverlapping = False
+        #         for b,l,ss in zip(sboxes_cleaned, slabels_cleaned, sscores_cleaned): 
+        #             x1min = max([0,b[0]])*fracx; y1min = max([0,b[1]])*fracy; 
+        #             x1max = min([config.IMAGE_W,b[2]])*fracx; 
+        #             y1max = min([config.IMAGE_H,b[3]])*fracy
+        #             isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+        #                                                (x2min,y2min,x2max,y2max))
+        #             if isOverlapping:
+        #                 # by how much?
+        #                 w1,h1 = x1max-x1min,y1max-y1min
+        #                 x1,y1 = x1min+0.5*w1, y1min+0.5*h1
+        #                 w2,h2 = x2max-x2min,y2max-y2min
+        #                 x2,y2 = x2min+0.5*w2, y2min+0.5*h2
+        #                 iou1 = iou_orig(x1,y1,w1,h1, x2,y2,w2,h2)
+        #                 if iou1 <= 0.25: # if less than 25% then ok
+        #                     isOverlapping = False
+        #         if not isOverlapping:
+        #             boxes.append([bb[0],bb[1],bb[2],bb[3]])
+        #             labels = np.append(labels,LABELS.index(bb[-1]))
+        #             scores = np.append(scores,1.0)
+        #boxes_pdf,uind = np.unique(np.array(boxes), axis=0, return_index=True) 
+        #labels_pdf = np.array(labels)[uind]; scores_pdf = np.array(scores)[uind]
+        boxes_pdf=boxes; labels_pdf = labels; scores_pdf = scores
     else:
         boxes_pdf = sboxes_cleaned; labels_pdf = slabels_cleaned; scores_pdf = sscores_cleaned
         
@@ -1002,12 +1021,11 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf, bbox_figcap
     fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
     for b,l,ss in zip(boxes_pdf, labels_pdf, scores_pdf): # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
         # look for negatives
-        b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); 
-        # b[2] = min([image_np.shape[1],b[2]]); 
-        # b[3] = min([image_np.shape[0],b[3]])
-        b[2] = min([config.IMAGE_W,b[2]]); 
-        b[3] = min([config.IMAGE_H,b[3]])
-        x1min = b[0]*fracx; y1min = b[1]*fracy; x1max = b[2]*fracx; y1max = b[3]*fracy
+        #b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); 
+        #b[2] = min([config.IMAGE_W,b[2]]); 
+        #b[3] = min([config.IMAGE_H,b[3]])
+        x1min = max([0,b[0]])*fracx; y1min = max([0,b[1]])*fracy; 
+        x1max = min([config.IMAGE_W,b[2]])*fracx; y1max = min([config.IMAGE_H,b[3]])*fracy
         # are we even dealing with a caption?
         bboxOverlap = []
         if 'caption' in LABELS[int(l)].lower():
@@ -1016,7 +1034,8 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf, bbox_figcap
                 # from x,y,w,h
                 # is within... vs...
                 if config.found_overlap == 'overlap':
-                    isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max))
+                    isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                       (x2min,y2min,x2max,y2max))
                 elif config.found_overlap == 'center':
                     # center is overlapping
                     x2 = 0.5*(x2min+x2max); y2 = 0.5*(y2min+y2max)
@@ -1031,9 +1050,12 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf, bbox_figcap
                         ymin = min([y1min,y2min]); xmax = max([x1max,x2max]); ymax = max([y1max,y2max])
                     bboxOverlap = (xmin,ymin,xmax,ymax)
                     ibbOverlap.append(ibb)
-        if len(bboxOverlap)>0: # found 1 that overlapped
-            boxesOut.append((bboxOverlap[0]/fracx,bboxOverlap[1]/fracy,bboxOverlap[2]/fracx,bboxOverlap[3]/fracy))
-            labelsOut.append(l); scoresOut.append(ss)
+            if len(bboxOverlap)>0: # found 1 that overlapped
+                boxesOut.append((bboxOverlap[0]/fracx,bboxOverlap[1]/fracy,
+                                 bboxOverlap[2]/fracx,bboxOverlap[3]/fracy))
+                labelsOut.append(l); scoresOut.append(ss)
+            else:
+                boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
         else:
             boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
     # reset

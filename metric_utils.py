@@ -3,7 +3,7 @@ import pandas as pd
 from general_utils import isRectangleOverlap, iou_orig
 
 # FP/FN/TP calcs:
-def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
+def calc_metrics(truebox1, boxes_sq, labels_sq_in, scores_sq, LABELS,ioumin,
                 years=[], iioumin=-1, iscoremin=-1, 
                 TPyear = [], FPyear=[], totalTrueyear=[], FNyear=[], year=[],
                 totalTruev=[], TPv=[], FPv=[],FNv=[], return_pairs = False):
@@ -14,6 +14,13 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
     scores_sq: found box score (0.0-1.0)
     LABELS: list of labels (strings), e.g. ['figure', 'figure caption', 'table']
     """
+    
+    # for heuristically-found labels, replace -2 tag with tag for figure caption
+    labels_sq = labels_sq_in.copy()
+    for il in range(len(labels_sq)):
+        if labels_sq[il] == -2:
+            labels_sq[il] = LABELS.index('figure caption')
+    
     # checks
     if iioumin == -1 and iscoremin != -1: 
         print('not supported for different params for iioumin & iscoremin')
@@ -61,6 +68,9 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                 iouMax = iou1
                 indFound[-1] = ib
                 labelsFound[-1] = labels_sq[ib]
+                # if tagged as a heurstically-only found caption, mark as caption
+                #if labels_sq[ib] == -2:
+                #    labelsFound[-1] = LABELS.index('figure caption')
                 foundCapHere = b
         true_found_index.append(indFound); true_found_labels.append(labelsFound); 
         if len(foundCapHere) > 0: foundCaps.append(foundCapHere)
@@ -70,6 +80,8 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
     true_found_pairs = []
     for ti,tl in zip(true_found_index, true_found_labels): # ti = [true index, found index]
         ind = int(tl[0]) # index is true's label
+        #if ind == -2: # this is tagged as a heuristic-only-found caption
+        #    ind = LABELS.index('figure caption')
         #if tl == -2: 
         #    print('here')
         #    import sys; sys.exit()
@@ -121,8 +133,8 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                 if ib not in np.array(true_found_index)[:,1].tolist(): 
                     ind = int(labels_sq[ib]) # label will be found label -- mark as a FP for this label
                     # is this a heuristically found caption? if so -- tag it not with index -2, but cap
-                    if ind == -2:
-                        ind = LABELS.index('figure caption')
+                    #if ind == -2:
+                    #    ind = LABELS.index('figure caption')
                     if iioumin != -1:
                         FPv[ind,iioumin,iscoremin] +=1
                         if len(years)>0:
@@ -139,8 +151,8 @@ def calc_metrics(truebox1, boxes_sq, labels_sq, scores_sq, LABELS,ioumin,
                                                    labels_sq[ib])) )
             elif len(true_found_index) == 0: # there is nothing true, any founds are FP
                 ind = int(labels_sq[ib])
-                if ind == -2:
-                    ind = LABELS.index('figure caption')
+                #if ind == -2:
+                #    ind = LABELS.index('figure caption')
                 if iioumin != -1:
                     FPv[ind,iioumin,iscoremin] +=1
                     if len(years)>0:

@@ -3,6 +3,14 @@ binary_dirs = 'binaries_model1/'
 weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211111_model1/'
 weightsFile = 'training_1model1_model_l0.17215717.h5' # figure/table, fig/table captions
 
+weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211118_model4/'
+binary_dirs = 'binaries_model4/'
+weightsFile = 'training_1model4_model_l0.1202761.h5' # figure/table, fig/table captions
+
+
+#adder = '_mod1' # leave empty to save default file
+adder = '' # leave empty to save default file
+
 benchmark = None
 scoreminVec = None
 iouminVec = None
@@ -196,6 +204,8 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                                                  labels1,
                                                                                  imgs_name)
     
+    # ------------------
+    
     # probably do this earlier and pass it...
     ff = imgs_name[0].split('/')[-1].split('.npz')[0]
     dfMS = dfMakeSense.loc[dfMakeSense['filename']==ff]
@@ -220,7 +230,7 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                             bbox_figcap_pars, LABELS,dfMS)
      
         
-        
+    # --- 4 ---
     # sometimes figures are found, but no captions -- check for "extra" 
     # only heuristically found captions, and use these as a last resort
     # when matching figures to captions
@@ -233,17 +243,17 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     
     # clean found boxes by paragraphs and words  -- if found box overlaps with 
     #. an OCR box, include this box in the bounding box of captions
-    # boxes_par_found, labels_par_found, \
-    #   scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
-    #                                             scores_heur,bboxes_words,
-    #                                                   bbox_par,rotation,
-    #                                                   LABELS, dfMS)
-    
     boxes_par_found, labels_par_found, \
       scores_par_found = clean_found_overlap_with_ocr(boxes_heur2, labels_heur2, 
                                                 scores_heur2,bboxes_words,
                                                       bbox_par,rotation,
                                                       LABELS, dfMS)  
+    # other way:
+    # boxes_par_found, labels_par_found, \
+    #   scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
+    #                                             scores_heur,bboxes_words,
+    #                                                   bbox_par,rotation,
+    #                                                   LABELS, dfMS)  
     
     # do same excersize with trueboxes (already done really in processing annoations)
     truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
@@ -263,7 +273,7 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                         labels_sq1,
                                                         scores_sq1, 
                                                         LABELS)
-    
+    # --- 6 ---
     # sometimes captions are slightly overlapping with figures -- split the 
     # difference between those where they touch on the "bottom"
     # Default to captions found with mega yolo, if there is a figure but 
@@ -311,7 +321,7 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                  boxes_sq3, labels_sq3, scores_sq3,
                  boxes_sq4, labels_sq4, scores_sq4,
                  boxes_sq5, labels_sq5, scores_sq5,
-                 truebox1,truebox2,truebox3,rotatedImage,LABELS]
+                 truebox1,truebox2,truebox3,rotatedImage,LABELS, boxes1, scores1, labels1]
     
     
 if yt.is_root():
@@ -328,6 +338,7 @@ if yt.is_root():
     boxes_sq4, labels_sq4, scores_sq4 = [],[],[]
     boxes_sq5, labels_sq5, scores_sq5 = [],[],[]
     truebox1,truebox2,truebox3,rotatedImage,LABELS = [],[],[],[],[]
+    boxes1, scores1, labels1 = [],[],[]
     
     for ns,vals in sorted(my_storage.items()):
         if vals is not None:
@@ -373,6 +384,9 @@ if yt.is_root():
             truebox3.append(vals[39])
             rotatedImage.append(vals[40])
             LABELS.append(vals[41])
+            boxes1.append(vals[42])
+            scores1.append(vals[43])
+            labels1.append(vals[44])
             
     # update labels
     LABELS = LABELS[0]
@@ -384,6 +398,7 @@ if yt.is_root():
     # build up filename
     pp = config.metric_results_dir
     pp += binary_dirs.split('/')[0]
+    pp += adder
     pp += '.pickle'
     with open(pp, 'wb') as ff:
         pickle.dump([icombo,imgs_name, truebox, pdfboxes, pdfrawboxes, captionText_figcap,\
@@ -398,5 +413,5 @@ if yt.is_root():
                      boxes_sq3, labels_sq3, scores_sq3,\
                      boxes_sq4, labels_sq4, scores_sq4,\
                      boxes_sq5, labels_sq5, scores_sq5,\
-                     truebox1,truebox2,truebox3,rotatedImage,LABELS], ff)
+                     truebox1,truebox2,truebox3,rotatedImage,LABELS,boxes1, scores1, labels1], ff)
             
