@@ -394,7 +394,7 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
                 x1, y1 = b[0]+0.5*w1, b[1]+0.5*h1
                 iou1 = iou_orig(x1,y1,w1,h1, x2,y2,w2,h2)
                 # a win!
-                if (iou1 > iouMax) and (iou1 > ioumin) and isOverlapping: # check for overlap
+                if (iou1 > iouMax) and (iou1 >= ioumin) and isOverlapping: # check for overlap
                     iouMax = iou1
                     indFound[-1] = ib
                     labelsFound[-1] = labels_sq[ib]
