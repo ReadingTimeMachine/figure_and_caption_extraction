@@ -35,6 +35,11 @@ feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confid
 binaries_file = 'model5_maxTag125'
 maxTag = 125 # trial? for fractin of ___ and punctuation
 
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles']
+# call these something new?
+binaries_file = 'model6'
 
 
 # ----------------------------------------------
@@ -134,6 +139,7 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         
     # if we've made it this far, let's generate features
     feature_name = generate_single_feature(dfsingle, feature_list = feature_list, 
-                                           binary_dir = binaries_file, mode=mode, maxTag=maxTag)
+                                           binary_dir = binaries_file, 
+                                           mode=mode, maxTag=maxTag)
     
     #import sys; sys.exit()

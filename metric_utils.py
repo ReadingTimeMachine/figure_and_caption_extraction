@@ -79,7 +79,7 @@ def calculate_ap_11_point_interp(rec, prec, recall_vals=11):
 def new_calcs(gt_boxes, det_boxes, det_labels, det_scores, 
               iou_thresholds, fname, gt_classes_only,
               method = 'EVERY_POINT_INTERPOLATION', generate_table = True, 
-             save_fp = None, image_shape=(512.,512.)):
+             save_fp = None, image_shape=(512.,512.)):#, return_tf_pairs=False):
     have_an_fp = False
     ret = {}; retOut = {}
     # Get classes of all bounding boxes separating them by classes

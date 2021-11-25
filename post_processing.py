@@ -1,11 +1,24 @@
 # set to None if you want to use defaults
-binary_dirs = 'binaries_model1/'
-weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211111_model1/'
-weightsFile = 'training_1model1_model_l0.17215717.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model1/'
+# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211111_model1/'
+# weightsFile = 'training_1model1_model_l0.17215717.h5' # figure/table, fig/table captions
 
-weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211118_model4/'
-binary_dirs = 'binaries_model4/'
-weightsFile = 'training_1model4_model_l0.1202761.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model2/'
+# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211116_model2/'
+# weightsFile = 'training_1model2_model_l0.13648733.h5' # figure/table, fig/table captions
+
+# binary_dirs = 'binaries_model3/'
+# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211117_model3/'
+# weightsFile = 'training_1model3_model_l0.20664357.h5' # figure/table, fig/table captions
+
+# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211118_model4/'
+# binary_dirs = 'binaries_model4/'
+# weightsFile = 'training_1model4_model_l0.1202761.h5' # figure/table, fig/table captions
+
+binary_dirs = 'binaries_model5/'
+weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211124_model5/'
+weightsFile = 'training_1model5_model_l0.13795476.h5' # figure/table, fig/table captions
+
 
 
 #adder = '_mod1' # leave empty to save default file
@@ -230,16 +243,15 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                             bbox_figcap_pars, LABELS,dfMS)
      
         
-    # --- 4 ---
     # sometimes figures are found, but no captions -- check for "extra" 
     # only heuristically found captions, and use these as a last resort
     # when matching figures to captions
-    boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
-                                                                  captionText_figcap,
-                                                                  ibbOverlap,
-                                                                  boxes_heur, 
-                                                                  labels_heur, 
-                                                                  scores_heur, dfMS)
+    # boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
+    #                                                               captionText_figcap,
+    #                                                               ibbOverlap,
+    #                                                               boxes_heur, 
+    #                                                               labels_heur, 
+    #                                                               scores_heur, dfMS)
     
     # clean found boxes by paragraphs and words  -- if found box overlaps with 
     #. an OCR box, include this box in the bounding box of captions
@@ -248,7 +260,7 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     #                                             scores_heur2,bboxes_words,
     #                                                   bbox_par,rotation,
     #                                                   LABELS, dfMS)  
-    # other way:
+    # other way -- w/o adding more heursitic caps:
     boxes_par_found, labels_par_found, \
       scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
                                                 scores_heur,bboxes_words,
