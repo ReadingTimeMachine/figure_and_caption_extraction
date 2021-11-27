@@ -41,6 +41,29 @@ feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confid
 # call these something new?
 binaries_file = 'model6'
 
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS']
+# call these something new?
+binaries_file = 'model7'
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# call these something new?
+binaries_file = 'model8'
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes']
+# call these something new?
+binaries_file = 'model9'
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes', 'carea boxes']
+# call these something new?
+binaries_file = 'model10'
 
 # ----------------------------------------------
 
@@ -79,10 +102,10 @@ debug = False
 ocrFiles = get_all_ocr_files()
 # get important quantities from these files
 if yt.is_root(): print('retreiving OCR data, this can take a moment...')
-ws, paragraphs, squares, html, rotations = collect_ocr_process_results(ocrFiles)
+ws, paragraphs, squares, html, rotations,colorbars = collect_ocr_process_results(ocrFiles)
 # create dataframe
 df = pd.DataFrame({'ws':ws, 'paragraphs':paragraphs, 'squares':squares, 
-                   'hocr':html, 'rotation':rotations})#, 'pdfwords':pdfwords})
+                   'hocr':html, 'rotation':rotations, 'colorbars':colorbars})#, 'pdfwords':pdfwords})
 df = df.drop_duplicates(subset='ws')
 df = df.set_index('ws')
 

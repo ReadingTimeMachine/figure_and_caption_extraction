@@ -52,7 +52,7 @@ def make_ann_directories():
 def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
     # we'll need this to grab only the text
     paragraphs = []; ws = []; squares = []; paragraphs_unskewed = []; pdfwords = []; html = []
-    rotations = []
+    rotations = []; colorbars = []
     # loop and grab
     for cp in ocrFiles:
         with open(cp, 'rb') as f:
@@ -97,8 +97,9 @@ def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
         ws.extend(wsout); paragraphs.extend(full_run_paragraphs); squares.extend(full_run_squares);
         html.extend(full_run_htmlText); 
         rotations.extend(full_run_rotations)
+        colorbars.extend(color_bars)
         
-    return ws, paragraphs, squares, html, rotations
+    return ws, paragraphs, squares, html, rotations, colorbars
 
 
 

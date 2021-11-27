@@ -15,14 +15,28 @@
 # binary_dirs = 'binaries_model4/'
 # weightsFile = 'training_1model4_model_l0.1202761.h5' # figure/table, fig/table captions
 
-binary_dirs = 'binaries_model5/'
-weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211124_model5/'
-weightsFile = 'training_1model5_model_l0.13795476.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model5/'
+# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211124_model5/'
+# weightsFile = 'training_1model5_model_l0.13795476.h5' # figure/table, fig/table captions
 
+# binary_dirs = 'binaries_model5_maxTag125/'
+# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211125_model5_maxTag125/'
+# weightsFile = 'training_1model5_maxTag125_model_l0.10710113.h5' # figure/table, fig/table captions
+
+binary_dirs = 'binaries_model6/'
+weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211126_model6/'
+weightsFile = 'training_1model6_model_l0.1766097.h5' # figure/table, fig/table captions
 
 
 #adder = '_mod1' # leave empty to save default file
 adder = '' # leave empty to save default file
+
+
+useColorbars = True
+#adder = 'truebox'
+
+
+
 
 benchmark = None
 scoreminVec = None
@@ -102,10 +116,10 @@ if store_diagnostics:
 ocrFiles = get_all_ocr_files()
 # get important quantities from these files
 if yt.is_root(): print('retreiving OCR data, this can take a moment...')
-ws, paragraphs, squares, html, rotations = collect_ocr_process_results(ocrFiles)
+ws, paragraphs, squares, html, rotations,colorbars = collect_ocr_process_results(ocrFiles)
 # create dataframe
 df = pd.DataFrame({'ws':ws, 'paragraphs':paragraphs, 'squares':squares, 
-                   'hocr':html, 'rotation':rotations})#, 'pdfwords':pdfwords})
+                   'hocr':html, 'rotation':rotations, 'colorbars':colorbars})#, 'pdfwords':pdfwords})
 df = df.drop_duplicates(subset='ws')
 df = df.set_index('ws')
 
@@ -191,7 +205,8 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     
     # get OCR results and parse them, open image for image processing
     backtorgb,image_np,rotatedImage,rotatedAngleOCR,bbox_hocr,\
-      bboxes_words,bbsq,rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df)
+      bboxes_words,bbsq,cbsq, rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df)
+    
     
     # predict squares in 2 ways
     # 1. MEGA YOLO
@@ -246,12 +261,12 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     # sometimes figures are found, but no captions -- check for "extra" 
     # only heuristically found captions, and use these as a last resort
     # when matching figures to captions
-    # boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
-    #                                                               captionText_figcap,
-    #                                                               ibbOverlap,
-    #                                                               boxes_heur, 
-    #                                                               labels_heur, 
-    #                                                               scores_heur, dfMS)
+    boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
+                                                                  captionText_figcap,
+                                                                  ibbOverlap,
+                                                                  boxes_heur, 
+                                                                  labels_heur, 
+                                                                  scores_heur, dfMS)
     
     # clean found boxes by paragraphs and words  -- if found box overlaps with 
     #. an OCR box, include this box in the bounding box of captions
@@ -271,13 +286,16 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
     truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
                                            bbox_par,rotation, 
                                            LABELS, dfMS)
+    #truebox1 = truebox.copy()
     
     # if figure boxes are smaller than image-processing found boxes, merge them; 
-    boxes_sq1, labels_sq1, scores_sq1 = clean_merge_squares(bbsq, 
+    # also, do with colorbars as well if requested
+    boxes_sq1, labels_sq1, scores_sq1, bbsq = clean_merge_squares(bbsq, cbsq,
                                                             boxes_par_found, 
                                                             labels_par_found, 
                                                             scores_par_found, 
-                                                            LABELS, dfMS)
+                                                            LABELS, dfMS, 
+                                                           useColorbars = useColorbars)
     
     # if there are any huge captions -- like 75% of the area of the page or more
     #. these are wrong, so drop them
@@ -285,14 +303,14 @@ for sto, icombo in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage
                                                         labels_sq1,
                                                         scores_sq1, 
                                                         LABELS)
-    # --- 6 ---
+
     # sometimes captions are slightly overlapping with figures -- split the 
     # difference between those where they touch on the "bottom"
     # Default to captions found with mega yolo, if there is a figure but 
     #. no caption found, then see if there is a heuristically found caption
     boxes_sq3, labels_sq3, scores_sq3 = clean_match_fig_cap(boxes_sq2,
                                                              labels_sq2,
-                                                         scores_sq2, bbsq, 
+                                                         scores_sq2, bbsq,
                                                          LABELS, 
                                                          rotatedImage, 
                                                          rotatedAngleOCR,

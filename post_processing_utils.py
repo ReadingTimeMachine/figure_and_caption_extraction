@@ -691,6 +691,13 @@ def get_ocr_results(imgs_name, dfMakeSense,dfsave):
             if len(ss) > 0:
                 x,y,w,h = cv.boundingRect(ss) # in orig page
                 bbsq.append((x,y,x+w,y+h))
+                
+        cbhere = dfsave.loc[indh]['colorbars']    
+        cbsq = []
+        for ss in cbhere:
+            if len(ss) > 0:
+                x,y,w,h = cv.boundingRect(ss) # in orig page
+                cbsq.append((x,y,x+w,y+h))
 
         # grab rotation
         rotation = dfsave.loc[indh]['rotation']
@@ -759,7 +766,7 @@ def get_ocr_results(imgs_name, dfMakeSense,dfsave):
         rot = rotatedImage
         
         return backtorgb, image_np, rotatedImage, rotatedAngleOCR, bbox_hocr, \
-          bboxes_words, bbsq, rotation, bbox_par
+          bboxes_words, bbsq, cbsq, rotation, bbox_par
     
     
 # ------------- IMAGE PROCESSING ------------------------
@@ -1278,10 +1285,15 @@ def clean_true_overlap_with_ocr(truebox, bboxes_words,bbox_par,rotation, LABELS,
     return truebox1
 
         ########### CLEAN FIGURES BY CHECKING IF THEY OVERLAP WITH SQUARES -- IF NO FIG, TAKE SQUARE ############
-def clean_merge_squares(bbsq, boxes_par_found, labels_par_found, scores_par_found, LABELS, dfMS):
+def clean_merge_squares(bbsq_in, cbsq, boxes_par_found, labels_par_found, 
+                        scores_par_found, LABELS, dfMS, useColorbars=False):
     fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
     fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
     boxesOut = []; labelsOut = []; scoresOut = []
+    bbsq = bbsq_in.copy()
+    if useColorbars:
+        for ss in cbsq:
+            bbsq.append(ss)
     # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
     for b,l,ss in zip(boxes_par_found, labels_par_found, scores_par_found): 
         # look for negatives
@@ -1313,7 +1325,7 @@ def clean_merge_squares(bbsq, boxes_par_found, labels_par_found, scores_par_foun
     boxesOut = np.array(boxesOut)
     # replace
     boxes_sq1 = boxesOut; labels_sq1 = labelsOut; scores_sq1 = scoresOut
-    return boxes_sq1, labels_sq1, scores_sq1
+    return boxes_sq1, labels_sq1, scores_sq1, bbsq
 
 
 

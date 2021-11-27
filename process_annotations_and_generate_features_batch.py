@@ -40,10 +40,10 @@ debug = False
 ocrFiles = get_all_ocr_files()
 # get important quantities from these files
 if yt.is_root(): print('retreiving OCR data, this can take a moment...')
-ws, paragraphs, squares, html, rotations = collect_ocr_process_results(ocrFiles)
+ws, paragraphs, squares, html, rotations,colorbars = collect_ocr_process_results(ocrFiles)
 # create dataframe
 df = pd.DataFrame({'ws':ws, 'paragraphs':paragraphs, 'squares':squares, 
-                   'hocr':html, 'rotation':rotations})#, 'pdfwords':pdfwords})
+                   'hocr':html, 'rotation':rotations, 'colorbars':colorbars})#, 'pdfwords':pdfwords})
 df = df.drop_duplicates(subset='ws')
 df = df.set_index('ws')
 
