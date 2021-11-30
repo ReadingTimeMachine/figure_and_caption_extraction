@@ -1262,13 +1262,14 @@ def augmentation_generator(yolo_dataset, anchors, CLASS, flipUpDown=False):
         boxes = batch[1].numpy()
         # conversion bbox numpy->ia object
         ia_boxes = []
-        for i in range(img.shape[0]):
-            ia_bbs = [ia.BoundingBox(x1=bb[0],
-                                       y1=bb[1],
-                                       x2=bb[2],
-                                       y2=bb[3]) for bb in boxes[i]
-                      if (bb[0] + bb[1] +bb[2] + bb[3] > 0)]
-            ia_boxes.append(ia.BoundingBoxesOnImage(ia_bbs, shape=(config.IMAGE_W, config.IMAGE_H)))
+        if len(boxes) > 0:
+            for i in range(img.shape[0]):
+                ia_bbs = [ia.BoundingBox(x1=bb[0],
+                                           y1=bb[1],
+                                           x2=bb[2],
+                                           y2=bb[3]) for bb in boxes[i]
+                          if (bb[0] + bb[1] +bb[2] + bb[3] > 0)]
+                ia_boxes.append(ia.BoundingBoxesOnImage(ia_bbs, shape=(config.IMAGE_W, config.IMAGE_H)))
         # data augmentation
         if flipUpDown:
             seq = iaa.Sequential([
@@ -1294,13 +1295,14 @@ def augmentation_generator(yolo_dataset, anchors, CLASS, flipUpDown=False):
         img_aug = np.clip(img_aug, 0, 1)
         boxes_aug = seq_det.augment_bounding_boxes(ia_boxes)
         # conversion ia object -> bbox numpy
-        for i in range(img.shape[0]):
-            boxes_aug[i] = boxes_aug[i].remove_out_of_image().clip_out_of_image()
-            for j, bb in enumerate(boxes_aug[i].bounding_boxes):
-                boxes[i,j,0] = bb.x1
-                boxes[i,j,1] = bb.y1
-                boxes[i,j,2] = bb.x2
-                boxes[i,j,3] = bb.y2
+        if len(boxes) > 0:
+            for i in range(img.shape[0]):
+                boxes_aug[i] = boxes_aug[i].remove_out_of_image().clip_out_of_image()
+                for j, bb in enumerate(boxes_aug[i].bounding_boxes):
+                    boxes[i,j,0] = bb.x1
+                    boxes[i,j,1] = bb.y1
+                    boxes[i,j,2] = bb.x2
+                    boxes[i,j,3] = bb.y2
         # conversion numpy->tensor
         #batch = (tf.convert_to_tensor(img_aug), tf.convert_to_tensor(boxes))
         #batch = (img_aug, boxes)
@@ -1310,6 +1312,13 @@ def augmentation_generator(yolo_dataset, anchors, CLASS, flipUpDown=False):
         for b in boxes:
             y1,y2,y3= process_box(b[:,:4], b[:,4].astype('int'),anchors,CLASS)
             y_true1.append(y1); y_true2.append(y2); y_true3.append(y3)
-        
+        # if there is no box, do something different
+        if len(boxes) == 0:
+            # fake a box
+            b = np.array([[111.,  59., 403., 364. ,  4.]])
+            y1,y2,y3= process_box(b[:,:4], b[:,4].astype('int'),anchors,CLASS)
+            y1[:] = 0; y2[:]=0;y3[:]=0
+            y_true1.append(y1); y_true2.append(y2); y_true3.append(y3)
+       
         img = tf.cast(np.array(img_aug), tf.float32)    
         yield img, tf.cast(y_true1, tf.float32), tf.cast(y_true2, tf.float32), tf.cast(y_true3, tf.float32)
