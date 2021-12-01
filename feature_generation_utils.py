@@ -8,6 +8,7 @@ import pandas as pd
 from lxml import etree
 from PIL import Image
 import numpy as np
+import pickle
 
 
 # SPaCY TAGS
@@ -35,7 +36,8 @@ steps = round(256./len(angles))
 
 def generate_single_feature(df, feature_list = None, debug=False, 
                             binary_dir = None, feature_invert=None, 
-                           mode='L',maxTag = 125):
+                           mode='L',maxTag = 125, save_type='uint8', 
+                           astype='npz',npzcompressed=False):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
@@ -489,13 +491,27 @@ def generate_single_feature(df, feature_list = None, debug=False,
     fname = df.name.split('/')[-1]
     fname = fname[:fname.rfind('.')]
     
+    # change type as needed
+    imgout = imgout.astype(save_type)
+    
     # binary save
-    with open(binary_dir+fname+'.npz', 'wb') as f:
-        np.savez_compressed(f, imgout) # 20 M/file
-
+    if 'pickle' not in astype:
+        if npzcompressed:
+            ender='.npz'
+            with open(binary_dir+fname+'.npz', 'wb') as f:
+                np.savez_compressed(f, imgout) # 20 M/file for floats
+        else:
+            ender='.npy'
+            with open(binary_dir+fname+'.npy', 'wb') as f:
+                np.savez(f, imgout) # 20 M/file for floats
+    else:
+        ender='.pickle'
+        with open(binary_dir+fname+'.pickle', 'wb') as ff:
+            pickle.dump([imgout], ff)
+            
     del imgout
     del imgOrig
-    return binary_dir+fname+'.npz'
+    return binary_dir+fname+ender
 
 
 

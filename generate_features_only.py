@@ -55,15 +55,33 @@ binaries_file = 'model8'
 
 feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes']
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
 # call these something new?
-binaries_file = 'model9'
+binaries_file = 'model8_pickle'
 
 feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes', 'carea boxes']
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
 # call these something new?
-binaries_file = 'model10'
+binaries_file = 'model8_noncom'
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# call these something new?
+binaries_file = 'model8_noncomz'
+
+# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+#                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes']
+# # call these something new?
+# binaries_file = 'model9'
+
+# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+#                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes', 'carea boxes']
+# # call these something new?
+# binaries_file = 'model10'
 
 # ----------------------------------------------
 
