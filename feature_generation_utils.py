@@ -11,7 +11,7 @@ import numpy as np
 import pickle
 import tensorflow as tf
 
-from general_utils import parse_annotations
+from general_utils import parse_annotation
 
 
 # SPaCY TAGS
@@ -82,7 +82,7 @@ def generate_single_feature(df, feature_list = None, debug=False,
     classDir_main_to = classDirMain + config.ann_name + str(int(config.IMAGE_H))\
       + 'x' + str(int(config.IMAGE_W))  + '_ann/'
 
-    classDir_main_to_imgs = classDirMain + fileStorage.split('/')[-2] + '/'
+    #classDir_main_to_imgs = classDirMain + fileStorage.split('/')[-2] + '/'
     background = 255
     if feature_invert: background = 0
     
@@ -550,10 +550,11 @@ def generate_single_feature(df, feature_list = None, debug=False,
     elif 'tfrecord' in astype:
         ender = '.tfrecord'
         # have to also get annotations
-        imgs_name, bbox = parse_annotation([classDir_main_to+f.split('/')[-1]], 
+        imgs_name, bbox = parse_annotation([classDir_main_to+fname+'.xml'], 
                                            LABELS,
-                                           feature_dir=classDir_main_to_imgs,
-                                           annotation_dir=classDir_main_to) 
+                                           feature_dir='',
+                                           annotation_dir=classDir_main_to,
+                                          check_for_file=False) 
         array_to_tfrecords(imgout, bbox, 
                            binary_dir+fname+ender)
             

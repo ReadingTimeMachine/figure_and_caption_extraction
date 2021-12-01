@@ -46,7 +46,7 @@ def iou_orig(x1, y1, w1, h1, x2, y2, w2, h2, return_individual = False):
 def parse_annotation(split_file_list, labels, feature_dir = '',
                      annotation_dir = '',
                      parse_pdf = False, use_only_one_class=False, 
-                    IMAGE_W=512, IMAGE_H=512, debug=False):
+                    IMAGE_W=512, IMAGE_H=512, debug=False, check_for_file=True):
     '''
     Parse XML files in PASCAL VOC format.
     
@@ -90,32 +90,13 @@ def parse_annotation(split_file_list, labels, feature_dir = '',
                     if debug: print(iname)
                 else:
                     iname = elem.text
-                if not os.path.isfile(iname):
-                    iname = iname[:iname.rfind('.')]
-                    if debug: print(iname)
-                    iname = glob(iname+'*')[0]
+                if check_for_file:
+                    if not os.path.isfile(iname):
+                        iname = iname[:iname.rfind('.')]
+                        if debug: print(iname)
+                        iname = glob(iname+'*')[0]
                 imgs_name.append(iname)
-                # if '/Users/jillnaiman' not in thisDir: # probably on google
-                #     if len(feature_dir)>0:
-                #         iname = feature_dir + elem.text.split('/')[-1]
-                #     else:
-                #         iname = elem.text
-                #     if not os.path.isfile(iname):
-                #         iname = iname[:iname.rfind('.')]
-                #         iname = glob.glob(iname+'*')[0]
-                #     imgs_name.append(iname)
-                # else:
-                #     if len(feature_dir) > 0:
-                #         iname = feature_dir + elem.text.split('/')[-1]
-                #     else:
-                #         iname = elem.text
-                #     #print(iname)
-                #     if not os.path.isfile(iname):
-                #         iname = iname[:iname.rfind('.')]
-                #         iname = glob.glob(iname+'*')[0]
-                #     imgs_name.append(iname)
-                #print(imgs_name[-1])
-                #print(iname)
+
             if 'width' in elem.tag:
                 w = int(elem.text)
             if 'height' in elem.tag:
