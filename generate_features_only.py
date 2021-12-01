@@ -71,6 +71,13 @@ binaries_file = 'model8_noncom'
 # # call these something new?
 # binaries_file = 'model8_noncomz'
 
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# call these something new?
+binaries_file = 'model8_tfrecord'
+
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
 #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes']

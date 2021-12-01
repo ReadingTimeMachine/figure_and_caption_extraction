@@ -9,6 +9,9 @@ from lxml import etree
 from PIL import Image
 import numpy as np
 import pickle
+import tensorflow as tf
+
+from general_utils import parse_annotations
 
 
 # SPaCY TAGS
@@ -34,10 +37,36 @@ DEP_LIST = np.unique(np.append(['ROOT', 'acl', 'acomp', 'advcl', 'advmod', 'agen
 angles = np.array([0, 90, 180, 270]) #options
 steps = round(256./len(angles))
 
+# if we want to write to recordio
+def array_to_tfrecords(X, boxes, output_file):
+    if len(boxes)>0:
+        x1 = boxes[0][:,0]; y1 = boxes[0][:,1]; x2 = boxes[0][:,2]; y2 = boxes[0][:,3]
+        classes = boxes[0][:,4]
+    else:
+        x1=np.array([]);y1=np.array([]);x2=np.array([]);y2=np.array([]);classes=np.array([])
+    # do division already
+    X = X/255.
+    feature = {
+        'X': tf.train.Feature(float_list=tf.train.FloatList(value=X.flatten())),
+        'x1': tf.train.Feature(float_list=tf.train.FloatList(value=x1.flatten())),
+        'y1': tf.train.Feature(float_list=tf.train.FloatList(value=y1.flatten())),
+        'x2': tf.train.Feature(float_list=tf.train.FloatList(value=x2.flatten())),
+        'y2': tf.train.Feature(float_list=tf.train.FloatList(value=y2.flatten())),
+        'class': tf.train.Feature(float_list=tf.train.FloatList(value=classes.flatten()))
+    }
+    example = tf.train.Example(features=tf.train.Features(feature=feature))
+    serialized = example.SerializeToString()
+
+    writer = tf.io.TFRecordWriter(output_file)
+    writer.write(serialized)
+    writer.close()
+
+    
+    
 def generate_single_feature(df, feature_list = None, debug=False, 
                             binary_dir = None, feature_invert=None, 
                            mode='L',maxTag = 125, save_type='uint8', 
-                           astype='npz',npzcompressed=False, npysave=False):
+                           astype='tfrecord',npzcompressed=False, npysave=False):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
@@ -49,7 +78,11 @@ def generate_single_feature(df, feature_list = None, debug=False,
     if feature_list is None: feature_list = config.feature_list
     if binary_dir is None: binary_dir = config.save_binary_dir+'binaries/'
     if feature_invert is None: feature_invert = config.feature_invert
-    
+    classDirMain = config.save_binary_dir #+ fileStorage
+    classDir_main_to = classDirMain + config.ann_name + str(int(config.IMAGE_H))\
+      + 'x' + str(int(config.IMAGE_W))  + '_ann/'
+
+    classDir_main_to_imgs = classDirMain + fileStorage.split('/')[-2] + '/'
     background = 255
     if feature_invert: background = 0
     
@@ -495,7 +528,7 @@ def generate_single_feature(df, feature_list = None, debug=False,
     imgout = imgout.astype(save_type)
     
     # binary save
-    if 'pickle' not in astype:
+    if 'pickle' not in astype and 'tfrecord' not in astype:
         if npzcompressed:
             ender='.npz'
             with open(binary_dir+fname+'.npz', 'wb') as f:
@@ -510,10 +543,19 @@ def generate_single_feature(df, feature_list = None, debug=False,
                 with open(binary_dir+fname+ender, 'wb') as f:
                     np.savez(f, imgout) # 20 M/file for floats
                 
-    else:
+    elif 'pickle' in astype:
         ender='.pickle'
         with open(binary_dir+fname+'.pickle', 'wb') as ff:
             pickle.dump([imgout], ff)
+    elif 'tfrecord' in astype:
+        ender = '.tfrecord'
+        # have to also get annotations
+        imgs_name, bbox = parse_annotation([classDir_main_to+f.split('/')[-1]], 
+                                           LABELS,
+                                           feature_dir=classDir_main_to_imgs,
+                                           annotation_dir=classDir_main_to) 
+        array_to_tfrecords(imgout, bbox, 
+                           binary_dir+fname+ender)
             
     del imgout
     del imgOrig
