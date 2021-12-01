@@ -37,7 +37,7 @@ steps = round(256./len(angles))
 def generate_single_feature(df, feature_list = None, debug=False, 
                             binary_dir = None, feature_invert=None, 
                            mode='L',maxTag = 125, save_type='uint8', 
-                           astype='npz',npzcompressed=False):
+                           astype='npz',npzcompressed=False, npysave=False):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
@@ -501,9 +501,15 @@ def generate_single_feature(df, feature_list = None, debug=False,
             with open(binary_dir+fname+'.npz', 'wb') as f:
                 np.savez_compressed(f, imgout) # 20 M/file for floats
         else:
-            ender='.npy'
-            with open(binary_dir+fname+'.npy', 'wb') as f:
-                np.savez(f, imgout) # 20 M/file for floats
+            ender='.npz'
+            if not npysave:
+                with open(binary_dir+fname+ender, 'wb') as f:
+                    np.savez(f, imgout) # 20 M/file for floats
+            else:
+                ender='.npy'
+                with open(binary_dir+fname+ender, 'wb') as f:
+                    np.savez(f, imgout) # 20 M/file for floats
+                
     else:
         ender='.pickle'
         with open(binary_dir+fname+'.pickle', 'wb') as ff:
