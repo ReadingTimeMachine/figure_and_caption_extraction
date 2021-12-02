@@ -1,5 +1,7 @@
 # redo features only -- allow for other lists of features
 import config
+# for tfrecords -- set to None for re-do of splits
+splits_directory = config.tmp_storage_dir
 
 # # this supercedes what is in the config file
 # feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
@@ -201,3 +203,151 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
                                            mode=mode, maxTag=maxTag)
     
     #import sys; sys.exit()
+
+    
+# if was records file, do a conversion
+if yt.is_root():
+    if 'TMPTFRECORD_' in feature_name: # we have done temp storage
+        # note: y_* aren't actually used anywhere
+        if splits_directory is None:
+            print('not totally implemented yet!!!!')
+            import sys; sys.exit()
+            # but it would go something like...
+            X_train, y_train, X_valid, y_valid,\
+               X_test, y_test = train_test_valid_split(X_full, Y_full,
+                                                       train_size = train_per, 
+                                                       valid_size = valid_per, 
+                                                       test_size = test_per, 
+                                                       textClassification=True, 
+                                                       asInts=False)
+
+            print('We have AT LEAST', len(X_train), 'training,', 
+                  len(X_valid), 'validation,', 
+                  len(X_test), 'test instances.')
+
+            # write files for splits
+            np.savetxt(splitsDir + 'train.csv', X_train, fmt='%s', delimiter=',')
+            np.savetxt(splitsDir + 'test.csv', X_test, fmt='%s', delimiter=',')
+            np.savetxt(splitsDir + 'valid.csv', X_valid, fmt='%s', delimiter=',')
+            
+        def _bytes_feature(value):
+            """Returns a bytes_list from a string / byte."""
+            if isinstance(value, type(tf.constant(0))):
+                value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
+            return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+        def _float_feature(value):
+            """Returns a float_list from a float / double."""
+            return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
+
+        def _int64_feature(value):
+            """Returns an int64_list from a bool / enum / int / uint."""
+            return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+        
+        # Create a dictionary with features that may be relevant.
+        def image_example(image, boxes):
+            #image_shape = tf.io.decode_jpeg(image_string).shape
+            image_string = image.astype('float32')/255.0
+            image_string = image.reshape(image.shape[0]*image.shape[1]*image.shape[2])
+
+            nfeatures = image.shape[2]
+            nboxes = boxes.shape[0]
+            if nboxes>0:
+                boxout = boxes.reshape(boxes.shape[0]*boxes.shape[1])
+            else:
+                boxout = np.array([])
+
+            feature = {
+              'nbox': _float_feature(np.float32(nboxes)),
+              'nfeatures': _float_feature(np.float32(nfeatures)),
+              'boxes': _bytes_feature(boxout.astype('float32').tobytes()),
+              'image_raw': _bytes_feature(image_string.astype('float32').tobytes()),
+            }
+
+            return tf.train.Example(features=tf.train.Features(feature=feature))  
+        
+        classDir_main_to = config.save_binary_dir + config.ann_name + \
+           str(int(config.IMAGE_H)) + 'x' + \
+           str(int(config.IMAGE_W))  + '_ann/'
+        
+        classDir_main_to_imgs = classDirMain + feature_name.split('/')[-2] + '/'  
+        
+        # make a temp record file to see how big each file is, on avearge
+        # write one image file and see how big it is
+        record_file = config.tmp_storage_dir+'TMPTFRECORD_test.tfrecords'
+        # what is our max boxes
+        maxboxes = -1
+        for a in annotations:
+            a = classDir_main_to + a.split('/')[-1]
+            try:
+                imgs_name, bbox = parse_annotation([a], LABELS,
+                                                   feature_dir=classDir_main_to_imgs,
+                                                   annotation_dir=classDir_main_to) 
+            except:
+                print('no file', a)
+            if len(bbox) > 0:
+                maxboxes = max([maxboxes,len(bbox[0])])
+
+        # print with maxboxes
+        with tf.io.TFRecordWriter(record_file) as writer:
+
+            a = classDir_main_to + filelist[0].split('/')[-1]
+            imgs_name, bbox = parse_annotation([a], LABELS,
+                                                   feature_dir=classDir_main_to_imgs,
+                                                   annotation_dir=classDir_main_to) 
+            # fake boxes
+            fakebox = np.random.random([maxboxes,5])
+            tf_example = image_example(arr,fakebox)
+            writer.write(tf_example.SerializeToString())
+            
+        # optimize to ~100Mb a file -- https://docs.w3cub.com/tensorflow~guide/performance/performance_guide
+        filesize = os.path.getsize(record_file)
+        #filesize, filesize/(100.*1e6)
+        #i.e we want:
+        nfiles_per_file = 100*1e6//filesize
+        nfiles = int(np.ceil(len(filelist)*1.0/nfiles_per_file))
+        
+        
+        splitsnames = ['train','valid','test']
+        for sp in splitsnames:
+            filelist1 = pd.read_csv(config.tmp_storage_dir+sp+'.csv',
+                                   names=['filename'])['filename'].values
+            # check for empty files
+            filelist = []
+            for a in filelist1:
+                a = classDir_main_to + a.split('/')[-1]
+                try:
+                    imgs_name, bbox = parse_annotation([a], LABELS,
+                                                       feature_dir=classDir_main_to_imgs,
+                                                       annotation_dir=classDir_main_to) 
+                    filelist.append(imgs_name[0])
+                except:
+                    print('no file', a)    
+                    
+            itrain = 0
+            record_file = binaries_file+sp+'_{}.tfrecords'
+
+            itotalLoop = 0
+            for index in range(nfiles):
+                if index%50 == 0: print('on', index,'of',nfiles)
+                with tf.io.TFRecordWriter(record_file.format(index)) as writer:
+                    for iloop,a in enumerate(filelist[index*int(nfiles_per_file):min([(index+1)*int(nfiles_per_file),len(filelist)])]):
+                        #print(iloop,a)
+                        a = classDir_main_to + a.split('/')[-1]
+
+                        try:
+                            imgs_name, bbox = parse_annotation([a], LABELS,
+                                                               feature_dir=classDir_main_to_imgs,
+                                                               annotation_dir=classDir_main_to)
+                        except:
+                            print('STILL cant find', a, ', moving on...')
+                            continue
+                        arr = np.load(imgs_name[0])['arr_0']
+
+                        if len(bbox) > 0: 
+                            bbox = np.array(bbox[0])
+                        else:
+                            bbox = np.array([])
+                        tf_example = image_example(arr,bbox)
+                        writer.write(tf_example.SerializeToString())
+            

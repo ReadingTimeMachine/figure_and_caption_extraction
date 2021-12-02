@@ -547,16 +547,21 @@ def generate_single_feature(df, LABELS, maxboxes, feature_list = None, debug=Fal
         ender='.pickle'
         with open(binary_dir+fname+'.pickle', 'wb') as ff:
             pickle.dump([imgout], ff)
-    elif 'tfrecord' in astype:
-        ender = '.tfrecord'
-        # have to also get annotations
-        imgs_name, bbox = parse_annotation([classDir_main_to+fname+'.xml'], 
-                                           LABELS,
-                                           feature_dir='',
-                                           annotation_dir=classDir_main_to,
-                                          check_for_file=False) 
-        array_to_tfrecords(imgout, bbox, 
-                           binary_dir+fname+ender)
+    elif 'tfrecord' in astype: 
+    # just for ease -- we are going to save in a tmp place, then re-write
+        with open(config.tmp_storage_dir + 'TMPTFRECORD_'+fname+'.npz', 'wb') as f:
+            np.savez_compressed(f, imgout) # 20 M/file for floats
+        binary_dir = config.tmp_storage_dir; fname = 'TMPTFRECORD_'+fname
+        
+        # ender = '.tfrecord'
+        # # have to also get annotations
+        # imgs_name, bbox = parse_annotation([classDir_main_to+fname+'.xml'], 
+        #                                    LABELS,
+        #                                    feature_dir='',
+        #                                    annotation_dir=classDir_main_to,
+        #                                   check_for_file=False) 
+        # array_to_tfrecords(imgout, bbox, 
+        #                    binary_dir+fname+ender)
             
     del imgout
     del imgOrig
