@@ -38,7 +38,7 @@ angles = np.array([0, 90, 180, 270]) #options
 steps = round(256./len(angles))
 
 # if we want to write to recordio
-def array_to_tfrecords(X, boxes, output_file):
+def array_to_tfrecords(X, boxes, output_file, maxboxes):
     if len(boxes)>0:
         x1 = boxes[0][:,0]; y1 = boxes[0][:,1]; x2 = boxes[0][:,2]; y2 = boxes[0][:,3]
         classes = boxes[0][:,4]
@@ -63,7 +63,7 @@ def array_to_tfrecords(X, boxes, output_file):
 
     
     
-def generate_single_feature(df, feature_list = None, debug=False, 
+def generate_single_feature(df, LABELS, maxboxes, feature_list = None, debug=False, 
                             binary_dir = None, feature_invert=None, 
                            mode='L',maxTag = 125, save_type='uint8', 
                            astype='tfrecord',npzcompressed=False, npysave=False):

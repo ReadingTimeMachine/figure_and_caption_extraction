@@ -118,6 +118,9 @@ from feature_generation_utils import generate_single_feature
 
 from general_utils import parse_annotation
 
+from post_processing_utils import parse_annotations_to_labels
+
+
 # general debug
 debug = False
 
@@ -168,7 +171,13 @@ wsInds = np.linspace(0,len(annotations)-1,len(annotations)).astype('int')
 #wsInds = wsInds[:2]
 mod_output = 100
                    
-                   
+LABELS, labels, slabels, \
+  CLASS, annotations, Y_full, maxboxes = parse_annotations_to_labels(imgDirAnn, 
+                                                           '', 
+                                                           benchmark=True,
+                                                          return_max_boxes=True)
+if yt.is_root():
+    print('maximum number of boxes = ',maxboxes), 
 
 # lets do this thing...
 if yt.is_root(): print('Making new features...')
@@ -186,7 +195,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     dfsingle = df.loc[fname+'.jpeg']
         
     # if we've made it this far, let's generate features
-    feature_name = generate_single_feature(dfsingle, feature_list = feature_list, 
+    feature_name = generate_single_feature(dfsingle, LABELS, maxboxes, 
+                                           feature_list = feature_list, 
                                            binary_dir = binaries_file, 
                                            mode=mode, maxTag=maxTag)
     

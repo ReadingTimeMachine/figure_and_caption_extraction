@@ -28,7 +28,8 @@ image_size = config.IMAGE_H # assume square I guess?
 threshold = config.threshold
 max_boxes = config.max_boxes
 
-def parse_annotations_to_labels(classDir_main_to, testListFile, benchmark=False):
+def parse_annotations_to_labels(classDir_main_to, testListFile, 
+                                benchmark=False, return_max_boxes=False):
     # from test file instead (from Google Collab splits)
     if not benchmark:
         with open(testListFile, 'r') as f:
@@ -48,7 +49,7 @@ def parse_annotations_to_labels(classDir_main_to, testListFile, benchmark=False)
     # NEXT: do a quick test run-through of the data generator for train/test splits
     X_full = np.array(annotations)
     Y_full_str = np.array([]) # have to loop and give best guesses for the pages that have multiple images/classes in them
-    slabels = []
+    slabels = []; maxboxes = -1
     for X in X_full:
         tree = ET.parse(X)
         tags = []
@@ -62,6 +63,7 @@ def parse_annotations_to_labels(classDir_main_to, testListFile, benchmark=False)
         if len(tags)>0: 
             modeClass = stats.mode(tags).mode[0] # most frequent class that pops up on this page
             Y_full_str = np.append(Y_full_str, modeClass) # class in string
+        maxboxes = max([len(tags),maxboxes])
 
     # NOTE: you need the full range of annotions to get ALL the labels:
     Y_full_str2 = np.array([]) # have to loop and give best guesses for the pages that have multiple images/classes in them
@@ -97,7 +99,11 @@ def parse_annotations_to_labels(classDir_main_to, testListFile, benchmark=False)
 
     Y_full = np.array(Y_full)
     
-    return LABELS, labels, slabels, CLASS, annotations, Y_full
+    if not return_max_boxes:
+        return LABELS, labels, slabels, CLASS, annotations, Y_full
+    else:
+        return LABELS, labels, slabels, CLASS, annotations, Y_full, maxboxes
+        
 
 
 # ------- not 100% sure if we uses these -----------
