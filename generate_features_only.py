@@ -155,6 +155,12 @@ def create_stuff(lock):
         with open(config.save_binary_dir + 'done','w') as ffd:
             print('done!',file=ffd)
         print(config.save_binary_dir + 'done')
+        # create records files and delete others
+        if not os.path.exists(config.tmp_storage_dir+'TMPTFRECORD/'):
+            os.mkdir(config.tmp_storage_dir+'TMPTFRECORD/')
+        # remove, remake
+        shutil.rmtree(config.tmp_storage_dir+'TMPTFRECORD/')
+        os.mkdir(config.tmp_storage_dir+'TMPTFRECORD/')
 
 # in theory, this should stop the parallel stuff until the folder
 #. has been created, but I'm not 100% sure on this one
@@ -170,7 +176,7 @@ annotations = glob(imgDirAnn+'*.xml')
 my_storage = {}
 wsInds = np.linspace(0,len(annotations)-1,len(annotations)).astype('int')
 # debug
-#wsInds = wsInds[:2]
+wsInds = wsInds[:2]
 mod_output = 100
                    
 LABELS, labels, slabels, \
@@ -208,6 +214,7 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
 # if was records file, do a conversion
 if yt.is_root():
     if 'TMPTFRECORD_' in feature_name: # we have done temp storage
+        import tensorflow as tf
         # note: y_* aren't actually used anywhere
         if splits_directory is None:
             print('not totally implemented yet!!!!')
@@ -270,31 +277,40 @@ if yt.is_root():
            str(int(config.IMAGE_H)) + 'x' + \
            str(int(config.IMAGE_W))  + '_ann/'
         
-        classDir_main_to_imgs = classDirMain + feature_name.split('/')[-2] + '/'  
+        classDir_main_to_imgs = config.save_binary_dir + feature_name.split('/')[-2] + '/'  
         
         # make a temp record file to see how big each file is, on avearge
         # write one image file and see how big it is
         record_file = config.tmp_storage_dir+'TMPTFRECORD_test.tfrecords'
-        # what is our max boxes
-        maxboxes = -1
-        for a in annotations:
-            a = classDir_main_to + a.split('/')[-1]
-            try:
-                imgs_name, bbox = parse_annotation([a], LABELS,
-                                                   feature_dir=classDir_main_to_imgs,
-                                                   annotation_dir=classDir_main_to) 
-            except:
-                print('no file', a)
-            if len(bbox) > 0:
-                maxboxes = max([maxboxes,len(bbox[0])])
+        # # what is our max boxes
+        # maxboxes = -1
+        # for a in annotations:
+        #     bbox=[]
+        #     a = classDir_main_to + a.split('/')[-1]
+        #     try:
+        #         imgs_name, bbox = parse_annotation([a], LABELS,
+        #                                            feature_dir=classDir_main_to_imgs,
+        #                                            annotation_dir=classDir_main_to) 
+        #     except:
+        #         print('no file', a)
+        #     if len(bbox) > 0:
+        #         maxboxes = max([maxboxes,len(bbox[0])])
 
         # print with maxboxes
         with tf.io.TFRecordWriter(record_file) as writer:
-
-            a = classDir_main_to + filelist[0].split('/')[-1]
-            imgs_name, bbox = parse_annotation([a], LABELS,
-                                                   feature_dir=classDir_main_to_imgs,
-                                                   annotation_dir=classDir_main_to) 
+            # make sure file is there
+            success = False
+            ia=0
+            while not success:
+                try:
+                    a = classDir_main_to + filelist[ia].split('/')[-1]
+                    imgs_name, bbox = parse_annotation([a], LABELS,
+                                                           feature_dir=classDir_main_to_imgs+'TMPTFRECORD_',
+                                                           annotation_dir=classDir_main_to) 
+                    success = True
+                except:
+                    print('no', a,ia)
+                    ia+=1
             # fake boxes
             fakebox = np.random.random([maxboxes,5])
             tf_example = image_example(arr,fakebox)

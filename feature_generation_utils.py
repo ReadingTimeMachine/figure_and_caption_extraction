@@ -549,9 +549,10 @@ def generate_single_feature(df, LABELS, maxboxes, feature_list = None, debug=Fal
             pickle.dump([imgout], ff)
     elif 'tfrecord' in astype: 
     # just for ease -- we are going to save in a tmp place, then re-write
-        with open(config.tmp_storage_dir + 'TMPTFRECORD_'+fname+'.npz', 'wb') as f:
+        ender='.npz'
+        with open(config.tmp_storage_dir + 'TMPTFRECORD/'+fname+ender, 'wb') as f:
             np.savez_compressed(f, imgout) # 20 M/file for floats
-        binary_dir = config.tmp_storage_dir; fname = 'TMPTFRECORD_'+fname
+        binary_dir = config.tmp_storage_dir; fname = 'TMPTFRECORD/'+fname
         
         # ender = '.tfrecord'
         # # have to also get annotations
