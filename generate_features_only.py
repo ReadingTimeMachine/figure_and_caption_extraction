@@ -226,6 +226,7 @@ if yt.is_root():
             print('not totally implemented yet!!!!')
             import sys; sys.exit()
             # but it would go something like...
+#            train_per = config.train_per # ...
 #             X_train, y_train, X_valid, y_valid,\
 #                X_test, y_test = train_test_valid_split(X_full, Y_full,
 #                                                        train_size = train_per, 

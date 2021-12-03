@@ -278,11 +278,6 @@ def process_box(boxes, labels,anchors,CLASS):
     boxes: [number of boxes on page, xmin, ymin, xmax, ymax]
     returns: the correctly formatted 3 y-trues
     '''
-    anchors_mask = [[6, 7, 8], [3, 4, 5], [0, 1, 2]]
-    #anchors = anchors
-    box_centers = (boxes[:, 0:2] + boxes[:, 2:4]) / 2
-    box_size = boxes[:, 2:4] - boxes[:, 0:2]
-
     y_true_1 = np.zeros((image_size // 32,
                             image_size // 32,
                             3, 5 + CLASS), np.float32)
@@ -292,44 +287,53 @@ def process_box(boxes, labels,anchors,CLASS):
     y_true_3 = np.zeros((image_size // 8,
                             image_size // 8,
                             3, 5 + CLASS), np.float32)
+    
+    
+    # if empty boxes, don't bother!
+    if not tf.equal(tf.size(boxes),0):
+        anchors_mask = [[6, 7, 8], [3, 4, 5], [0, 1, 2]]
+        #anchors = anchors
+        box_centers = (boxes[:, 0:2] + boxes[:, 2:4]) / 2
+        box_size = boxes[:, 2:4] - boxes[:, 0:2]
 
-    y_true = [y_true_1, y_true_2, y_true_3]
 
-    box_size = np.expand_dims(box_size, 1)
+        y_true = [y_true_1, y_true_2, y_true_3]
 
-    min_np = np.maximum(- box_size / 2, - anchors / 2)
-    max_np = np.minimum(box_size / 2, anchors / 2)
+        box_size = np.expand_dims(box_size, 1)
 
-    whs = max_np - min_np
+        min_np = np.maximum(- box_size / 2, - anchors / 2)
+        max_np = np.minimum(box_size / 2, anchors / 2)
 
-    overlap = whs[:, :, 0] * whs[:, :, 1]
-    union = box_size[:, :, 0] * box_size[:, :, 1] + anchors[:, 0] * anchors[:, 1] - whs[:, :, 0] * whs[:, :, 1] + 1e-10
+        whs = max_np - min_np
 
-    iou = overlap / union
-    best_match_idx = np.argmax(iou, axis=1)
+        overlap = whs[:, :, 0] * whs[:, :, 1]
+        union = box_size[:, :, 0] * box_size[:, :, 1] + anchors[:, 0] * anchors[:, 1] - whs[:, :, 0] * whs[:, :, 1] + 1e-10
 
-    ratio_dict = {1.: 8., 2.: 16., 3.: 32.}
-    for i, idx in enumerate(best_match_idx):
-        feature_map_group = 2 - idx // 3
-        ratio = ratio_dict[np.ceil((idx + 1) / 3.)]
-        x = int(np.floor(box_centers[i, 0] / ratio))
-        y = int(np.floor(box_centers[i, 1] / ratio))
-        k = anchors_mask[feature_map_group].index(idx)
-        c = labels[i]
-        if type(c) != np.ndarray:
-            c = labels[i].numpy().astype('int')
+        iou = overlap / union
+        best_match_idx = np.argmax(iou, axis=1)
 
-            
-        y_true[feature_map_group][y, x, k, :2] = box_centers[i]
-        y_true[feature_map_group][y, x, k, 2:4] = box_size[i]
-        y_true[feature_map_group][y, x, k, 4] = 1.
-        try:
-            #y_true[feature_map_group][y, x, k, 5 + c] = 1.
-            y_true[feature_map_group][y, x, k, 5 + c -1] = 1. # labels start at 0
-        except:
-            print('in parse')
-            print(y,x,k,c, 5+c)
-            print(labels)
+        ratio_dict = {1.: 8., 2.: 16., 3.: 32.}
+        for i, idx in enumerate(best_match_idx):
+            feature_map_group = 2 - idx // 3
+            ratio = ratio_dict[np.ceil((idx + 1) / 3.)]
+            x = int(np.floor(box_centers[i, 0] / ratio))
+            y = int(np.floor(box_centers[i, 1] / ratio))
+            k = anchors_mask[feature_map_group].index(idx)
+            c = labels[i]
+            if type(c) != np.ndarray:
+                c = labels[i].numpy().astype('int')
+
+
+            y_true[feature_map_group][y, x, k, :2] = box_centers[i]
+            y_true[feature_map_group][y, x, k, 2:4] = box_size[i]
+            y_true[feature_map_group][y, x, k, 4] = 1.
+            try:
+                #y_true[feature_map_group][y, x, k, 5 + c] = 1.
+                y_true[feature_map_group][y, x, k, 5 + c -1] = 1. # labels start at 0
+            except:
+                print('in parse')
+                print(y,x,k,c, 5+c)
+                print(labels)
 
     return y_true_1, y_true_2, y_true_3
 

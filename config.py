@@ -96,6 +96,11 @@ check_parse = True
 # what type of file do you want to store TFRecords is HIGHLY recommended
 astype = 'tfrecord'
 
+# what about splits?
+train_per = 0.75
+valid_per = 0.15
+test_per = 0.10
+
 # ------  Yolo Parameters ---------
 
 IMAGE_W = 512
