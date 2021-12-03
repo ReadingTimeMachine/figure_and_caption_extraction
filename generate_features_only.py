@@ -176,7 +176,7 @@ annotations = glob(imgDirAnn+'*.xml')
 my_storage = {}
 wsInds = np.linspace(0,len(annotations)-1,len(annotations)).astype('int')
 # debug
-wsInds = wsInds[:2]
+#wsInds = wsInds[:2]
 mod_output = 100
                    
 LABELS, labels, slabels, \
