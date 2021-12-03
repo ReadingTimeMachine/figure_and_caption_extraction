@@ -327,6 +327,7 @@ if yt.is_root():
         
         splitsnames = ['train','valid','test']
         for sp in splitsnames:
+            print('-----------', sp, '--------------')
             filelist1 = pd.read_csv(config.tmp_storage_dir+sp+'.csv',
                                    names=['filename'])['filename'].values
             # check for empty files
