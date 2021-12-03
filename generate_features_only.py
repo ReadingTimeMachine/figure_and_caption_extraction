@@ -78,7 +78,7 @@ feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confid
                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
 # call these something new?
-binaries_file = 'model8_tfrecord'
+binaries_file = 'model8_tfrecordz'
 
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
@@ -252,7 +252,7 @@ if yt.is_root():
             return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
         
         # Create a dictionary with features that may be relevant.
-        def image_example(image, boxes):
+        def image_example(image, boxes, img_name):
             #image_shape = tf.io.decode_jpeg(image_string).shape
             image_string = image.astype('float32')/255.0
             image_string = image.reshape(image.shape[0]*image.shape[1]*image.shape[2])
@@ -269,6 +269,7 @@ if yt.is_root():
               'nfeatures': _float_feature(np.float32(nfeatures)),
               'boxes': _bytes_feature(boxout.astype('float32').tobytes()),
               'image_raw': _bytes_feature(image_string.astype('float32').tobytes()),
+              'image_name': _bytes_feature(img_name.astype('float32').tobytes()),
             }
 
             return tf.train.Example(features=tf.train.Features(feature=feature))  
@@ -282,47 +283,39 @@ if yt.is_root():
         # make a temp record file to see how big each file is, on avearge
         # write one image file and see how big it is
         record_file = config.tmp_storage_dir+'TMPTFRECORD/test.tfrecords'
-        # # what is our max boxes
-        # maxboxes = -1
-        # for a in annotations:
-        #     bbox=[]
-        #     a = classDir_main_to + a.split('/')[-1]
-        #     try:
-        #         imgs_name, bbox = parse_annotation([a], LABELS,
-        #                                            feature_dir=classDir_main_to_imgs,
-        #                                            annotation_dir=classDir_main_to) 
-        #     except:
-        #         print('no file', a)
-        #     if len(bbox) > 0:
-        #         maxboxes = max([maxboxes,len(bbox[0])])
-
-        # print with maxboxes
-        with tf.io.TFRecordWriter(record_file) as writer:
+        compress = 'GZIP'
+        tf_record_options = tf.io.TFRecordOptions(compression_type = compression) 
+        
+        #with tf.io.TFRecordWriter(record_file) as writer:
+        with tf.io.TFRecordWriter(record_file, options=tf_record_options) as writer:
             # make sure file is there
             success = False
             ia=0
             while not success:
                 a = classDir_main_to + annotations[ia].split('/')[-1]
-                #try:
-                if True:
+                try:
+                #if True:
                     imgs_name, bbox = parse_annotation([a], LABELS,
                                                            feature_dir=config.tmp_storage_dir+'TMPTFRECORD/',
                                                            annotation_dir=classDir_main_to) 
                     arr = np.load(imgs_name[0])['arr_0']
                     success = True
-                #except:
-                #    print('no', a,ia)
-                #    ia+=1
+                except:
+                    print('no', a,ia)
+                    ia+=1
             # fake boxes
             fakebox = np.random.random([maxboxes,5])
-            tf_example = image_example(arr,fakebox)
+            tf_example = image_example(arr,fakebox,imgs_name[0])
             writer.write(tf_example.SerializeToString())
             
         # optimize to ~100Mb a file -- https://docs.w3cub.com/tensorflow~guide/performance/performance_guide
         filesize = os.path.getsize(record_file)
-        #filesize, filesize/(100.*1e6)
         #i.e we want:
         nfiles_per_file = 100*1e6//filesize
+        # downgrade for compression
+        if compress is not None:
+            nfiles_per_file = nfiles_per_file/100.0
+        print('there will be', nfiles_per_file, 'images+labels per TFrecord')
         
         
         splitsnames = ['train','valid','test']
@@ -349,7 +342,7 @@ if yt.is_root():
             itotalLoop = 0
             for index in range(nfiles):
                 if index%50 == 0: print('on', index,'of',nfiles)
-                with tf.io.TFRecordWriter(record_file.format(index)) as writer:
+                with tf.io.TFRecordWriter(record_file.format(index), options=tf_record_options) as writer:
                     for iloop,a in enumerate(filelist[index*int(nfiles_per_file):min([(index+1)*int(nfiles_per_file),len(filelist)])]):
                         #print(iloop,a)
                         a = classDir_main_to + a.split('/')[-1].split('.npz')[0] + '.xml'
@@ -367,7 +360,7 @@ if yt.is_root():
                             bbox = np.array(bbox[0])
                         else:
                             bbox = np.array([])
-                        tf_example = image_example(arr,bbox)
+                        tf_example = image_example(arr,bbox,imgs_name[0])
                         writer.write(tf_example.SerializeToString())
                         
         # remove all tmp files
