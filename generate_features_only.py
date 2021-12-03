@@ -213,7 +213,7 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     
 # if was records file, do a conversion
 if yt.is_root():
-    if 'TMPTFRECORD_' in feature_name: # we have done temp storage
+    if 'TMPTFRECORD/' in feature_name: # we have done temp storage
         import tensorflow as tf
         # note: y_* aren't actually used anywhere
         if splits_directory is None:
@@ -281,7 +281,7 @@ if yt.is_root():
         
         # make a temp record file to see how big each file is, on avearge
         # write one image file and see how big it is
-        record_file = config.tmp_storage_dir+'TMPTFRECORD_test.tfrecords'
+        record_file = config.tmp_storage_dir+'TMPTFRECORD/test.tfrecords'
         # # what is our max boxes
         # maxboxes = -1
         # for a in annotations:
@@ -302,15 +302,16 @@ if yt.is_root():
             success = False
             ia=0
             while not success:
-                try:
-                    a = classDir_main_to + filelist[ia].split('/')[-1]
+                a = classDir_main_to + annotations[ia].split('/')[-1]
+                #try:
+                if True:
                     imgs_name, bbox = parse_annotation([a], LABELS,
-                                                           feature_dir=classDir_main_to_imgs+'TMPTFRECORD_',
+                                                           feature_dir=config.tmp_storage_dir+'TMPTFRECORD/',
                                                            annotation_dir=classDir_main_to) 
                     success = True
-                except:
-                    print('no', a,ia)
-                    ia+=1
+                #except:
+                #    print('no', a,ia)
+                #    ia+=1
             # fake boxes
             fakebox = np.random.random([maxboxes,5])
             tf_example = image_example(arr,fakebox)
