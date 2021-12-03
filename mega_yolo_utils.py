@@ -316,7 +316,10 @@ def process_box(boxes, labels,anchors,CLASS):
         y = int(np.floor(box_centers[i, 1] / ratio))
         k = anchors_mask[feature_map_group].index(idx)
         c = labels[i]
+        if type(c) != np.ndarray:
+            c = labels[i].numpy().astype('int')
 
+            
         y_true[feature_map_group][y, x, k, :2] = box_centers[i]
         y_true[feature_map_group][y, x, k, 2:4] = box_size[i]
         y_true[feature_map_group][y, x, k, 4] = 1.

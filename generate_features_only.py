@@ -220,22 +220,22 @@ if yt.is_root():
             print('not totally implemented yet!!!!')
             import sys; sys.exit()
             # but it would go something like...
-            X_train, y_train, X_valid, y_valid,\
-               X_test, y_test = train_test_valid_split(X_full, Y_full,
-                                                       train_size = train_per, 
-                                                       valid_size = valid_per, 
-                                                       test_size = test_per, 
-                                                       textClassification=True, 
-                                                       asInts=False)
+#             X_train, y_train, X_valid, y_valid,\
+#                X_test, y_test = train_test_valid_split(X_full, Y_full,
+#                                                        train_size = train_per, 
+#                                                        valid_size = valid_per, 
+#                                                        test_size = test_per, 
+#                                                        textClassification=True, 
+#                                                        asInts=False)
 
-            print('We have AT LEAST', len(X_train), 'training,', 
-                  len(X_valid), 'validation,', 
-                  len(X_test), 'test instances.')
+#             print('We have AT LEAST', len(X_train), 'training,', 
+#                   len(X_valid), 'validation,', 
+#                   len(X_test), 'test instances.')
 
-            # write files for splits
-            np.savetxt(splitsDir + 'train.csv', X_train, fmt='%s', delimiter=',')
-            np.savetxt(splitsDir + 'test.csv', X_test, fmt='%s', delimiter=',')
-            np.savetxt(splitsDir + 'valid.csv', X_valid, fmt='%s', delimiter=',')
+#             # write files for splits
+#             np.savetxt(splitsDir + 'train.csv', X_train, fmt='%s', delimiter=',')
+#             np.savetxt(splitsDir + 'test.csv', X_test, fmt='%s', delimiter=',')
+#             np.savetxt(splitsDir + 'valid.csv', X_valid, fmt='%s', delimiter=',')
             
         def _bytes_feature(value):
             """Returns a bytes_list from a string / byte."""
@@ -250,6 +250,9 @@ if yt.is_root():
         def _int64_feature(value):
             """Returns an int64_list from a bool / enum / int / uint."""
             return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+        
+        # first off, save labels as CSV
+        np.savetxt(binaries_file + 'LABELS.csv', LABELS, fmt='%s', delimiter=',')        
         
         # Create a dictionary with features that may be relevant.
         def image_example(image, boxes, img_name):
@@ -269,7 +272,7 @@ if yt.is_root():
               'nfeatures': _float_feature(np.float32(nfeatures)),
               'boxes': _bytes_feature(boxout.astype('float32').tobytes()),
               'image_raw': _bytes_feature(image_string.astype('float32').tobytes()),
-              'image_name': _bytes_feature(img_name.astype('float32').tobytes()),
+              'image_name': _bytes_feature(img_name.tobytes()),
             }
 
             return tf.train.Example(features=tf.train.Features(feature=feature))  
@@ -284,7 +287,7 @@ if yt.is_root():
         # write one image file and see how big it is
         record_file = config.tmp_storage_dir+'TMPTFRECORD/test.tfrecords'
         compress = 'GZIP'
-        tf_record_options = tf.io.TFRecordOptions(compression_type = compression) 
+        tf_record_options = tf.io.TFRecordOptions(compression_type = compress) 
         
         #with tf.io.TFRecordWriter(record_file) as writer:
         with tf.io.TFRecordWriter(record_file, options=tf_record_options) as writer:
@@ -313,8 +316,10 @@ if yt.is_root():
         #i.e we want:
         nfiles_per_file = 100*1e6//filesize
         # downgrade for compression
+        ndiv = 100.0 # about 1-2Mb/file
+        ndiv = 10.0
         if compress is not None:
-            nfiles_per_file = nfiles_per_file/100.0
+            nfiles_per_file = nfiles_per_file/ndiv
         print('there will be', nfiles_per_file, 'images+labels per TFrecord')
         
         
@@ -341,7 +346,7 @@ if yt.is_root():
 
             itotalLoop = 0
             for index in range(nfiles):
-                if index%50 == 0: print('on', index,'of',nfiles)
+                if index%10 == 0: print('on', index,'of',nfiles)
                 with tf.io.TFRecordWriter(record_file.format(index), options=tf_record_options) as writer:
                     for iloop,a in enumerate(filelist[index*int(nfiles_per_file):min([(index+1)*int(nfiles_per_file),len(filelist)])]):
                         #print(iloop,a)
