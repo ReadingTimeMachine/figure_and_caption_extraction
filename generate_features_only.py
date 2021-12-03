@@ -308,6 +308,7 @@ if yt.is_root():
                     imgs_name, bbox = parse_annotation([a], LABELS,
                                                            feature_dir=config.tmp_storage_dir+'TMPTFRECORD/',
                                                            annotation_dir=classDir_main_to) 
+                    arr = np.load(imgs_name[0])['arr_0']
                     success = True
                 #except:
                 #    print('no', a,ia)
@@ -322,7 +323,6 @@ if yt.is_root():
         #filesize, filesize/(100.*1e6)
         #i.e we want:
         nfiles_per_file = 100*1e6//filesize
-        nfiles = int(np.ceil(len(filelist)*1.0/nfiles_per_file))
         
         
         splitsnames = ['train','valid','test']
@@ -335,12 +335,13 @@ if yt.is_root():
                 a = classDir_main_to + a.split('/')[-1]
                 try:
                     imgs_name, bbox = parse_annotation([a], LABELS,
-                                                       feature_dir=classDir_main_to_imgs,
+                                                       feature_dir=config.tmp_storage_dir+'TMPTFRECORD/',
                                                        annotation_dir=classDir_main_to) 
                     filelist.append(imgs_name[0])
                 except:
                     print('no file', a)    
                     
+            nfiles = int(np.ceil(len(filelist)*1.0/nfiles_per_file))
             itrain = 0
             record_file = binaries_file+sp+'_{}.tfrecords'
 
@@ -350,11 +351,11 @@ if yt.is_root():
                 with tf.io.TFRecordWriter(record_file.format(index)) as writer:
                     for iloop,a in enumerate(filelist[index*int(nfiles_per_file):min([(index+1)*int(nfiles_per_file),len(filelist)])]):
                         #print(iloop,a)
-                        a = classDir_main_to + a.split('/')[-1]
+                        a = classDir_main_to + a.split('/')[-1].split('.npz')[0] + '.xml'
 
                         try:
                             imgs_name, bbox = parse_annotation([a], LABELS,
-                                                               feature_dir=classDir_main_to_imgs,
+                                                               feature_dir=config.tmp_storage_dir+'TMPTFRECORD/',
                                                                annotation_dir=classDir_main_to)
                         except:
                             print('STILL cant find', a, ', moving on...')
@@ -367,4 +368,7 @@ if yt.is_root():
                             bbox = np.array([])
                         tf_example = image_example(arr,bbox)
                         writer.write(tf_example.SerializeToString())
+                        
+        # remove all tmp files
+        shutil.rmtree(config.tmp_storage_dir+'TMPTFRECORD/')
             
