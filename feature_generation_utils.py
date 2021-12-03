@@ -66,7 +66,7 @@ def array_to_tfrecords(X, boxes, output_file, maxboxes):
 def generate_single_feature(df, LABELS, maxboxes, feature_list = None, debug=False, 
                             binary_dir = None, feature_invert=None, 
                            mode='L',maxTag = 125, save_type='uint8', 
-                           astype='tfrecord',npzcompressed=False, npysave=False):
+                           astype=None,npzcompressed=False, npysave=False):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
@@ -78,6 +78,7 @@ def generate_single_feature(df, LABELS, maxboxes, feature_list = None, debug=Fal
     if feature_list is None: feature_list = config.feature_list
     if binary_dir is None: binary_dir = config.save_binary_dir+'binaries/'
     if feature_invert is None: feature_invert = config.feature_invert
+    if astype is None: astype = config.astype
     classDirMain = config.save_binary_dir #+ fileStorage
     classDir_main_to = classDirMain + config.ann_name + str(int(config.IMAGE_H))\
       + 'x' + str(int(config.IMAGE_W))  + '_ann/'

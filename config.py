@@ -93,6 +93,9 @@ check_nans = True
 # check that we can parse everything OK?
 check_parse = True
 
+# what type of file do you want to store TFRecords is HIGHLY recommended
+astype = 'tfrecord'
+
 # ------  Yolo Parameters ---------
 
 IMAGE_W = 512

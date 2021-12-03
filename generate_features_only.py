@@ -126,6 +126,7 @@ from post_processing_utils import parse_annotations_to_labels
 # general debug
 debug = False
 
+
 # ----------------------------------------------
 
 # let's get all of the ocr files
@@ -151,16 +152,21 @@ def create_stuff(lock):
         # check these all exist, but don't over write the directories like for annotaitons
         if not os.path.exists(binaries_file):
             os.mkdir(binaries_file)  
-        # done
-        with open(config.save_binary_dir + 'done','w') as ffd:
-            print('done!',file=ffd)
-        print(config.save_binary_dir + 'done')
+        # ... unless tfrecords -- don't want to keep writing
+        if config.astype == 'tfrecord':
+            # remove, remake
+            shutil.rmtree(binaries_file)
+            os.mkdir(binaries_file)
         # create records files and delete others
         if not os.path.exists(config.tmp_storage_dir+'TMPTFRECORD/'):
             os.mkdir(config.tmp_storage_dir+'TMPTFRECORD/')
         # remove, remake
         shutil.rmtree(config.tmp_storage_dir+'TMPTFRECORD/')
         os.mkdir(config.tmp_storage_dir+'TMPTFRECORD/')
+        # done
+        with open(config.save_binary_dir + 'done','w') as ffd:
+            print('done!',file=ffd)
+        print(config.save_binary_dir + 'done')
 
 # in theory, this should stop the parallel stuff until the folder
 #. has been created, but I'm not 100% sure on this one
@@ -274,7 +280,6 @@ if yt.is_root():
               'image_raw': _bytes_feature(image_string.astype('float32').tobytes()),
               'image_name': _bytes_feature(img_name.tobytes()),
             }
-
             return tf.train.Example(features=tf.train.Features(feature=feature))  
         
         classDir_main_to = config.save_binary_dir + config.ann_name + \
@@ -316,8 +321,9 @@ if yt.is_root():
         #i.e we want:
         nfiles_per_file = 100*1e6//filesize
         # downgrade for compression
-        ndiv = 100.0 # about 1-2Mb/file
-        ndiv = 10.0
+        #ndiv = 100.0 # about 1-2Mb/file
+        #ndiv = 10.0 # about 34Mb/file
+        ndiv = 4.0 # maybe ~85Mb/file (?)
         if compress is not None:
             nfiles_per_file = nfiles_per_file/ndiv
         print('there will be', nfiles_per_file, 'images+labels per TFrecord')
@@ -344,9 +350,10 @@ if yt.is_root():
             itrain = 0
             record_file = binaries_file+sp+'_{}.tfrecords'
 
+            # if I was clever I would do this in parallel but...
             itotalLoop = 0
             for index in range(nfiles):
-                if index%10 == 0: print('on', index,'of',nfiles)
+                if index%1 == 0: print('on', index,'of',nfiles)
                 with tf.io.TFRecordWriter(record_file.format(index), options=tf_record_options) as writer:
                     for iloop,a in enumerate(filelist[index*int(nfiles_per_file):min([(index+1)*int(nfiles_per_file),len(filelist)])]):
                         #print(iloop,a)
@@ -370,4 +377,5 @@ if yt.is_root():
                         
         # remove all tmp files
         shutil.rmtree(config.tmp_storage_dir+'TMPTFRECORD/')
+        print('All done!')
             
