@@ -2,95 +2,104 @@
 import config
 # for tfrecords -- set to None for re-do of splits
 splits_directory = config.tmp_storage_dir
+mode = 'L' # "L" is default for grayscale formatting
+maxTag = 125 # trial? for fraction of words/numbers and punctuation
 
 # # this supercedes what is in the config file
 # feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
 #                 'punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
 
-feature_list = ['grayscale']
-# call these something new?
-binaries_file = 'model1_inverted_palletized'
-#mode = 'P' # "L" is default for grayscale formatting
-mode = 'L' # "L" is default for grayscale formatting
 
-feature_list = ['grayscale','fontsize']
-# call these something new?
-binaries_file = 'model2'
 
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders']
-# call these something new?
-binaries_file = 'model3'
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences']
-# call these something new?
-binaries_file = 'model4'
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation']
-# call these something new?
-binaries_file = 'model5'
-maxTag = 50 # trial? for fractin of ___ and punctuation
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation']
-# call these something new?
-binaries_file = 'model5_maxTag125'
-maxTag = 125 # trial? for fractin of ___ and punctuation
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles']
-# call these something new?
-binaries_file = 'model6'
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS']
-# call these something new?
-binaries_file = 'model7'
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
-# call these something new?
-binaries_file = 'model8'
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
-# call these something new?
-binaries_file = 'model8_pickle'
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
-# call these something new?
-binaries_file = 'model8_noncom'
 
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
 #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
 # # call these something new?
-# binaries_file = 'model8_noncomz'
-
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
-# call these something new?
-binaries_file = 'model8_tfrecordz'
+# binaries_file = 'model8_tfrecordz'
 
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
 #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes']
 # # call these something new?
-# binaries_file = 'model9'
+# binaries_file = 'model9_tfrecordz'
+
+# # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+# #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+# #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes', 'carea boxes']
+# # # call these something new?
+# # binaries_file = 'model10'
+
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS']
+# call these something new?
+binaries_file = 'model7_tfrecordz'
+
+# ----- older -----
+# feature_list = ['grayscale']
+# # call these something new?
+# binaries_file = 'model1_inverted_palletized'
+# #mode = 'P' # "L" is default for grayscale formatting
+# mode = 'L' # "L" is default for grayscale formatting
+
+# feature_list = ['grayscale','fontsize']
+# # call these something new?
+# binaries_file = 'model2'
+
+# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders']
+# # call these something new?
+# binaries_file = 'model3'
+
+# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences']
+# # call these something new?
+# binaries_file = 'model4'
+
+# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word','fraction of letters in a word','punctuation']
+# # call these something new?
+# binaries_file = 'model5'
+# maxTag = 50 # trial? for fractin of ___ and punctuation
+
+# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word','fraction of letters in a word','punctuation']
+# # call these something new?
+# binaries_file = 'model5_maxTag125'
+# maxTag = 125 # trial? for fractin of ___ and punctuation
 
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-#                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes', 'carea boxes']
+#                'text angles']
 # # call these something new?
-# binaries_file = 'model10'
+# binaries_file = 'model6'
+
+
+
+# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+#                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# # call these something new?
+# binaries_file = 'model8'
+
+# # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+# #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+# #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# # # call these something new?
+# # binaries_file = 'model8_pickle'
+
+# # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+# #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+# #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# # # call these something new?
+# # binaries_file = 'model8_noncom'
+
+# # # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+# # #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+# # #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# # # # call these something new?
+# # # binaries_file = 'model8_noncomz'
+
 
 # ----------------------------------------------
 

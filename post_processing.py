@@ -1,31 +1,10 @@
 # set to None if you want to use defaults
-# binary_dirs = 'binaries_model1/'
-# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211111_model1/'
-# weightsFile = 'training_1model1_model_l0.17215717.h5' # figure/table, fig/table captions
 
-# binary_dirs = 'binaries_model2/'
-# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211116_model2/'
-# weightsFile = 'training_1model2_model_l0.13648733.h5' # figure/table, fig/table captions
 
-# binary_dirs = 'binaries_model3/'
-# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211117_model3/'
-# weightsFile = 'training_1model3_model_l0.20664357.h5' # figure/table, fig/table captions
-
-# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211118_model4/'
-# binary_dirs = 'binaries_model4/'
-# weightsFile = 'training_1model4_model_l0.1202761.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model5/'
-# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211124_model5/'
-# weightsFile = 'training_1model5_model_l0.13795476.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model5_maxTag125/'
-# weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211125_model5_maxTag125/'
-# weightsFile = 'training_1model5_maxTag125_model_l0.10710113.h5' # figure/table, fig/table captions
-
-binary_dirs = 'binaries_model6/'
-weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211126_model6/'
-weightsFile = 'training_1model6_model_l0.1766097.h5' # figure/table, fig/table captions
+binary_dirs = 'binaries_model8_tfrecordz/'
+weightsFileDir = save_weights_dir + '20211204_model8tfz/'
+weightsFile = 'training_1model8_tfrec_model_l0.023908472.h5' # figure/table, fig/table captions
+useTFrecords = True
 
 
 #adder = '_mod1' # leave empty to save default file
@@ -81,9 +60,11 @@ diagnostics_dir = config.tmp_storage_dir
 store_diagnostics = config.store_diagnostics
 
 weightsFileDownload = weightsFileDir + weightsFile
-if not benchmark:
+if not benchmark and not useTFrecords:
     testListFile = weightsFileDir + 'testList.csv'
-anchorsFile = weightsFileDir + 'anchors.pickle'
+else:
+    testListFile = ''
+anchorsFile = weightsFileDir + 'anchors.pickle'  # should this be changed....
 
 
 #################################################
@@ -141,7 +122,6 @@ LABELS, labels, slabels, \
 # checks
 if yt.is_root():
     print('LABELS=', LABELS)
-    #print('unique Y_full=',np.unique(Y_full), np.unique(Y_full_str))
     
 # build the model
 model = build_predict(weightsFileDownload, anchorsFile, 
@@ -163,19 +143,6 @@ years, years_list = get_years(dfMakeSense['filename'].values)
 
 
 my_storage = {}
-# # set up annotations CV arrays -- this will calculate spread around metrics
-# inds = np.random.choice(range(len(annotations)),size=len(annotations), replace=False)
-# # split into k-cv indicies
-# ann_inds = []
-# incr = len(annotations)//n_folds_cv
-# for ix in range(n_folds_cv):
-#     for inc in range(incr):
-#         ann_inds.append(ix)
-# while len(inds) > len(ann_inds): # while not perfectly split, add extras to random fold
-#     ann_inds.append(np.random.randint(n_folds_cv))
-# if len(inds) != len(ann_inds): print('issue here!!!'); import sys; sys.exit()
-# sortp = np.argsort(inds)
-# ann_inds = np.array(ann_inds)[sortp]
 
 wsInds = np.arange(0,len(annotations))
 #wsInds = np.arange(0,6) # debug
