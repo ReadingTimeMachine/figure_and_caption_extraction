@@ -613,11 +613,14 @@ def get_true_boxes(a,LABELS, badskews, badannotations, annotation_dir='', featur
 
 
 ########### LOAD IMAGE FEATURES AND IMAGE DATA #####################
-def get_ocr_results(imgs_name, dfMakeSense,dfsave):
+def get_ocr_results(imgs_name, dfMakeSense,dfsave,use_tfrecords=True):
     
-    # feature file
-    image_np = np.load(imgs_name[0])['arr_0']
-    image_np = image_np.astype(np.float32) / 255.0    
+    # # feature file
+    # if not use_tfrecords:
+    #     image_np = np.load(imgs_name[0])['arr_0']
+    #     image_np = image_np.astype(np.float32) / 255.0 
+    # else:
+        
     
     # OCR file/data
     ff = imgs_name[0].split('/')[-1].split('.npz')[0]

@@ -11,12 +11,48 @@ maxTag = 125 # trial? for fraction of words/numbers and punctuation
 
 
 
+feature_list = ['grayscale']
+# call these something new?
+binaries_file = 'model1_tfrecordz'
+
+feature_list = ['grayscale','fontsize']
+# call these something new?
+binaries_file = 'model2_tfrecordz'
+
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders']
+# call these something new?
+binaries_file = 'model3_tfrecordz'
+
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences']
+# call these something new?
+binaries_file = 'model4_tfrecordz'
+
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation']
+# call these something new?
+binaries_file = 'model5_tfrecordz'
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles']
+# call these something new?
+binaries_file = 'model6_tfrecordz'
 
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-#                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+#                'text angles','Spacy POS']
 # # call these something new?
-# binaries_file = 'model8_tfrecordz'
+# binaries_file = 'model7_tfrecordz'
+
+
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# call these something new?
+binaries_file = 'model8_tfrecordz'
 
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
@@ -30,49 +66,15 @@ maxTag = 125 # trial? for fraction of words/numbers and punctuation
 # # # call these something new?
 # # binaries_file = 'model10'
 
-
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS']
-# call these something new?
-binaries_file = 'model7_tfrecordz'
-
-# ----- older -----
-# feature_list = ['grayscale']
-# # call these something new?
-# binaries_file = 'model1_inverted_palletized'
-# #mode = 'P' # "L" is default for grayscale formatting
-# mode = 'L' # "L" is default for grayscale formatting
-
-# feature_list = ['grayscale','fontsize']
-# # call these something new?
-# binaries_file = 'model2'
-
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders']
-# # call these something new?
-# binaries_file = 'model3'
-
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences']
-# # call these something new?
-# binaries_file = 'model4'
-
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-#                 'fraction of numbers in a word','fraction of letters in a word','punctuation']
-# # call these something new?
-# binaries_file = 'model5'
-# maxTag = 50 # trial? for fractin of ___ and punctuation
-
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-#                 'fraction of numbers in a word','fraction of letters in a word','punctuation']
-# # call these something new?
-# binaries_file = 'model5_maxTag125'
-# maxTag = 125 # trial? for fractin of ___ and punctuation
-
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-#                'text angles']
+#                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes', 'carea boxes']
 # # call these something new?
-# binaries_file = 'model6'
+# binaries_file = 'model10_tfrecordz'
+
+
+# ----- older -----
+
 
 
 
@@ -288,7 +290,7 @@ if yt.is_root():
               'nfeatures': _float_feature(np.float32(nfeatures)),
               'boxes': _bytes_feature(boxout.astype('float32').tobytes()),
               'image_raw': _bytes_feature(image_string.astype('float32').tobytes()),
-              'image_name': _bytes_feature(img_name.tobytes()),
+              'image_name': _bytes_feature(img_name.encode('utf-8')),
             }
             return tf.train.Example(features=tf.train.Features(feature=feature))  
         

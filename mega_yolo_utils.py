@@ -440,13 +440,15 @@ def compute_nms(args):
     return [boxes, scores, labels]
 #################################################################
 def build_predict(weightsFile, anchorsFile, classDir_main_to_imgs, 
-                  LABELS,version='l', debug=False, use_ps = False):
+                  LABELS,version='l', debug=False, use_ps = False, 
+                 use_tfrecords = True):
     # read in anchors
     with open(anchorsFile, 'rb') as f:
         anchors = pickle.load(f) 
         anchors = anchors.astype('float32')
     # get number of features
-    n_features = get_n_features(classDir_main_to_imgs)
+    if not use_tfrecords:
+        n_features = get_n_features(classDir_main_to_imgs)
     if debug:
         print('n features=', n_features)
     
