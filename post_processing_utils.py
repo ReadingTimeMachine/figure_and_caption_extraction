@@ -512,24 +512,24 @@ def compute_nms(args):
 
     return [boxes, scores, labels]
 #################################################################
-def build_predict(weightsFile, anchorsFile, classDir_main_to_imgs, 
-                  LABELS,version='l', debug=False, use_ps = False):
-    # read in anchors
-    with open(anchorsFile, 'rb') as f:
-        anchors = pickle.load(f) 
-        anchors = anchors.astype('float32')
-    # get number of features
-    n_features = get_n_features(classDir_main_to_imgs)
-    if debug:
-        print('n features=', n_features)
+# def build_predict(weightsFile, anchorsFile, classDir_main_to_imgs, 
+#                   LABELS,version='l', debug=False, use_ps = False):
+#     # read in anchors
+#     with open(anchorsFile, 'rb') as f:
+#         anchors = pickle.load(f) 
+#         anchors = anchors.astype('float32')
+#     # get number of features
+#     n_features = get_n_features(classDir_main_to_imgs)
+#     if debug:
+#         print('n features=', n_features)
     
-    model_predict = build_model(n_features, anchors, version, len(LABELS),training=False, use_ps=False)
-    if debug:
-        tf.keras.utils.plot_model(model_predict, "yolo_v5.png", show_shapes=True, 
-                                  show_layer_names=True, expand_nested=False)
-    model_predict.load_weights(weightsFile) # note there was a True) here and i took it out and now things work?  for REASONS.
+#     model_predict = build_model(n_features, anchors, version, len(LABELS),training=False, use_ps=False)
+#     if debug:
+#         tf.keras.utils.plot_model(model_predict, "yolo_v5.png", show_shapes=True, 
+#                                   show_layer_names=True, expand_nested=False)
+#     model_predict.load_weights(weightsFile) # note there was a True) here and i took it out and now things work?  for REASONS.
     
-    return model_predict
+#     return model_predict
 
 
 

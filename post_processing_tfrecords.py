@@ -78,12 +78,14 @@ import tensorflow as tf
 import glob
 from annotation_utils import get_all_ocr_files, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years
-from post_processing_utils import parse_annotations_to_labels, build_predict, \
+from post_processing_utils import parse_annotations_to_labels, \
    get_true_boxes, get_ocr_results, get_image_process_boxes, clean_overlapping_squares, \
    clean_merge_pdfsquares, clean_merge_heurstic_captions, add_heuristic_captions, \
    clean_found_overlap_with_ocr, clean_true_overlap_with_ocr, clean_merge_squares, \
    clean_big_captions, clean_match_fig_cap, expand_true_boxes_fig_cap, \
    expand_found_boxes_fig_cap, expand_true_area_above_cap, expand_found_area_above_cap
+
+from mega_yolo_utils import build_predict
 #, calc_metrics
 #################################################
 
@@ -220,16 +222,16 @@ icout = 0
 #a = annotations[icombo] # which annotation
 #k_cv = ann_inds[icombo] # which fold?
 #for image,images_name in test_dataset.__iter__():
-for image,images_name in test_dataset.take(5):
+for image,images_name in test_dataset:
     imgs_name = images_name.numpy().decode('utf-8')
     a = imgs_name.split('/')[-1]
     a = a[:a.rfind('.')]
     a = annotation_dir+a+'.xml'
-    print(a)
+    #print(a)
 
     # run model
     if icout%iMod == 0:
-        print('on ', icombo, ' of ', len(annotations)-1)
+        print('on ', icout, ' of ~', int(len(annotations)*config.test_per))
 
     # there is a lot of mess here that gets and formats all true boxes and 
     #. all of the OCR data
@@ -377,7 +379,7 @@ for image,images_name in test_dataset.take(5):
 
     #sto.result_id = icombo
     #if icombo==1: import sys; sys.exit()
-    my_storage[icout] = [icombo,imgs_name[0], truebox, pdfboxes, pdfrawboxes, captionText_figcap, 
+    my_storage[icout] = [icout,imgs_name[0], truebox, pdfboxes, pdfrawboxes, captionText_figcap, 
                   bbox_figcap_pars,
                   sboxes_cleaned, slabels_cleaned, sscores_cleaned, 
                  boxes_pdf, labels_pdf, scores_pdf, 
