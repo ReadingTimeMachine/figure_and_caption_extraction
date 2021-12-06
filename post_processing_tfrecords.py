@@ -2,9 +2,10 @@
 import config
 
 
-binary_dirs = 'binaries_model8_tfrecordz/'
-weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211204_model8tfz/'
-weightsFile = 'training_1model8_tfrec_model_l0.023908472.h5' # figure/table, fig/table captions
+
+binary_dirs = 'binaries_model1_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
+weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' # figure/table, fig/table captions
 
 
 #adder = '_mod1' # leave empty to save default file
