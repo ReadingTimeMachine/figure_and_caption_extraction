@@ -441,7 +441,7 @@ def compute_nms(args):
 #################################################################
 def build_predict(weightsFile, anchorsFile, classDir_main_to_imgs, 
                   LABELS,version='l', debug=False, use_ps = False, 
-                 use_tfrecords = True):
+                 use_tfrecords = True, n_features=None):
     # read in anchors
     with open(anchorsFile, 'rb') as f:
         anchors = pickle.load(f) 

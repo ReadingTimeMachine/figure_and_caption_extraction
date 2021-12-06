@@ -534,12 +534,15 @@ def build_predict(weightsFile, anchorsFile, classDir_main_to_imgs,
 
 
 ############# LOAD ANNOTATIONS #####################
-def get_true_boxes(a,LABELS, badskews, badannotations, annotation_dir='', feature_dir=''):
+def get_true_boxes(a,LABELS, badskews, badannotations, 
+                   annotation_dir='', feature_dir='',
+                  check_for_file=True):
     # get annotations, use pdffigures2 boxes as well
     years_ind = []
     imgs_name, true_boxes, pdfboxes, \
        pdfrawboxes = parse_annotation([a], LABELS,feature_dir = feature_dir,
-                     annotation_dir = annotation_dir, parse_pdf=True)    
+                     annotation_dir = annotation_dir, parse_pdf=True,
+                                     check_for_file=check_for_file)    
 
     if len(true_boxes) > 0:
         truebox = true_boxes[0] # formatting mess
@@ -587,18 +590,20 @@ def get_true_boxes(a,LABELS, badskews, badannotations, annotation_dir='', featur
         
 
     # look for image
+    #print(imgs_name)
     iiname = imgs_name[0]
     iiname = iiname[:iiname.rfind('.')]
     #print(iiname)
     if (iiname.split('/')[-1] in badskews) or (iiname.split('/')[-1] in badannotations):
         print('bad skew or annotation for', icombo)
         ##continue
-    if os.path.isfile(iiname+'.jpeg'):
-        imgName = iiname + '.jpeg'
-    elif os.path.isfile(iiname+'.jpg'):
-        imgName = iiname + '.jpg'
-    else:
-        imgName = glob(iiname+'*')[0]
+    if check_for_file:
+        if os.path.isfile(iiname+'.jpeg'):
+            imgName = iiname + '.jpeg'
+        elif os.path.isfile(iiname+'.jpg'):
+            imgName = iiname + '.jpg'
+        else:       
+            imgName = glob(iiname+'*')[0]
     pdfbase = a.split('/')[-1].split('_p')[0]
 
     if len(pdfbase) > 0 and pdfbase[:4].isdigit():
@@ -613,13 +618,13 @@ def get_true_boxes(a,LABELS, badskews, badannotations, annotation_dir='', featur
 
 
 ########### LOAD IMAGE FEATURES AND IMAGE DATA #####################
-def get_ocr_results(imgs_name, dfMakeSense,dfsave,use_tfrecords=True):
+def get_ocr_results(imgs_name, dfMakeSense,dfsave,
+                    use_tfrecords=True, image_np=None):
     
-    # # feature file
-    # if not use_tfrecords:
-    #     image_np = np.load(imgs_name[0])['arr_0']
-    #     image_np = image_np.astype(np.float32) / 255.0 
-    # else:
+    # feature file -- if not given
+    if not use_tfrecords:
+        image_np = np.load(imgs_name[0])['arr_0']
+        image_np = image_np.astype(np.float32) / 255.0 
         
     
     # OCR file/data

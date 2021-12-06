@@ -67,7 +67,7 @@ anchorsFile = weightsFileDir + 'anchors.pickle'  # should this be changed....
 
 
 #################################################
-#import yt
+import yt
 #yt.enable_parallelism()
 # NO parallel
 nProcs = 1
@@ -129,6 +129,8 @@ print('LABELS=', LABELS)
     
 # for tfrecrords, get datasets
 test_list = glob.glob(feature_dir + 'test_*tfrecords')
+#test_list = glob.glob(feature_dir + 'train_*tfrecords')
+
 test_raw_data = tf.data.TFRecordDataset(filenames=test_list, 
                                          compression_type='GZIP', 
                                          buffer_size=None, 
@@ -147,23 +149,22 @@ def _parse_image_function_test(example_proto,anchors,CLASS):
     # parse the data
     nboxes = image_features['nbox']
     nfeatures = image_features['nfeatures']
-    #boxes = tf.io.decode_raw(image_features['boxes'],tf.float32)
-    #boxes = tf.reshape(boxes,[nboxes,5])
     images_raw = image_features['image_raw']
     image = tf.io.decode_raw(images_raw,tf.float32)
     image = tf.reshape(image,[config.IMAGE_H,config.IMAGE_W,nfeatures])
     img_name = tf.cast(image_features['image_name'],tf.string)
-    #print(img_name)
-    #image_name = tf.io.decode_raw(image_features['image_name'],tf.string) 
-    #print(image_name)
     return image,img_name
 
-test_dataset = test_raw_data.interleave(lambda x: test_raw_data.map(lambda example_proto:_parse_image_function_test(example_proto, 
-                                                                                                               anchors,CLASS), 
-                                    num_parallel_calls=tf.data.AUTOTUNE))
+# test_dataset = test_raw_data.interleave(lambda x: test_raw_data.map(lambda example_proto:_parse_image_function_test(example_proto, 
+#                                                                                                                anchors,CLASS), 
+#                                     num_parallel_calls=tf.data.AUTOTUNE))
+
+test_dataset = test_raw_data.map(lambda example_proto:_parse_image_function_test(example_proto,
+                                                                             anchors,CLASS))
+
 #test, debug
-for im,iname in test_dataset.take(1):
-    print('hi',iname)
+#for im,iname in test_dataset.take(1):
+#    print('hi',iname)
 
 # get nfeatures
 # if we have anchors already
@@ -180,7 +181,7 @@ for f in nfeatures_data.take(1):
     
 # build the model
 model = build_predict(weightsFileDownload, anchorsFile, 
-                    feature_dir,LABELS,version='l', debug=False,nfeatures=nfeatures)
+                    feature_dir,LABELS,version='l', debug=False,n_features=n_features)
 model.load_weights(weightsFileDownload)
 
 if badskewList is not None:
@@ -207,180 +208,190 @@ my_storage = {}
 #wsInds = wsInds[1:]
 #wsInds = wsInds[:2]
 
-wsInds = len(test_list)
+#wsInds = np.arange(0,len(test_list))
 
 # run the thing
 iMod = 10
 
-for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
+icout = 0
+
+#for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
     
-    #a = annotations[icombo] # which annotation
-    #k_cv = ann_inds[icombo] # which fold?
-    for image,images_name in test_dataset:
+#a = annotations[icombo] # which annotation
+#k_cv = ann_inds[icombo] # which fold?
+#for image,images_name in test_dataset.__iter__():
+for image,images_name in test_dataset.take(5):
+    imgs_name = images_name.numpy().decode('utf-8')
+    a = imgs_name.split('/')[-1]
+    a = a[:a.rfind('.')]
+    a = annotation_dir+a+'.xml'
+    print(a)
 
-        # run model
-        if icombo%iMod == 0:
-            print('on ', icombo, ' of ', len(annotations)-1)
+    # run model
+    if icout%iMod == 0:
+        print('on ', icombo, ' of ', len(annotations)-1)
 
-        # there is a lot of mess here that gets and formats all true boxes and 
-        #. all of the OCR data
-        imgs_name, pdfboxes, pdfrawboxes,years_ind, truebox = get_true_boxes(a,LABELS,
-                                                           badskews,badannotations,
-                                                           annotation_dir=annotation_dir,
-                                                          feature_dir=feature_dir)
+    # there is a lot of mess here that gets and formats all true boxes and 
+    #. all of the OCR data
+    imgs_name, pdfboxes, pdfrawboxes,years_ind, truebox = get_true_boxes(a,LABELS,
+                                                       badskews,badannotations,
+                                                       annotation_dir=annotation_dir,
+                                                      feature_dir=feature_dir,
+                                                                         check_for_file=False)
 
-        #import sys; sys.exit()
+    #import sys; sys.exit()
 
-        # get OCR results and parse them, open image for image processing
-        backtorgb,image_np,rotatedImage,rotatedAngleOCR,bbox_hocr,\
-          bboxes_words,bbsq,cbsq, rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df)
-
-        import sys; sys.exit()
-
-
-        # predict squares in 2 ways
-        # 1. MEGA YOLO
-        boxes, scores, labels = model.predict(image_np[np.newaxis, ...])
-        boxes1, scores1, labels1 = np.squeeze(boxes, 0), np.squeeze(scores, 0), np.squeeze(labels, 0)
-
-        #save_boxes = boxes.copy(); save_labels = labels.copy(); save_scores2 = scores.copy()
-
-        # only non -1 ones
-        boxes1 = boxes1[labels1>-1]
-        scores1 = scores1[labels1>-1]
-        labels1 = labels1[labels1>-1]    
-
-        # get figures and captions from image processing
-        captionText_figcap, bbox_figcap_pars = get_image_process_boxes(backtorgb, 
-                                                                       bbox_hocr, 
-                                                                       rotatedImage)
-
-        # clean overlapping squares
-        # if squares are majorly overlapping, take the one with the highest score
-        sboxes_cleaned, slabels_cleaned, sscores_cleaned = clean_overlapping_squares(boxes1,
-                                                                                     scores1,
-                                                                                     labels1,
-                                                                                     imgs_name)
-
-        # ------------------
-
-        # probably do this earlier and pass it...
-        ff = imgs_name[0].split('/')[-1].split('.npz')[0]
-        dfMS = dfMakeSense.loc[dfMakeSense['filename']==ff]
+    # get OCR results and parse them, open image for image processing
+    backtorgb,image_np,rotatedImage,rotatedAngleOCR,bbox_hocr,\
+      bboxes_words,bbsq,cbsq, rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df,
+                                                                 image_np=image.numpy())
 
 
-        # merge with any boxes that have been found with PDF mining
-        # found figures are generally not accurate, so ignore these, but do 
-        # assume any tables or figure captions are more accurate from PDF mining
-        boxes_pdf, labels_pdf, scores_pdf = clean_merge_pdfsquares(pdfboxes,
-                                                                   pdfrawboxes,
-                                                                   sboxes_cleaned, 
-                                                                   slabels_cleaned, 
-                                                                   sscores_cleaned, 
-                                                                   LABELS, dfMS)
+    # predict squares in 2 ways
+    # 1. MEGA YOLO
+    boxes, scores, labels = model.predict(image_np[np.newaxis, ...])
+    boxes1, scores1, labels1 = np.squeeze(boxes, 0), np.squeeze(scores, 0), np.squeeze(labels, 0)
 
-        # combine figure caption boxes with heuristically found ones
-        # -- often the heurstically found boxes are more accurate, especially 
-        # in the vertical direction
-        boxes_heur, labels_heur, scores_heur,\
-          ibbOverlap = clean_merge_heurstic_captions(boxes_pdf, 
-                                                labels_pdf, scores_pdf, 
-                                                bbox_figcap_pars, LABELS,dfMS)
+    #save_boxes = boxes.copy(); save_labels = labels.copy(); save_scores2 = scores.copy()
+
+    # only non -1 ones
+    boxes1 = boxes1[labels1>-1]
+    scores1 = scores1[labels1>-1]
+    labels1 = labels1[labels1>-1]    
+
+    # get figures and captions from image processing
+    captionText_figcap, bbox_figcap_pars = get_image_process_boxes(backtorgb, 
+                                                                   bbox_hocr, 
+                                                                   rotatedImage)
+
+    # clean overlapping squares
+    # if squares are majorly overlapping, take the one with the highest score
+    sboxes_cleaned, slabels_cleaned, sscores_cleaned = clean_overlapping_squares(boxes1,
+                                                                                 scores1,
+                                                                                 labels1,
+                                                                                 imgs_name)
+
+    # ------------------
+
+    # probably do this earlier and pass it...
+    ff = imgs_name[0].split('/')[-1].split('.npz')[0]
+    dfMS = dfMakeSense.loc[dfMakeSense['filename']==ff]
 
 
-        # sometimes figures are found, but no captions -- check for "extra" 
-        # only heuristically found captions, and use these as a last resort
-        # when matching figures to captions
-        boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
-                                                                      captionText_figcap,
-                                                                      ibbOverlap,
-                                                                      boxes_heur, 
-                                                                      labels_heur, 
-                                                                      scores_heur, dfMS)
+    # merge with any boxes that have been found with PDF mining
+    # found figures are generally not accurate, so ignore these, but do 
+    # assume any tables or figure captions are more accurate from PDF mining
+    boxes_pdf, labels_pdf, scores_pdf = clean_merge_pdfsquares(pdfboxes,
+                                                               pdfrawboxes,
+                                                               sboxes_cleaned, 
+                                                               slabels_cleaned, 
+                                                               sscores_cleaned, 
+                                                               LABELS, dfMS)
 
-        # clean found boxes by paragraphs and words  -- if found box overlaps with 
-        #. an OCR box, include this box in the bounding box of captions
-        # boxes_par_found, labels_par_found, \
-        #   scores_par_found = clean_found_overlap_with_ocr(boxes_heur2, labels_heur2, 
-        #                                             scores_heur2,bboxes_words,
-        #                                                   bbox_par,rotation,
-        #                                                   LABELS, dfMS)  
-        # other way -- w/o adding more heursitic caps:
-        boxes_par_found, labels_par_found, \
-          scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
-                                                    scores_heur,bboxes_words,
-                                                          bbox_par,rotation,
-                                                          LABELS, dfMS)  
+    # combine figure caption boxes with heuristically found ones
+    # -- often the heurstically found boxes are more accurate, especially 
+    # in the vertical direction
+    boxes_heur, labels_heur, scores_heur,\
+      ibbOverlap = clean_merge_heurstic_captions(boxes_pdf, 
+                                            labels_pdf, scores_pdf, 
+                                            bbox_figcap_pars, LABELS,dfMS)
 
-        # do same excersize with trueboxes (already done really in processing annoations)
-        truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
-                                               bbox_par,rotation, 
-                                               LABELS, dfMS)
-        #truebox1 = truebox.copy()
 
-        # if figure boxes are smaller than image-processing found boxes, merge them; 
-        # also, do with colorbars as well if requested
-        boxes_sq1, labels_sq1, scores_sq1, bbsq = clean_merge_squares(bbsq, cbsq,
-                                                                boxes_par_found, 
-                                                                labels_par_found, 
-                                                                scores_par_found, 
-                                                                LABELS, dfMS, 
-                                                               useColorbars = useColorbars)
+    # sometimes figures are found, but no captions -- check for "extra" 
+    # only heuristically found captions, and use these as a last resort
+    # when matching figures to captions
+    boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
+                                                                  captionText_figcap,
+                                                                  ibbOverlap,
+                                                                  boxes_heur, 
+                                                                  labels_heur, 
+                                                                  scores_heur, dfMS)
 
-        # if there are any huge captions -- like 75% of the area of the page or more
-        #. these are wrong, so drop them
-        boxes_sq2, labels_sq2, scores_sq2 = clean_big_captions(boxes_sq1,
-                                                            labels_sq1,
-                                                            scores_sq1, 
-                                                            LABELS)
+    # clean found boxes by paragraphs and words  -- if found box overlaps with 
+    #. an OCR box, include this box in the bounding box of captions
+    # boxes_par_found, labels_par_found, \
+    #   scores_par_found = clean_found_overlap_with_ocr(boxes_heur2, labels_heur2, 
+    #                                             scores_heur2,bboxes_words,
+    #                                                   bbox_par,rotation,
+    #                                                   LABELS, dfMS)  
+    # other way -- w/o adding more heursitic caps:
+    boxes_par_found, labels_par_found, \
+      scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
+                                                scores_heur,bboxes_words,
+                                                      bbox_par,rotation,
+                                                      LABELS, dfMS)  
 
-        # sometimes captions are slightly overlapping with figures -- split the 
-        # difference between those where they touch on the "bottom"
-        # Default to captions found with mega yolo, if there is a figure but 
-        #. no caption found, then see if there is a heuristically found caption
-        boxes_sq3, labels_sq3, scores_sq3 = clean_match_fig_cap(boxes_sq2,
-                                                                 labels_sq2,
-                                                             scores_sq2, bbsq,
-                                                             LABELS, 
-                                                             rotatedImage, 
-                                                             rotatedAngleOCR,
-                                                             dfMS)
+    # do same excersize with trueboxes (already done really in processing annoations)
+    truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
+                                           bbox_par,rotation, 
+                                           LABELS, dfMS)
+    #truebox1 = truebox.copy()
 
-        # check for overlaps
-        truebox2 = expand_true_boxes_fig_cap(truebox1, rotatedImage, LABELS)
-        # again for found boxes?  I feel like maybe not the one above?
-        boxes_sq4, labels_sq4, scores_sq4 = expand_found_boxes_fig_cap(boxes_sq3, 
-                                                                    labels_sq3, 
-                                                                    scores_sq3,
-                                                                       bbsq,
+    # if figure boxes are smaller than image-processing found boxes, merge them; 
+    # also, do with colorbars as well if requested
+    boxes_sq1, labels_sq1, scores_sq1, bbsq = clean_merge_squares(bbsq, cbsq,
+                                                            boxes_par_found, 
+                                                            labels_par_found, 
+                                                            scores_par_found, 
+                                                            LABELS, dfMS, 
+                                                           useColorbars = useColorbars)
+
+    # if there are any huge captions -- like 75% of the area of the page or more
+    #. these are wrong, so drop them
+    boxes_sq2, labels_sq2, scores_sq2 = clean_big_captions(boxes_sq1,
+                                                        labels_sq1,
+                                                        scores_sq1, 
+                                                        LABELS)
+
+    # sometimes captions are slightly overlapping with figures -- split the 
+    # difference between those where they touch on the "bottom"
+    # Default to captions found with mega yolo, if there is a figure but 
+    #. no caption found, then see if there is a heuristically found caption
+    boxes_sq3, labels_sq3, scores_sq3 = clean_match_fig_cap(boxes_sq2,
+                                                             labels_sq2,
+                                                         scores_sq2, bbsq,
+                                                         LABELS, 
+                                                         rotatedImage, 
+                                                         rotatedAngleOCR,
+                                                         dfMS)
+
+    # check for overlaps
+    truebox2 = expand_true_boxes_fig_cap(truebox1, rotatedImage, LABELS)
+    # again for found boxes?  I feel like maybe not the one above?
+    boxes_sq4, labels_sq4, scores_sq4 = expand_found_boxes_fig_cap(boxes_sq3, 
+                                                                labels_sq3, 
+                                                                scores_sq3,
+                                                                   bbsq,
+                                                                rotatedImage, 
+                                                                LABELS, dfMS)
+
+    # expand true boxes if area above caption is larger
+    truebox3 = expand_true_area_above_cap(truebox2, rotatedImage, LABELS)
+    # same for found
+    boxes_sq5, labels_sq5, scores_sq5 = expand_found_area_above_cap(boxes_sq4, 
+                                                                    labels_sq4, 
+                                                                    scores_sq4, 
+                                                                    bbsq,
                                                                     rotatedImage, 
                                                                     LABELS, dfMS)
 
-        # expand true boxes if area above caption is larger
-        truebox3 = expand_true_area_above_cap(truebox2, rotatedImage, LABELS)
-        # same for found
-        boxes_sq5, labels_sq5, scores_sq5 = expand_found_area_above_cap(boxes_sq4, 
-                                                                        labels_sq4, 
-                                                                        scores_sq4, 
-                                                                        bbsq,
-                                                                        rotatedImage, 
-                                                                        LABELS, dfMS)
+    #sto.result_id = icombo
+    #if icombo==1: import sys; sys.exit()
+    my_storage[icout] = [icombo,imgs_name[0], truebox, pdfboxes, pdfrawboxes, captionText_figcap, 
+                  bbox_figcap_pars,
+                  sboxes_cleaned, slabels_cleaned, sscores_cleaned, 
+                 boxes_pdf, labels_pdf, scores_pdf, 
+                  boxes_heur, labels_heur, scores_heur,
+                 boxes_heur2, labels_heur2, scores_heur2,
+                 boxes_par_found, labels_par_found, scores_par_found,
+                 boxes_sq1, labels_sq1, scores_sq1,
+                 boxes_sq2, labels_sq2, scores_sq2,
+                 boxes_sq3, labels_sq3, scores_sq3,
+                 boxes_sq4, labels_sq4, scores_sq4,
+                 boxes_sq5, labels_sq5, scores_sq5,
+                 truebox1,truebox2,truebox3,rotatedImage,LABELS, boxes1, scores1, labels1]
 
-        sto.result_id = icombo
-        #if icombo==1: import sys; sys.exit()
-        sto.result = [icombo,imgs_name[0], truebox, pdfboxes, pdfrawboxes, captionText_figcap, 
-                      bbox_figcap_pars,
-                      sboxes_cleaned, slabels_cleaned, sscores_cleaned, 
-                     boxes_pdf, labels_pdf, scores_pdf, 
-                      boxes_heur, labels_heur, scores_heur,
-                     boxes_heur2, labels_heur2, scores_heur2,
-                     boxes_par_found, labels_par_found, scores_par_found,
-                     boxes_sq1, labels_sq1, scores_sq1,
-                     boxes_sq2, labels_sq2, scores_sq2,
-                     boxes_sq3, labels_sq3, scores_sq3,
-                     boxes_sq4, labels_sq4, scores_sq4,
-                     boxes_sq5, labels_sq5, scores_sq5,
-                     truebox1,truebox2,truebox3,rotatedImage,LABELS, boxes1, scores1, labels1]
+    icout += 1
 
     
 if yt.is_root():
