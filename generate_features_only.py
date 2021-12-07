@@ -25,46 +25,41 @@ feature_list = ['grayscale','fontsize','x_ascenders','x_decenders']
 binaries_file = 'model3_tfrecordz'
 
 
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences']
-# # call these something new?
-# binaries_file = 'model4_tfrecordz'
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences']
+# call these something new?
+binaries_file = 'model4_tfrecordz'
 
 
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-#                 'fraction of numbers in a word','fraction of letters in a word','punctuation']
-# # call these something new?
-# binaries_file = 'model5_tfrecordz'
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation']
+# call these something new?
+binaries_file = 'model5_tfrecordz'
 
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-#                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-#                'text angles']
-# # call these something new?
-# binaries_file = 'model6_tfrecordz'
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles']
+# call these something new?
+binaries_file = 'model6_tfrecordz'
 
-# # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-# #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-# #                'text angles','Spacy POS']
-# # # call these something new?
-# # binaries_file = 'model7_tfrecordz'
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS']
+# call these something new?
+binaries_file = 'model7_tfrecordz'
 
 
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-#                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-#                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
-# # call these something new?
-# binaries_file = 'model8_tfrecordz'
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# call these something new?
+binaries_file = 'model8_tfrecordz'
 
-# # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-# #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-# #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes']
-# # # call these something new?
-# # binaries_file = 'model9_tfrecordz'
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes']
+# call these something new?
+binaries_file = 'model9_tfrecordz'
 
-# # # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-# # #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-# # #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs', 'paragraph boxes', 'carea boxes']
-# # # # call these something new?
-# # # binaries_file = 'model10'
 
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
