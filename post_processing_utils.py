@@ -15,6 +15,7 @@ from PIL import Image
 import cv2 as cv
 import regex
 import re
+import pytesseract
 
 # stuff
 import config
@@ -763,6 +764,7 @@ def get_ocr_results(imgs_name, dfMakeSense,dfsave,
             rotatedAngleOCR = stats.mode(rots).mode[0]
              
         backtorgb = np.array(Image.open(config.images_jpeg_dir+indh).convert('RGB'))
+        #print(config.images_jpeg_dir+indh) 
         try:
             newdata=pytesseract.image_to_osd(backtorgb.copy())
             rotationImage = int(re.search('(?<=Rotate: )\d+', newdata).group(0))

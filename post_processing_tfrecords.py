@@ -3,9 +3,14 @@ import config
 
 
 
-binary_dirs = 'binaries_model1_tfrecordz/'
-weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
-weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model5_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211212_model5tfz/'
+# weightsFile = 'training_1model5_tfrec_model_l0.025074273.h5' # figure/table, fig/table captions
+
+binary_dirs = 'binaries_model10_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211207_model10tfz/'
+weightsFile = 'training_1model10_tfrec_model_l0.028558243.h5' # figure/table, fig/table captions
+
 
 
 #adder = '_mod1' # leave empty to save default file
