@@ -35,8 +35,8 @@ binary_dirs = 'binaries_model7_tfrecordz/'
 weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model7tfz/'
 weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5' # figure/table, fig/table captions
 
-# using the training or test data?
-use_training = False
+# using the valid or test data?
+use_valid = True
 
 
 #adder = '_mod1' # leave empty to save default file
@@ -55,7 +55,7 @@ iouminVec = None
 
 
 
-if use_training: adder = '_train'
+if use_valid: adder = '_valid'
 
 
 # from config file
@@ -162,13 +162,15 @@ if yt.is_root():
     
 # for tfrecrords, get datasets
 test_list = glob.glob(feature_dir + 'test_*tfrecords')
-if use_training:
-    test_list = glob.glob(feature_dir + 'train_*tfrecords')
+if use_valid:
+    test_list = glob.glob(feature_dir + 'valid_*tfrecords')
     
 if yt.is_root():
     print('we have:', len(test_list), 'tfrecords files to loop over')
 
 #test_list = glob.glob(feature_dir + 'train_*tfrecords')
+
+nProcs = len(test_list)
 
 #if not use_training:
 test_raw_data = tf.data.TFRecordDataset(filenames=test_list, 

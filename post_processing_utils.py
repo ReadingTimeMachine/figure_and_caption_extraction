@@ -762,6 +762,8 @@ def get_ocr_results(imgs_name, dfMakeSense,dfsave,
         
         if len(rots) > 0:
             rotatedAngleOCR = stats.mode(rots).mode[0]
+        else: # if no words, assume not rotated
+            rotatedAngleOCR = 0
              
         backtorgb = np.array(Image.open(config.images_jpeg_dir+indh).convert('RGB'))
         #print(config.images_jpeg_dir+indh) 
