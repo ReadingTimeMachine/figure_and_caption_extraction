@@ -25,6 +25,8 @@ yt.enable_parallelism()
 from PIL import Image
 
 nProcs = 6
+# where to save images?
+viz_output_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/MetricsResults/fbdetect/'
 
 args_config_file = 'configs/DLA_mask_rcnn_X_101_32x8d_FPN_3x.yaml'
 args_opts = ['MODEL.WEIGHTS','/Users/jillnaiman/Downloads/model_final_trimmed.pth','MODEL.DEVICE','cpu']
@@ -111,6 +113,11 @@ for sto, iimg in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
     img = read_image(img_path, format="BGR")
 
     predictions, visualized_output = demo.run_on_image(img)
+
+    # save
+    out_filename = os.path.join(viz_output_dir, os.path.basename(img_path))
+    visualized_output.save(out_filename)
+
 
     if len(predictions['instances']) > 0:
         _,height,width = predictions['instances'][0].pred_masks.numpy().shape
