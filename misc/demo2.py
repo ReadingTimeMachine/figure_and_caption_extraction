@@ -22,6 +22,8 @@ from predictor import VisualizationDemo
 import yt
 yt.enable_parallelism()
 
+from PIL import Image
+
 nProcs = 6
 
 args_config_file = 'configs/DLA_mask_rcnn_X_101_32x8d_FPN_3x.yaml'
@@ -95,24 +97,29 @@ for im in imgs_name:
     img_paths.append(jpegPath + im.split('/')[-1].split('.npz')[0]+'.jpeg')
 
 # debug:
-img_paths = img_paths[:6]
+#img_paths = img_paths[:6]
 
 wsInds = np.arange(0,len(img_paths))
 
+import sys
 
 my_storage = {}
 for sto, iimg in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
     sto.result_id = iimg
     img_path = img_paths[iimg]
 
-#all_boxes = []
-#for iimg, img_path in enumerate(img_paths):
-
     img = read_image(img_path, format="BGR")
 
     predictions, visualized_output = demo.run_on_image(img)
 
-    boxes = []; scores = []; classes = []
+    if len(predictions['instances']) > 0:
+        _,height,width = predictions['instances'][0].pred_masks.numpy().shape
+    else:
+        ii = np.array(Image.open(img_path))
+        height,width = ii.shape[0], ii.shape[1]
+        del ii
+    
+    boxes = []; scores = []; classes = [];
     for ib in range(len(predictions['instances'])):
         boxes.append(predictions['instances'][ib].pred_boxes.tensor.numpy())
         scores.append(predictions['instances'][ib].scores.numpy())
@@ -120,13 +127,13 @@ for sto, iimg in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
 
     #all_boxes.append(boxes)
 
-    if iimg%100 == 0: print('on', iimg, 'of', len(img_paths))
+    if iimg%100 == 0: print('on', iimg, 'of', len(img_paths), flush=True)
 
-    sto.result = [img_path, boxes, classes, scores]
+    sto.result = [img_path, boxes, classes, scores,height,width]
 
 
 if yt.is_root():
-    img_names = []; boxes = []; classes=[]; scores = []
+    img_names = []; boxes = []; classes=[]; scores = []; height = []; width=[]
     
     for ns,vals in sorted(my_storage.items()):
         if vals is not None:
@@ -134,6 +141,8 @@ if yt.is_root():
             boxes.append(vals[1])
             classes.append(vals[2])
             scores.append(vals[3])
+            height.append(vals[4])
+            width.append(vals[5])
             
     # build up filename
     pp = metrics_path
@@ -142,5 +151,5 @@ if yt.is_root():
     pp += '_fbdetect'           
     pp += '.pickle'
     with open(pp, 'wb') as ff:
-        pickle.dump([img_names,boxes,classes,scores], ff)
+        pickle.dump([img_names,boxes,classes,scores,height,width], ff)
             
