@@ -32,7 +32,7 @@ args_config_file = 'configs/DLA_mask_rcnn_X_101_32x8d_FPN_3x.yaml'
 args_opts = ['MODEL.WEIGHTS','/Users/jillnaiman/Downloads/model_final_trimmed.pth','MODEL.DEVICE','cpu']
 #args_opts = '~/Downloads/model_final_trimmed.pth'
 
-args_confidence_threshold = 0.5
+args_confidence_threshold = 0.5 # is this even used? ...
 
 def setup_cfg():
     # load config from file and command-line arguments
@@ -65,7 +65,7 @@ demo = VisualizationDemo(cfg)
 
 # read in lists
 binary_dirs = 'binaries_model6_tfrecordz/'
-use_valid = True
+use_valid = False # use test dataset for comparison
 adder = ''
 if use_valid: adder = '_valid'
 import pickle
