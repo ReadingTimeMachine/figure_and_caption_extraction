@@ -23,17 +23,17 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211208_model2tfz/'
 # weightsFile = 'training_1model2_tfrec_model_l0.031917848.h5' # figure/table, fig/table captions
 
-# binary_dirs = 'binaries_model1_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
-# weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' # figure/table, fig/table captions
+binary_dirs = 'binaries_model1_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
+weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' # figure/table, fig/table captions
 
 # binary_dirs = 'binaries_model6_tfrecordz/'
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211213_model6tfz/'
 # weightsFile = 'training_1model6_tfrec_model_l0.033180892.h5' # figure/table, fig/table captions
 
-binary_dirs = 'binaries_model7_tfrecordz/'
-weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model7tfz/'
-weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model7_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model7tfz/'
+# weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5' # figure/table, fig/table captions
 
 # using the valid or test data?
 use_valid = True
@@ -284,7 +284,10 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
 
         # run model
         if icout%iMod == 0:
-            print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.test_per))
+            if not use_valid:
+                print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.test_per))
+            else:
+                print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.valid_per))
 
         # there is a lot of mess here that gets and formats all true boxes and 
         #. all of the OCR data
@@ -517,6 +520,11 @@ if yt.is_root():
             
     # update labels
     LABELS = LABELS[0]
+    
+    # make sure you get unique ones
+    #imgs_name, uind = np.unique(imgs_name, return_index=True)
+    #icombo = np.array(icombo[uind])
+    
             
 # binary_dirs = 'binaries_model1/'
 # weightsFileDir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/20211111_model1/'
