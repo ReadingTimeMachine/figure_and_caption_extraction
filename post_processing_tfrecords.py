@@ -19,13 +19,13 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211209_model3tfz/'
 # weightsFile = 'training_1model3_tfrec_model_l0.021069372.h5' # figure/table, fig/table captions
 
-# binary_dirs = 'binaries_model2_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211208_model2tfz/'
-# weightsFile = 'training_1model2_tfrec_model_l0.031917848.h5' # figure/table, fig/table captions
+binary_dirs = 'binaries_model2_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211208_model2tfz/'
+weightsFile = 'training_1model2_tfrec_model_l0.031917848.h5' # figure/table, fig/table captions
 
-binary_dirs = 'binaries_model1_tfrecordz/'
-weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
-weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model1_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
+# weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' # figure/table, fig/table captions
 
 # binary_dirs = 'binaries_model6_tfrecordz/'
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211213_model6tfz/'
@@ -35,8 +35,17 @@ weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' # figure/table, fig
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model7tfz/'
 # weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5' # figure/table, fig/table captions
 
+# binary_dirs = 'binaries_model8_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211215_model8tfz/'
+# weightsFile = 'training_1model8_tfrec_model_l0.022871962.h5' # figure/table, fig/table captions
+
+# binary_dirs = 'binaries_model9_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211205_model9tfz/'
+# weightsFile = 'training_1model9_tfrec_model_l0.033717625.h5' # figure/table, fig/table captions
+
+
 # using the valid or test data?
-use_valid = True
+use_valid = False
 
 
 #adder = '_mod1' # leave empty to save default file
