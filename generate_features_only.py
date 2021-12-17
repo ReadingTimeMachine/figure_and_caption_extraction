@@ -76,7 +76,7 @@ maxTag = 125 # trial? for fraction of words/numbers and punctuation
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
 #                'text angles','Spacy POS']
-feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
                'text angles','Spacy POS']
 # call these something new?
