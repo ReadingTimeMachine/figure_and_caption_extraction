@@ -1148,9 +1148,17 @@ def add_heuristic_captions(bbox_figcap_pars,captionText_figcap,ibbOverlap,
 
 ########### CLEAN BOTH PREDICTED AND TRUE BOXES BY OVERLAP WITH PARAGRAPHS ############
 def clean_found_overlap_with_ocr(boxes_heur, labels_heur, scores_heur,bboxes_words,
-                                 bbox_par,rotation,LABELS, dfMS):
-    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
-    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+                                 bbox_par,rotation,LABELS, dfMS, width=None, height=None):
+    if dfMS is not None:
+        fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+        fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    elif (width is not None) and (height is not None):
+        fracx = width*1.0/config.IMAGE_W
+        fracy = height*1.0/config.IMAGE_H  
+    else:
+        print('WHAT')
+        import sys; sys.exit()
+        
     # combine paragraphs & words
     bboxes_combined = []
     for ibb, bp in enumerate(bboxes_words): 
@@ -1323,9 +1331,15 @@ def clean_true_overlap_with_ocr(truebox, bboxes_words,bbox_par,rotation, LABELS,
 
         ########### CLEAN FIGURES BY CHECKING IF THEY OVERLAP WITH SQUARES -- IF NO FIG, TAKE SQUARE ############
 def clean_merge_squares(bbsq_in, cbsq, boxes_par_found, labels_par_found, 
-                        scores_par_found, LABELS, dfMS, useColorbars=False):
-    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
-    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+                        scores_par_found, LABELS, dfMS, useColorbars=False, 
+                       width=None, height=None):
+    if dfMS is not None:
+        fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+        fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    elif (width is not None) and (height is not None):
+        fracx = width*1.0/config.IMAGE_W
+        fracy = height*1.0/config.IMAGE_H  
+        
     boxesOut = []; labelsOut = []; scoresOut = []
     bbsq = bbsq_in.copy()
     if useColorbars:
@@ -1380,9 +1394,15 @@ def clean_big_captions(boxes_sq1,labels_sq1,scores_sq1, LABELS):
 ############### MATCH SQUARES TO CAPTIONS #############################
 def clean_match_fig_cap(boxes_sq,labels_sq,scores_sq, bbsq, 
                         LABELS, rotatedImage, 
-                        rotatedAngleOCR,dfMS,change_bottoms=False):
-    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
-    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+                        rotatedAngleOCR,dfMS,change_bottoms=False, 
+                       width=None, height=None):
+    if dfMS is not None:
+        fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+        fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    elif (width is not None) and (height is not None):
+        fracx = width*1.0/config.IMAGE_W
+        fracy = height*1.0/config.IMAGE_H  
+        
     # take caption closest to the BOTTOM EDGE, NOT in a square
     boxesOut = []; labelsOut = []; scoresOut = []
     boxes_fig = []; boxes_cap = []; boxes_heur_cap = []
@@ -1583,9 +1603,14 @@ def expand_true_boxes_fig_cap(truebox1, rotatedImage, LABELS):
 
 
 def expand_found_boxes_fig_cap(boxes_sq, labels_sq, scores_sq, bbsq, 
-                               rotatedImage, LABELS, dfMS):
-    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
-    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+                               rotatedImage, LABELS, dfMS, 
+                              width=None, height=None):
+    if dfMS is not None:
+        fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+        fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    elif (width is not None) and (height is not None):
+        fracx = width*1.0/config.IMAGE_W
+        fracy = height*1.0/config.IMAGE_H  
     # now, do for found boxes
     # Note: in theory, you can do this in the step above, but here I'm just doing them together 
     # for clarity (true vs found)
@@ -1746,9 +1771,14 @@ def expand_true_area_above_cap(truebox1, rotatedImage, LABELS):
 
 
 def expand_found_area_above_cap(boxes_sq, labels_sq, scores_sq, bbsq, 
-                               rotatedImage, LABELS, dfMS):
-    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
-    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H 
+                               rotatedImage, LABELS, dfMS,
+                               width=None, height=None):
+    if dfMS is not None:
+        fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+        fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H 
+    elif (width is not None) and (height is not None):
+        fracx = width*1.0/config.IMAGE_W
+        fracy = height*1.0/config.IMAGE_H 
     # now, do for found boxes
     # Note: in theory, you can do this in the step above, but here I'm just doing them together 
     # for clarity (true vs found)
