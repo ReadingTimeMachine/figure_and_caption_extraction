@@ -67,11 +67,20 @@ maxTag = 125 # trial? for fraction of words/numbers and punctuation
 # # call these something new?
 # binaries_file = 'model10_tfrecordz'
 
-# hopefully this is our final model??
-feature_list = ['grayscale','fontsize', 'word confidences', 'text angles','Spacy POS']
-# call these something new?
-binaries_file = 'model11_tfrecordz'
+# # hopefully this is our final model??
+# feature_list = ['grayscale','fontsize', 'word confidences', 'text angles','Spacy POS']
+# # call these something new?
+# binaries_file = 'model11_tfrecordz'
 
+# Start taking things out from the main list of model 7
+# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+#                'text angles','Spacy POS']
+feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS']
+# call these something new?
+binaries_file = 'model12_tfrecordz'
 
 
 # ----- older -----

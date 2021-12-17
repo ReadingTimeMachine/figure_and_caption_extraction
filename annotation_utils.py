@@ -56,7 +56,9 @@ def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
     paragraphs = []; ws = []; squares = []; paragraphs_unskewed = []; pdfwords = []; html = []
     rotations = []; colorbars = []
     # loop and grab
-    for cp in ocrFiles:
+    for icp,cp in enumerate(ocrFiles):
+        if debug: 
+            if is_root(): print('##### OCR retrieval FILE: on', icp+1,'of',len(ocrFiles), ' ##### ')
         with open(cp, 'rb') as f:
             wsout, full_run_squares, full_run_ocr, full_run_rotations, \
                  full_run_pdf, full_run_hocr, color_bars,\
@@ -66,7 +68,7 @@ def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
         full_run_htmlText = []; full_run_paragraphs = []
         for ihocr,hocr in enumerate(full_run_hocr):
             if debug: 
-                if ihocr%imod == 0 and is_root(): print('--- OCR retrieval: on', ihocr,'of',len(full_run_hocr))
+                if ihocr%imod == 0 and is_root(): print('--- OCR retrieval: on', ihocr,'of',len(full_run_hocr), '---')
             # translate to text to find namespace for xpath
             htmlText = hocr.decode('utf-8')
             full_run_htmlText.append(htmlText)

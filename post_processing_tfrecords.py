@@ -43,6 +43,11 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211205_model9tfz/'
 # weightsFile = 'training_1model9_tfrec_model_l0.033717625.h5' # figure/table, fig/table captions
 
+binary_dirs = 'binaries_model11_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211216_model11tfz/'
+weightsFile = 'training_1model11_tfrec_model_l0.031253316.h5' # figure/table, fig/table captions
+
+
 
 # using the valid or test data?
 use_valid = False
