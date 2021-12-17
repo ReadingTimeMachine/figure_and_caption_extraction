@@ -620,49 +620,58 @@ def get_true_boxes(a,LABELS, badskews, badannotations,
 
 ########### LOAD IMAGE FEATURES AND IMAGE DATA #####################
 def get_ocr_results(imgs_name, dfMakeSense,dfsave,
-                    use_tfrecords=True, image_np=None):
+                    use_tfrecords=True, image_np=None,
+                   width=None,height=None,images_jpeg_dir=None):
+    if images_jpeg_dir is None: images_jpeg_dir=config.images_jpeg_dir
     
-    # feature file -- if not given
-    if not use_tfrecords:
-        image_np = np.load(imgs_name[0])['arr_0']
-        image_np = image_np.astype(np.float32) / 255.0 
-        
-    
-    # OCR file/data
-    ff = imgs_name[0].split('/')[-1].split('.npz')[0]
-    # get height, width of orig image
-    try:
-        indff = dfMakeSense.loc[dfMakeSense['filename']==ff].index[0]
-    except:
-        print('we have an issue here!!')
-        print(ff)
-        import sys; sys.exit()
-    # reshape to this
-    dfMS = dfMakeSense.loc[dfMakeSense['filename']==ff]
-    #fracx = msw[indff]*1.0/image_np.shape[1]
-    #fracy = msh[indff]*1.0/image_np.shape[0]
-    fracx = dfMS['w']*1.0/image_np.shape[1]
-    fracy = dfMS['h']*1.0/image_np.shape[0]
-    # check for file
-    if os.path.isfile(config.images_jpeg_dir+ff+'.jpeg'):
-        indh = ff+'.jpeg'
-    elif os.path.isfile(config.images_jpeg_dir+ff+'.jpg'):
-        indh = ff+'.jpg'
-    else:
-        # find correct hocr index
-        ff = glob.glob(config.images_jpeg_dir+ff + '*')
-        if len(ff) == 0:
-            print('have issue! here in looking for thing.')
-            import sys; sys.exit()
-        else:
-            indh = ff[0].split('/')[-1]                
-    # grab OCR
     goOn = True
+    if dfMakeSense is not None:
+        # feature file -- if not given
+        if not use_tfrecords:
+            image_np = np.load(imgs_name[0])['arr_0']
+            image_np = image_np.astype(np.float32) / 255.0 
+
+
+        # OCR file/data
+        ff = imgs_name[0].split('/')[-1].split('.npz')[0]
+        # get height, width of orig image
+        try:
+            indff = dfMakeSense.loc[dfMakeSense['filename']==ff].index[0]
+        except:
+            print('we have an issue here!!')
+            print(ff)
+            import sys; sys.exit()
+        # reshape to this
+        dfMS = dfMakeSense.loc[dfMakeSense['filename']==ff]
+        #fracx = msw[indff]*1.0/image_np.shape[1]
+        #fracy = msh[indff]*1.0/image_np.shape[0]
+        fracx = dfMS['w']*1.0/image_np.shape[1]
+        fracy = dfMS['h']*1.0/image_np.shape[0]
+        # check for file
+        if os.path.isfile(images_jpeg_dir+ff+'.jpeg'):
+            indh = ff+'.jpeg'
+        elif os.path.isfile(images_jpeg_dir+ff+'.jpg'):
+            indh = ff+'.jpg'
+        else:
+            # find correct hocr index
+            ff = glob.glob(images_jpeg_dir+ff + '*')
+            if len(ff) == 0:
+                print('have issue! here in looking for thing.')
+                import sys; sys.exit()
+            else:
+                indh = ff[0].split('/')[-1]                
+    elif (width is not None) and (height is not None):
+        fracx = width/image_np.shape[1]
+        fracy = height/image_np.shape[0]
+        indh = dfsave.index.values[0]
+    # grab OCR
+    #print(dfsave)
     try:
         hocr = dfsave.loc[indh]['hocr']
     except:
         print('NO hocr for', indh)
         goOn = False
+        
     if goOn:
         # paragraphs from OCR
         bbox_par = []
@@ -765,7 +774,7 @@ def get_ocr_results(imgs_name, dfMakeSense,dfsave,
         else: # if no words, assume not rotated
             rotatedAngleOCR = 0
              
-        backtorgb = np.array(Image.open(config.images_jpeg_dir+indh).convert('RGB'))
+        backtorgb = np.array(Image.open(images_jpeg_dir+indh).convert('RGB'))
         #print(config.images_jpeg_dir+indh) 
         try:
             newdata=pytesseract.image_to_osd(backtorgb.copy())
@@ -1040,12 +1049,22 @@ def clean_merge_pdfsquares(pdfboxes,pdfrawboxes,sboxes_cleaned,
 
 
 #################################### CLEAN BY HEURISTIC FIG CAPTIONS ####################################
-def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf, bbox_figcap_pars, LABELS,dfMS):
+def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf, 
+                                  bbox_figcap_pars, LABELS,dfMS,
+                                 width=None, height=None):
     #for found boxes: get overlap with figure caption from paragraphs 
     boxesOut = []; labelsOut = []; scoresOut = []; pars_in_found_box = []
     ibbOverlap = []
-    fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
-    fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    if dfMS is not None:
+        fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
+        fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
+    elif (width is not None) and (height is not None):
+        fracx = width*1.0/config.IMAGE_W
+        fracy = height*1.0/config.IMAGE_H  
+    else:
+        print('no idea...')
+        import sys; sys.exit()
+        
     for b,l,ss in zip(boxes_pdf, labels_pdf, scores_pdf): # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
         # look for negatives
         #b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); 
