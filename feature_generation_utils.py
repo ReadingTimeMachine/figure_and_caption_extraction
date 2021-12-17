@@ -66,7 +66,8 @@ def array_to_tfrecords(X, boxes, output_file, maxboxes):
 def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=False, 
                             binary_dir = None, feature_invert=None, 
                            mode='L',maxTag = 125, save_type='uint8', 
-                           astype=None,npzcompressed=False, npysave=False):
+                           astype=None,npzcompressed=False, npysave=False,
+                           images_jpeg_dir=None):
     """
     df -- the subset dataframe for this page containing OCR data
     feature_list -- optional, will be config.feature_list if set to None
@@ -82,6 +83,7 @@ def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=
     classDirMain = config.save_binary_dir #+ fileStorage
     classDir_main_to = classDirMain + config.ann_name + str(int(config.IMAGE_H))\
       + 'x' + str(int(config.IMAGE_W))  + '_ann/'
+    if images_jpeg_dir is None: images_jpeg_dir = config.images_jpeg_dir
 
     #classDir_main_to_imgs = classDirMain + fileStorage.split('/')[-2] + '/'
     background = 255
@@ -96,7 +98,7 @@ def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=
     ifeature = 0 # keep count of where we are
     
     # read in image as grayscale -- use for all features to replace
-    img = np.array(Image.open(config.images_jpeg_dir+df.name).convert(mode))
+    img = np.array(Image.open(images_jpeg_dir+df.name).convert(mode))
     # invert?
     if feature_invert: img = 255-img
     # interpolate to size
