@@ -1,17 +1,17 @@
 # for benchmarks, otherwise set to None
 ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-nRandom_ocr_image = 3 # for testing
+nRandom_ocr_image = 100 # for testing
 full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
 tmp_storage_dir = None
 
 
-# back to config-file defaults
-ocr_results_dir = None
-nRandom_ocr_image = None #3 # for testing
-full_article_pdfs_dir = None
-images_jpeg_dir = None
-tmp_storage_dir = None
+# # back to config-file defaults
+# ocr_results_dir = None
+# nRandom_ocr_image = None #3 # for testing
+# full_article_pdfs_dir = None
+# images_jpeg_dir = None
+# tmp_storage_dir = None
 
 import config
 
@@ -185,8 +185,10 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
     sto.result = [imgImageProc,ws[iw], hocr, results_def, rotations, saved_squares_culled, color_bars,cin1,cout1]    
     # remove tmp TIFF image for storage reasons if doing PDF processing
     if pdfarts is not None: # have PDFs
-        remove(imOCRName)
-        
+        try:
+            remove(imOCRName)
+        except:
+            print('no TIFF file to remove for:', imOCRName)
 
     if iw%mod_output == 0: print('On ' + str(iw) + ' of ' + str(len(wsInds))+ ' at ' + str(time.ctime(time.time())))
     
