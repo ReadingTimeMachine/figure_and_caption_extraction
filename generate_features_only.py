@@ -222,7 +222,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     dfsingle = df.loc[fname+'.jpeg']
         
     # if we've made it this far, let's generate features
-    feature_name, font = generate_single_feature(dfsingle, LABELS, maxboxes, 
+    feature_name, font = generate_single_feature(dfsingle, LABELS,
+                                                 maxboxes=maxboxes, 
                                            feature_list = feature_list, 
                                            binary_dir = binaries_file, 
                                            mode=mode, maxTag=maxTag)

@@ -63,7 +63,7 @@ def array_to_tfrecords(X, boxes, output_file, maxboxes):
 
     
     
-def generate_single_feature(df, LABELS, maxboxes, feature_list = None, debug=False, 
+def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=False, 
                             binary_dir = None, feature_invert=None, 
                            mode='L',maxTag = 125, save_type='uint8', 
                            astype=None,npzcompressed=False, npysave=False):

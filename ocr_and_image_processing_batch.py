@@ -5,6 +5,14 @@ full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLo
 images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
 tmp_storage_dir = None
 
+
+# back to config-file defaults
+ocr_results_dir = None
+nRandom_ocr_image = None #3 # for testing
+full_article_pdfs_dir = None
+images_jpeg_dir = None
+tmp_storage_dir = None
+
 import config
 
 debug = False
