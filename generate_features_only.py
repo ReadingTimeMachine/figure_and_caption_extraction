@@ -121,6 +121,7 @@ import cv2 as cv
 import numpy as np
 #import xml.etree.ElementTree as ET
 from glob import glob
+import pickle
 
 from annotation_utils import get_all_ocr_files, make_ann_directories, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years, get_cross_index, get_pdffigures_info, get_annotation_name, \
@@ -221,16 +222,32 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     dfsingle = df.loc[fname+'.jpeg']
         
     # if we've made it this far, let's generate features
-    feature_name = generate_single_feature(dfsingle, LABELS, maxboxes, 
+    feature_name, font = generate_single_feature(dfsingle, LABELS, maxboxes, 
                                            feature_list = feature_list, 
                                            binary_dir = binaries_file, 
                                            mode=mode, maxTag=maxTag)
     
     #import sys; sys.exit()
+    sto.result = [font,feature_name]
 
     
 # if was records file, do a conversion
 if yt.is_root():
+    # combine fonts
+    fontsize = []; names = []
+    for ns,vals in sorted(my_storage.items()):
+        if vals is not None:
+            fontsize.append(vals[0])
+            names.append(vals[1])
+
+    # if not os.path.exists(binaries_file[:-1]+'_fonts/'):
+    #     os.mkdir(binaries_file[:-1]+'_fonts/')
+    # # remove, remake
+    # shutil.rmtree(binaries_file[:-1]+'_fonts/')
+    # os.mkdir(binaries_file[:-1]+'_fonts/')
+    with open(binaries_file[:-1]+'_fonts.pickle', 'wb') as ff:
+        pickle.dump([fontsize,names], ff)   
+    
     if 'TMPTFRECORD/' in feature_name: # we have done temp storage
         import tensorflow as tf
         # note: y_* aren't actually used anywhere
@@ -271,8 +288,12 @@ if yt.is_root():
             return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
         
         # first off, save labels as CSV
-        np.savetxt(binaries_file + 'LABELS.csv', LABELS, fmt='%s', delimiter=',')        
+        np.savetxt(binaries_file + 'LABELS.csv', LABELS, fmt='%s', delimiter=',')    
         
+        # save feature list
+        with open(binaries_file +'feature_list.pickle', 'wb') as ff:
+            pickle.dump([feature_list], ff)   
+                    
         # Create a dictionary with features that may be relevant.
         def image_example(image, boxes, img_name):
             #image_shape = tf.io.decode_jpeg(image_string).shape

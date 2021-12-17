@@ -1,3 +1,10 @@
+# for benchmarks, otherwise set to None
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+nRandom_ocr_image = 3 # for testing
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+tmp_storage_dir = None
+
 import config
 
 debug = False
@@ -50,16 +57,18 @@ from ocr_and_image_processing_utils import get_already_ocr_processed, find_pickl
 # -----------------------------------------------
 
 # Get all already done pages... 
-wsAlreadyDone = get_already_ocr_processed()
+wsAlreadyDone = get_already_ocr_processed(ocr_results_dir=ocr_results_dir)
 
 # find the pickle file we will process next
-pickle_file_name = find_pickle_file_name()
+pickle_file_name = find_pickle_file_name(ocr_results_dir=ocr_results_dir)
 
 if yt.is_root(): print('working with pickle file:', pickle_file_name)
 
 # get randomly selected articles and pages
 if config.ocr_list_file is None:
-    ws, pageNums, pdfarts = get_random_page_list(wsAlreadyDone)
+    ws, pageNums, pdfarts = get_random_page_list(wsAlreadyDone,
+                                                 full_article_pdfs_dir=full_article_pdfs_dir,
+                                                nRandom_ocr_image=nRandom_ocr_image)
 else:
     if yt.is_root(): print('Using a OCR list -- ', config.ocr_list_file)
     import pandas as pd
@@ -75,6 +84,9 @@ wsInds = np.arange(0,len(ws))
 # debug
 #wsInds = wsInds[:6]
 #wsInds = wsInds[90:]
+
+if images_jpeg_dir is None: images_jpeg_dir = config.images_jpeg_dir
+if tmp_storage_dir is None: tmp_storage_dir = config.tmp_storage_dir
 
 
 my_storage = {}
@@ -108,7 +120,7 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
         imPDF.resize(width=int(0.5*imPDF.width),height=int(0.5*imPDF.height))
         imPDF.background_color = Color("white")
         imPDF.alpha_channel = 'remove'
-        WandImage(imPDF).save(filename=config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg')
+        WandImage(imPDF).save(filename=images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg')
         del imPDF
         
         # also for tempTiff -- have to redo here
@@ -121,12 +133,12 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
         imPDF.alpha_channel = 'remove'
         
         # save a temp TIFF file for OCR
-        tmpFile = config.tmp_storage_dir + checkws + '_p'+str(iimPDF) + '.tiff'
+        tmpFile = tmp_storage_dir + checkws + '_p'+str(iimPDF) + '.tiff'
         WandImage(imPDF).save(filename=tmpFile)
         del imPDF
         
         imOCRName = tmpFile
-        imgImageProc = config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
+        imgImageProc = images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
     else: # bitmaps or jpegs -- no tiffs!
         if 'bmp' in ws[iw]:
             checkws = ws[iw].split('/')[-1].split('.bmp')[0] # for outputting file
@@ -136,9 +148,9 @@ for sto, iw in yt.parallel_objects(wsInds, nprocs, storage=my_storage):
             checkws = ws[iw].split('/')[-1].split('.jpg')[0] # for outputting file  
         # read in and copy to jpeg 
         im = Image.open(ws[iw])
-        im.save(config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg', quality=95)
-        imOCRName = config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
-        imgImageProc = config.images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
+        im.save(images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg', quality=95)
+        imOCRName = images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
+        imgImageProc = images_jpeg_dir + checkws + '_p'+str(iimPDF) + '.jpeg'
         del im
 
     if debug: print('reading in image:', checkws + '_p'+str(iimPDF) + '.jpeg')

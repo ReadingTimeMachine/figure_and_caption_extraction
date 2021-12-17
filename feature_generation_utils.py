@@ -311,6 +311,7 @@ def generate_single_feature(df, LABELS, maxboxes, feature_list = None, debug=Fal
     if 'fontsize' in feature_list:
         # rescale -- not 100% sure which one we want to use here -- using unscaled for now
         fontshere = np.array(fontshere)# - med
+        fonts2 = fontshere.copy()
         # subtract median
         fontshere -= np.median(fontshere)
         # remove outliers
@@ -567,7 +568,7 @@ def generate_single_feature(df, LABELS, maxboxes, feature_list = None, debug=Fal
             
     del imgout
     del imgOrig
-    return binary_dir+fname+ender
+    return binary_dir+fname+ender, fonts2
 
 
 

@@ -12,8 +12,10 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfinterp import resolve1
 import math
 
-def get_already_ocr_processed():
-    fileCheckArr = [config.ocr_results_dir+config.pickle_file_head + '*.pickle']
+def get_already_ocr_processed(ocr_results_dir=None,pickle_file_head=None):
+    if ocr_results_dir is None: ocr_results_dir = config.ocr_results_dir
+    if pickle_file_head is None: pickle_file_head = config.pickle_file_head
+    fileCheckArr = [ocr_results_dir+pickle_file_head + '*.pickle']
     wsAlreadyDone = []
     # loop and grab
     # check for stars:
@@ -38,25 +40,30 @@ def get_already_ocr_processed():
 
 
 # find the current pickle-file name for this run:
-def find_pickle_file_name():
+def find_pickle_file_name(ocr_results_dir=None, pickle_file_head=None):
+    if ocr_results_dir is None: ocr_results_dir = config.ocr_results_dir
+    if pickle_file_head is None: pickle_file_head = config.pickle_file_head
     # look for most recent pickle storage file and have "take" number increase by 1:
-    pickle_files = glob(config.ocr_results_dir + config.pickle_file_head + '*pickle')
+    pickle_files = glob(ocr_results_dir + pickle_file_head + '*pickle')
     if len(pickle_files) == 0: # new!
-        pickle_file_name = config.ocr_results_dir + config.pickle_file_head +'1.pickle'
+        pickle_file_name = ocr_results_dir + pickle_file_head +'1.pickle'
     else:
         nums = []
         for p in pickle_files:
             nums.append(int(p.split('_take')[-1].split('.pickle')[0]))
         newNum = max(nums)+1
-        pickle_file_name = config.ocr_results_dir + config.pickle_file_head +str(newNum)+'.pickle'
+        pickle_file_name = ocr_results_dir + pickle_file_head +str(newNum)+'.pickle'
     return pickle_file_name
 
 
 
 # find the list of PDFs/Images/Jpegs you want to process
-def get_random_page_list(wsAlreadyDone):
+def get_random_page_list(wsAlreadyDone, full_article_pdfs_dir=None,
+                         nRandom_ocr_image=None):
+    if full_article_pdfs_dir is None: full_article_pdfs_dir=config.full_article_pdfs_dir
+    if nRandom_ocr_image is None: nRandom_ocr_image = config.nRandom_ocr_image
     # get list of possible files from what has been downloaded in full article PDFs
-    pdfarts = glob(config.full_article_pdfs_dir+'*pdf')
+    pdfarts = glob(full_article_pdfs_dir+'*pdf')
     if is_root() and len(pdfarts)>0: 
         print('working with:', len(pdfarts), 'full article PDFs, will pull random pages from these')
     elif is_root():
@@ -68,7 +75,7 @@ def get_random_page_list(wsAlreadyDone):
         # loop and grab random page (if not already processed)
         ws = []; pageNums = []
         iloop = 0
-        while (len(ws) < config.nRandom_ocr_image):
+        while (len(ws) < nRandom_ocr_image):
             if (iloop>=len(pdfarts)*10): # assume ~10 pages per article
                 print('no more files!')
                 break
@@ -109,26 +116,26 @@ def get_random_page_list(wsAlreadyDone):
             iloop += 1
         if is_root(): print('end loop to get pages of PDFs, iloop=',iloop)
     else: # look for bitmaps or jpegs
-        pdfarts = glob(config.full_article_pdfs_dir+'*bmp')
+        pdfarts = glob(full_article_pdfs_dir+'*bmp')
         # probably
-        if len(pdfarts) < config.nRandom_ocr_image and len(pdfarts) > 0: # have something, but smaller than random
+        if len(pdfarts) < nRandom_ocr_image and len(pdfarts) > 0: # have something, but smaller than random
             ws = pdfarts.copy()
             pdfarts = None
             pageNums = np.repeat(0,len(ws))
-        elif len(pdfarts) > config.nRandom_ocr_image:
+        elif len(pdfarts) > nRandom_ocr_image:
             print('not random implemented, stopping')
             import sys; sys.exit()
         else:
             if is_root(): print('no bitmaps, looking for jpegs')
             # look for jpegs
-            pdfarts = glob(config.full_article_pdfs_dir+'*jpg')
+            pdfarts = glob(full_article_pdfs_dir+'*jpg')
             if len(pdfarts) == 0:
-                pdfarts = glob(config.full_article_pdfs_dir+'*jpeg')
+                pdfarts = glob(full_article_pdfs_dir+'*jpeg')
             if len(pdfarts) == 0:
                 print('really NO idea then... stopping')
                 import sys; sys.exit()
             else: # found something! carry on!
-                if len(pdfarts) < config.nRandom_ocr_image:
+                if len(pdfarts) < nRandom_ocr_image:
                     ws = pdfarts.copy()
                     pdfarts = None
                     pageNums = np.repeat(0,len(ws))

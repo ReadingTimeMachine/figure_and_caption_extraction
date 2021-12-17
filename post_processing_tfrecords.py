@@ -19,9 +19,9 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211209_model3tfz/'
 # weightsFile = 'training_1model3_tfrec_model_l0.021069372.h5' # figure/table, fig/table captions
 
-binary_dirs = 'binaries_model2_tfrecordz/'
-weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211208_model2tfz/'
-weightsFile = 'training_1model2_tfrec_model_l0.031917848.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model2_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211208_model2tfz/'
+# weightsFile = 'training_1model2_tfrec_model_l0.031917848.h5' # figure/table, fig/table captions
 
 # binary_dirs = 'binaries_model1_tfrecordz/'
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
@@ -227,13 +227,14 @@ def _parse_nfeatures(example_proto):
     return nfeatures
 nfeatures_data = test_raw_data.map(lambda example_proto:_parse_nfeatures(example_proto))
 
-nfeatures = -1
+n_features = -1
 for f in nfeatures_data.take(1):
     n_features = int(f.numpy())
     
 # build the model
 model = build_predict(weightsFileDownload, anchorsFile, 
-                    feature_dir,LABELS,version='l', debug=False,n_features=n_features)
+                    feature_dir,LABELS,version=config.version, 
+                      debug=False,n_features=n_features)
 model.load_weights(weightsFileDownload)
 
 if badskewList is not None:

@@ -14,9 +14,11 @@ import xml.etree.ElementTree as ET
 
 from general_utils import isRectangleOverlap, iou_orig
 
-def get_all_ocr_files():
+def get_all_ocr_files(ocr_results_dir=None,pickle_file_head=None):
+    if ocr_results_dir is None: ocr_results_dir = config.ocr_results_dir
+    if pickle_file_head is None: pickle_file_head = config.pickle_file_head
     ocrFiles = []
-    ocrFilesAll = [config.ocr_results_dir + config.pickle_file_head + '*.pickle']
+    ocrFilesAll = [ocr_results_dir + pickle_file_head + '*.pickle']
     for f in ocrFilesAll:
         if '*' not in f:
             ocrFiles.append(f)
