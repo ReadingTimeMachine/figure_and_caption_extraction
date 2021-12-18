@@ -11,6 +11,7 @@ save_binary_dir = None
 make_sense_dir = None
 images_jpeg_dir = None
 full_article_pdfs_dir = None
+make_splits = True
 
 # For non-defaults (like for benchmarking), set to None for default
 ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
@@ -20,7 +21,7 @@ save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
 make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
 images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
 full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
-
+make_splits = False
 
 # # this supercedes what is in the config file
 # feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
@@ -162,7 +163,7 @@ df = pd.DataFrame({'ws':ws, 'paragraphs':paragraphs, 'squares':squares,
 df = df.drop_duplicates(subset='ws')
 df = df.set_index('ws')
 
-import sys; sys.exit()
+#import sys; sys.exit()
 
 binaries_file2 = save_binary_dir + 'binaries'
 if len(binaries_file)>0: #add

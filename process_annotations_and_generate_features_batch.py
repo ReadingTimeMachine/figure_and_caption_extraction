@@ -132,7 +132,7 @@ wsInds = np.linspace(0,len(dfMakeSense['filename'].values)-1,len(dfMakeSense['fi
 #wsInds = wsInds[:2]
 mod_output = 100
 
-import sys; sys.exit()
+#import sys; sys.exit()
 
 # lets do this thing...
 if yt.is_root(): print('Making annotation files and features...')
