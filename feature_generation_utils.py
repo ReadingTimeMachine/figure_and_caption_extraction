@@ -76,7 +76,7 @@ def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=
     mode -- grayscale mode to read in image, will default to "L" for luminance, but can use "P" for palletized
     maxTag -- max number of "color" bands for # of letters & numbers in a word & punctuation
     """
-    font2 = 0.0
+    fonts2 = 0.0
     if feature_list is None: feature_list = config.feature_list
     if binary_dir is None: binary_dir = config.save_binary_dir+'binaries/'
     if feature_invert is None: feature_invert = config.feature_invert
