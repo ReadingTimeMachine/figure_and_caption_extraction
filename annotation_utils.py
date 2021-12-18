@@ -29,8 +29,12 @@ def get_all_ocr_files(ocr_results_dir=None,pickle_file_head=None):
     return ocrFiles
 
 
-def make_ann_directories():
-    fileStorage = config.save_binary_dir
+def make_ann_directories(save_binary_dir=None,make_sense_dir=None, debug=False):
+    if save_binary_dir is None: 
+        fileStorage = config.save_binary_dir
+    else:
+        fileStorage = save_binary_dir
+    if make_sense_dir is None: make_sense_dir = config.make_sense_dir
     IMAGE_H = config.IMAGE_H; IMAGE_W = config.IMAGE_W
 
     # where shall we store all things?
@@ -42,9 +46,13 @@ def make_ann_directories():
 
     # get bad skews
     if config.bad_skews_file is not None:
-        badskews = pd.read_csv(config.make_sense_dir+config.bad_skews_file, delimiter='(')
-        badskewsList = badskews.index.values.tolist()
-        if is_root(): print('--- using a bad skew/bad annotations file ---')
+        try:
+            badskews = pd.read_csv(make_sense_dir+config.bad_skews_file, delimiter='(')
+            badskewsList = badskews.index.values.tolist()
+            if is_root(): print('--- using a bad skew/bad annotations file ---')
+        except:
+            if debug: print('no bad ann file found')
+            badskewsList = [-1]
     else:
         badskewsList = [-1]
         
@@ -108,8 +116,9 @@ def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
 
 
 
-def get_makesense_info_and_years(df):
-    msf = glob(config.make_sense_dir + 'labels_*csv')
+def get_makesense_info_and_years(df,make_sense_dir=None):
+    if make_sense_dir is None: make_sense_dir = config.make_sense_dir
+    msf = glob(make_sense_dir + 'labels_*csv')
     mysquares = []; myfnames = []; myws=[]; myhs=[] 
     for f in msf:
         d = pd.read_csv(f, names=['class','x','y', 'w','h','fname','wm','hm'])
@@ -169,13 +178,14 @@ def get_years(dd):
     years = np.unique(years_list)
     return years,years_list
 
-def get_cross_index(d,df,img_resize):
+def get_cross_index(d,df,img_resize,images_jpeg_dir=None):
     """
     d - subset dataframe from a makesense data frame
     df - full list of OCR results
     """
+    if images_jpeg_dir is None: images_jpeg_dir = config.images_jpeg_dir
     # get image -- with some checks
-    baseName = config.images_jpeg_dir +d['filename'].values[0]
+    baseName = images_jpeg_dir +d['filename'].values[0]
     if os.path.isfile(baseName + '.jpeg'):
         fname = baseName + '.jpeg'
     elif os.path.isfile(baseName + '.jpg'):
@@ -210,7 +220,9 @@ def get_cross_index(d,df,img_resize):
     return goOn, dfsingle, indh, fracxDiag, fracyDiag, fname
 
 
-def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72):
+def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72, 
+                       full_article_pdfs_dir=None):
+    if full_article_pdfs_dir is None: full_article_pdfs_dir = config.full_article_pdfs_dir
     IMAGE_W = config.IMAGE_W
     IMAGE_H = config.IMAGE_H
     figsThisPage = []; rawBoxThisPage =[]
@@ -232,7 +244,7 @@ def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72):
                 rawBoxThisPage.append(fb)
 
         if (len(figsThisPage) > 0) or (len(rawBoxThisPage) > 0):
-            imgPDF = convert_from_path(config.full_article_pdfs_dir+ff.split('_p')[0]+'.pdf', dpi=pdffigures_dpi, 
+            imgPDF = convert_from_path(full_article_pdfs_dir+ff.split('_p')[0]+'.pdf', dpi=pdffigures_dpi, 
                                        first_page=page+1,last_page=page+1)[0]
             # size of the pdffigures2 PDF conversion?
             imgPDFsize = imgPDF.size
@@ -262,7 +274,8 @@ def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72):
     return figsThisPage, rawBoxThisPage, xc, fracy, fracyYOLO, fracxYOLO
 
 
-def get_annotation_name(d,scount,sfcount,ccount):
+def get_annotation_name(d,scount,sfcount,ccount,ignore_ann_list=None):
+    if ignore_ann_list is None: ignore_ann_list=config.ignore_ann_list
     # take out any overlapping subfigs
     taken_sqs = []; subsq = []
     for s in d['squares'].values:
@@ -301,7 +314,8 @@ def get_annotation_name(d,scount,sfcount,ccount):
         #else:
             #if labslabs[LABELS.index(b[-1])] == -1: notSubfig = False
         #if ignore_mathformula and 'math' in b[-1]: notSubfig = False
-        if b[-1] in config.ignore_ann_list: #return '' # in ignore list?
+        #print(b[-1], ignore_ann_list)
+        if b[-1] in ignore_ann_list: #return '' # in ignore list?
             diagLabs.append('')
         elif notSubfig or ('sub fig' in b[-1] and (scount <= sfcount) and (ccount == 0) and b[-1] != 'no label'): # this is overly convoluted
             diagLab = ''

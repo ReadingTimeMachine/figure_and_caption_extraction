@@ -3,7 +3,24 @@ import config
 
 pdffigures_dpi = 72 # this is the default DPI of coordinates for PDFs for pdffigures2 (docs say 150, but this is a LIE)
 reRun = False # only toggle on if you want to re-run all of pdffigures2 which can take a while
+use_pdfmining = True # generally true, but can set to false for some benchmarks
+generate_features = True # again, generally true, but set to false if you don't want to generate features
 
+# for defaults
+ocr_results_dir = None
+save_binary_dir = None
+make_sense_dir = None
+images_jpeg_dir = None
+full_article_pdfs_dir = None
+
+# For non-defaults (like for benchmarking), set to None for default
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+use_pdfmining = False
+generate_features = False
+save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 # ----------------------------------------------
 
 # easy parallel
@@ -36,8 +53,10 @@ debug = False
 
 # ----------------------------------------------
 
+if full_article_pdfs_dir is None: full_article_pdfs_dir = config.full_article_pdfs_dir
+
 # let's get all of the ocr files
-ocrFiles = get_all_ocr_files()
+ocrFiles = get_all_ocr_files(ocr_results_dir=ocr_results_dir)
 # get important quantities from these files
 if yt.is_root(): print('retreiving OCR data, this can take a moment...')
 ws, paragraphs, squares, html, rotations,colorbars = collect_ocr_process_results(ocrFiles)
@@ -48,11 +67,17 @@ df = df.drop_duplicates(subset='ws')
 df = df.set_index('ws')
 
 # make all file directories
-fileStorage = config.save_binary_dir
-imgDir, imgDirAnn, imgDirPDF, badskewsList = make_ann_directories()
+if save_binary_dir is None: 
+    fileStorage = config.save_binary_dir
+else:
+    fileStorage = save_binary_dir
+imgDir, imgDirAnn, imgDirPDF, badskewsList = make_ann_directories(save_binary_dir=save_binary_dir, 
+                                                                 make_sense_dir=make_sense_dir)
 
 # for saving diagnostics, if you've chosen to do that
 diagnostics_file = config.tmp_storage_dir + 'tmpAnnDiags/'
+
+
 
 def create_stuff(lock):
     if os.path.isfile(fileStorage + 'done'): os.remove(fileStorage + 'done') # test to make sure we don't move on in parallel too soon
@@ -88,8 +113,14 @@ def create_stuff(lock):
 my_lock = Lock()
 create_stuff(my_lock)
 
+
 # get make sense info
-dfMakeSense = get_makesense_info_and_years(df)
+dfMakeSense = get_makesense_info_and_years(df,make_sense_dir=make_sense_dir)
+LABELS = []
+for s in dfMakeSense['squares'].values:
+    for ss in s:
+        LABELS.append(ss[-1])
+LABELS = np.unique(LABELS).tolist()
 
 # get years and years list
 years, years_list = get_years(dfMakeSense['filename'].values)
@@ -100,6 +131,8 @@ wsInds = np.linspace(0,len(dfMakeSense['filename'].values)-1,len(dfMakeSense['fi
 # debug
 #wsInds = wsInds[:2]
 mod_output = 100
+
+import sys; sys.exit()
 
 # lets do this thing...
 if yt.is_root(): print('Making annotation files and features...')
@@ -113,7 +146,7 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     
     # subset dataframe
     d = dfMakeSense.loc[dfMakeSense['filename']==dfMakeSense['filename'].values[iw]]
-    
+
     # get squares & save -- check for any NotSures and continue if found
     gotSomething = False
     scount=0;sfcount=0; ccount = 0
@@ -134,7 +167,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     
     # cross index this makesense data frame with the OCR processing results
     # goOn lets us know if we should continue or not
-    goOn, dfsingle, indh, fracxDiag, fracyDiag, fname = get_cross_index(d,df,img_resize)
+    goOn, dfsingle, indh, fracxDiag, fracyDiag, fname = get_cross_index(d,df,img_resize,
+                                                                       images_jpeg_dir=images_jpeg_dir)
     if not goOn: continue
 
     _, rotation, _, _, _, bbox_par, bboxes_words = angles_results_from_ocr(dfsingle['hocr'], 
@@ -146,13 +180,11 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     for ibb, bp in enumerate(bbox_par): # these are also xmin,ymin,xmax,ymax -- found w/OCR, original page size
         bboxes_combined.append(bp)
         
-        
-        
     # run pdffigures2 on this thing
     fileExpected = imgDirPDF + fname.split('/')[-1].split('_p')[0] + '.json'
-    pdfExpected = config.full_article_pdfs_dir + fname.split('/')[-1].split('_p')[0] + '.pdf'
+    pdfExpected = full_article_pdfs_dir + fname.split('/')[-1].split('_p')[0] + '.pdf'
     # do we have any pdf heres?
-    if os.path.exists(pdfExpected):
+    if os.path.exists(pdfExpected) and use_pdfmining:
         if not os.path.exists(fileExpected) or reRun:
             #import sys; sys.exit()
             try:
@@ -172,7 +204,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
                     print(' on #',iw, ws[iw])
                 pass
     else:
-        print('no PDF for', fname.split('/')[-1])
+        if use_pdfmining:
+            print('no PDF for', fname.split('/')[-1])
 
         
     # annotation file save (aloc) and feature file save (floc)
@@ -193,9 +226,11 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         
         
     # if we've made it this far, let's generate features
-    feature_name = generate_single_feature(dfsingle)
-    #import sys; sys.exit()
-    
+    if generate_features:
+        feature_name = generate_single_feature(dfsingle,LABELS)#,
+                                               #feature_list = feature_list, 
+                                               # binary_dir = storeTmps+'binaries/',
+                                               # images_jpeg_dir = images_jpeg_dir,)    
     
     # write file header
     fo = open(aloc,"w")
@@ -226,78 +261,79 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
 
     # note: xc will probably always be 0, but this is useful if scanned JPEGs
     #. come from a different location than the PDF pages
-    figsThisPage, rawBoxThisPage, xc, fracy, \
-       fracyYOLO, fracxYOLO = get_pdffigures_info(jsonfile, 
-                                                  page,d['filename'].values[0],
-                                                  d,pdffigures_dpi=pdffigures_dpi)
-        
-    # if we have any PDF boxes, write them out:
-    for fp in figsThisPage:
-        x1 = fp['regionBoundary']['x1'] 
-        y1 = fp['regionBoundary']['y1']
-        x2 = fp['regionBoundary']['x2'] 
-        y2 = fp['regionBoundary']['y2']
-        # transform from PDF to scanned axis to YOLO boxsize
-        y1 = int(round((y1/fracy)*fracyYOLO)); y2 = int(round((y2/fracy)*fracyYOLO))
-        x1 = int(round((x1/fracy-xc)*fracxYOLO)); x2=int(round((x2/fracy-xc)*fracxYOLO))
-        #print(xc)
-        fo.write("\t<PDFinfo>\n")
-        if fp['figType'] == 'Figure':
-            fo.write("\t\t<name>"+'figure'+"</name>\n")
-            capName = 'figure caption'
-        elif fp['figType'] == 'Table':
-            fo.write("\t\t<name>"+'table'+"</name>\n")
-            capName = 'table caption'
-        # write figure/table
-        fo.write("\t\t<bndbox>\n")
-        fo.write("\t\t\t<xmin>" + str(int(round(x1))) + "</xmin>\n")
-        fo.write("\t\t\t<ymin>" + str(int(round(y1))) + "</ymin>\n")
-        fo.write("\t\t\t<xmax>" + str(int(round(x2))) + "</xmax>\n")
-        fo.write("\t\t\t<ymax>" + str(int(round(y2))) + "</ymax>\n")
-        fo.write("\t\t</bndbox>\n")    
-        fo.write("\t</PDFinfo>\n")
-        # write caption
-        x1 = fp['captionBoundary']['x1'] 
-        y1 = fp['captionBoundary']['y1']
-        x2 = fp['captionBoundary']['x2'] 
-        y2 = fp['captionBoundary']['y2']
-        # transform from PDF to scanned axis
-        #y1 = int(round(y1/fracy)); y2 = int(round(y2/fracy))
-        #x1 = int(round(x1/fracy-xc)); x2=int(round(x2/fracy-xc))
-        y1 = int(round((y1/fracy)*fracyYOLO)); y2 = int(round((y2/fracy)*fracyYOLO))
-        x1 = int(round((x1/fracy-xc)*fracxYOLO)); x2=int(round((x2/fracy-xc)*fracxYOLO))
-        fo.write("\t<PDFinfo>\n")
-        fo.write("\t\t<name>"+capName+"</name>\n")
-        # write figure
-        fo.write("\t\t<bndbox>\n")
-        fo.write("\t\t\t<xmin>" + str(int(round(x1))) + "</xmin>\n")
-        fo.write("\t\t\t<ymin>" + str(int(round(y1))) + "</ymin>\n")
-        fo.write("\t\t\t<xmax>" + str(int(round(x2))) + "</xmax>\n")
-        fo.write("\t\t\t<ymax>" + str(int(round(y2))) + "</ymax>\n")
-        fo.write("\t\t</bndbox>\n")    
-        fo.write("\t</PDFinfo>\n")
+    if use_pdfmining:
+        figsThisPage, rawBoxThisPage, xc, fracy, \
+           fracyYOLO, fracxYOLO = get_pdffigures_info(jsonfile, 
+                                                      page,d['filename'].values[0],
+                                                      d,pdffigures_dpi=pdffigures_dpi)
 
-    # write out regionless boxes too
-    for fp in rawBoxThisPage:
-        x1 = fp['boundary']['x1'] 
-        y1 = fp['boundary']['y1']
-        x2 = fp['boundary']['x2'] 
-        y2 = fp['boundary']['y2']
-        # transform from PDF to scanned axis
-        #y1 = int(round(y1/fracy)); y2 = int(round(y2/fracy))
-        #x1 = int(round(x1/fracy-xc)); x2=int(round(x2/fracy-xc))
-        y1 = int(round((y1/fracy)*fracyYOLO)); y2 = int(round((y2/fracy)*fracyYOLO))
-        x1 = int(round((x1/fracy-xc)*fracxYOLO)); x2=int(round((x2/fracy-xc)*fracxYOLO))
-        fo.write("\t<PDFinfoRAW>\n")
-        fo.write("\t\t<name>"+'raw'+"</name>\n")
-        # write box
-        fo.write("\t\t<bndbox>\n")
-        fo.write("\t\t\t<xmin>" + str(int(round(x1))) + "</xmin>\n")
-        fo.write("\t\t\t<ymin>" + str(int(round(y1))) + "</ymin>\n")
-        fo.write("\t\t\t<xmax>" + str(int(round(x2))) + "</xmax>\n")
-        fo.write("\t\t\t<ymax>" + str(int(round(y2))) + "</ymax>\n")
-        fo.write("\t\t</bndbox>\n")    
-        fo.write("\t</PDFinfoRAW>\n")
+        # if we have any PDF boxes, write them out:
+        for fp in figsThisPage:
+            x1 = fp['regionBoundary']['x1'] 
+            y1 = fp['regionBoundary']['y1']
+            x2 = fp['regionBoundary']['x2'] 
+            y2 = fp['regionBoundary']['y2']
+            # transform from PDF to scanned axis to YOLO boxsize
+            y1 = int(round((y1/fracy)*fracyYOLO)); y2 = int(round((y2/fracy)*fracyYOLO))
+            x1 = int(round((x1/fracy-xc)*fracxYOLO)); x2=int(round((x2/fracy-xc)*fracxYOLO))
+            #print(xc)
+            fo.write("\t<PDFinfo>\n")
+            if fp['figType'] == 'Figure':
+                fo.write("\t\t<name>"+'figure'+"</name>\n")
+                capName = 'figure caption'
+            elif fp['figType'] == 'Table':
+                fo.write("\t\t<name>"+'table'+"</name>\n")
+                capName = 'table caption'
+            # write figure/table
+            fo.write("\t\t<bndbox>\n")
+            fo.write("\t\t\t<xmin>" + str(int(round(x1))) + "</xmin>\n")
+            fo.write("\t\t\t<ymin>" + str(int(round(y1))) + "</ymin>\n")
+            fo.write("\t\t\t<xmax>" + str(int(round(x2))) + "</xmax>\n")
+            fo.write("\t\t\t<ymax>" + str(int(round(y2))) + "</ymax>\n")
+            fo.write("\t\t</bndbox>\n")    
+            fo.write("\t</PDFinfo>\n")
+            # write caption
+            x1 = fp['captionBoundary']['x1'] 
+            y1 = fp['captionBoundary']['y1']
+            x2 = fp['captionBoundary']['x2'] 
+            y2 = fp['captionBoundary']['y2']
+            # transform from PDF to scanned axis
+            #y1 = int(round(y1/fracy)); y2 = int(round(y2/fracy))
+            #x1 = int(round(x1/fracy-xc)); x2=int(round(x2/fracy-xc))
+            y1 = int(round((y1/fracy)*fracyYOLO)); y2 = int(round((y2/fracy)*fracyYOLO))
+            x1 = int(round((x1/fracy-xc)*fracxYOLO)); x2=int(round((x2/fracy-xc)*fracxYOLO))
+            fo.write("\t<PDFinfo>\n")
+            fo.write("\t\t<name>"+capName+"</name>\n")
+            # write figure
+            fo.write("\t\t<bndbox>\n")
+            fo.write("\t\t\t<xmin>" + str(int(round(x1))) + "</xmin>\n")
+            fo.write("\t\t\t<ymin>" + str(int(round(y1))) + "</ymin>\n")
+            fo.write("\t\t\t<xmax>" + str(int(round(x2))) + "</xmax>\n")
+            fo.write("\t\t\t<ymax>" + str(int(round(y2))) + "</ymax>\n")
+            fo.write("\t\t</bndbox>\n")    
+            fo.write("\t</PDFinfo>\n")
+
+        # write out regionless boxes too
+        for fp in rawBoxThisPage:
+            x1 = fp['boundary']['x1'] 
+            y1 = fp['boundary']['y1']
+            x2 = fp['boundary']['x2'] 
+            y2 = fp['boundary']['y2']
+            # transform from PDF to scanned axis
+            #y1 = int(round(y1/fracy)); y2 = int(round(y2/fracy))
+            #x1 = int(round(x1/fracy-xc)); x2=int(round(x2/fracy-xc))
+            y1 = int(round((y1/fracy)*fracyYOLO)); y2 = int(round((y2/fracy)*fracyYOLO))
+            x1 = int(round((x1/fracy-xc)*fracxYOLO)); x2=int(round((x2/fracy-xc)*fracxYOLO))
+            fo.write("\t<PDFinfoRAW>\n")
+            fo.write("\t\t<name>"+'raw'+"</name>\n")
+            # write box
+            fo.write("\t\t<bndbox>\n")
+            fo.write("\t\t\t<xmin>" + str(int(round(x1))) + "</xmin>\n")
+            fo.write("\t\t\t<ymin>" + str(int(round(y1))) + "</ymin>\n")
+            fo.write("\t\t\t<xmax>" + str(int(round(x2))) + "</xmax>\n")
+            fo.write("\t\t\t<ymax>" + str(int(round(y2))) + "</ymax>\n")
+            fo.write("\t\t</bndbox>\n")    
+            fo.write("\t</PDFinfoRAW>\n")
 
         
     # on occation, depending on who is annotating and what labels you have in there
@@ -411,8 +447,12 @@ if yt.is_root():
                             shapes.append(-1)
         # endevor to parse the full annotation
         if config.check_parse:
+            check_for_file = True
+            if not generate_features: check_for_file = False
             try:
-                iname, tb = parse_annotation([ann],LABELS,debug=True)
+                iname, tb = parse_annotation([ann],LABELS,
+                                             debug=True,
+                                             check_for_file=check_for_file)
             except:
                 print('trouble parsing for:', ann)
     # check for same shapes

@@ -5,6 +5,23 @@ splits_directory = config.tmp_storage_dir
 mode = 'L' # "L" is default for grayscale formatting
 maxTag = 125 # trial? for fraction of words/numbers and punctuation
 
+# for defaults
+ocr_results_dir = None
+save_binary_dir = None
+make_sense_dir = None
+images_jpeg_dir = None
+full_article_pdfs_dir = None
+
+# For non-defaults (like for benchmarking), set to None for default
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+use_pdfmining = False
+generate_features = False
+save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+
+
 # # this supercedes what is in the config file
 # feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
 #                 'punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
@@ -80,37 +97,17 @@ feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences',
                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
                'text angles','Spacy POS']
 # call these something new?
-binaries_file = 'model12_tfrecordz'
-
-
-# ----- older -----
-
+#binaries_file = 'model12_tfrecordz'
+binaries_file = 'model12_tfrecordz_pmcnoncom' # benchmark
 
 
 
-# feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-#                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-#                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
+# feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word','punctuation', 
+#                'text angles','Spacy POS']
 # # call these something new?
-# binaries_file = 'model8'
+# binaries_file = 'model13_tfrecordz'
 
-# # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-# #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-# #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
-# # # call these something new?
-# # binaries_file = 'model8_pickle'
-
-# # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-# #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-# #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
-# # # call these something new?
-# # binaries_file = 'model8_noncom'
-
-# # # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
-# # #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-# # #                'text angles','Spacy POS','Spacy TAGs','Spacy DEPs']
-# # # # call these something new?
-# # # binaries_file = 'model8_noncomz'
 
 
 # ----------------------------------------------
@@ -151,8 +148,11 @@ debug = False
 
 # ----------------------------------------------
 
+if images_jpeg_dir is None: images_jpeg_dir = config.images_jpeg_dir
+if save_binary_dir is None: save_binary_dir = config.save_binary_dir
+
 # let's get all of the ocr files
-ocrFiles = get_all_ocr_files()
+ocrFiles = get_all_ocr_files(ocr_results_dir=ocr_results_dir)
 # get important quantities from these files
 if yt.is_root(): print('retreiving OCR data, this can take a moment...')
 ws, paragraphs, squares, html, rotations,colorbars = collect_ocr_process_results(ocrFiles)
@@ -162,14 +162,16 @@ df = pd.DataFrame({'ws':ws, 'paragraphs':paragraphs, 'squares':squares,
 df = df.drop_duplicates(subset='ws')
 df = df.set_index('ws')
 
-binaries_file2 = config.save_binary_dir + 'binaries'
+import sys; sys.exit()
+
+binaries_file2 = save_binary_dir + 'binaries'
 if len(binaries_file)>0: #add
     binaries_file = binaries_file2 + '_' + binaries_file + '/'
 else:
     binaries_file = binaries_file2 + '/'
 
 def create_stuff(lock):
-    if os.path.isfile(config.save_binary_dir + 'done'): os.remove(config.save_binary_dir + 'done') # test to make sure we don't move on in parallel too soon
+    if os.path.isfile(save_binary_dir + 'done'): os.remove(save_binary_dir + 'done') # test to make sure we don't move on in parallel too soon
     if yt.is_root():
         # check these all exist, but don't over write the directories like for annotaitons
         if not os.path.exists(binaries_file):
@@ -186,9 +188,9 @@ def create_stuff(lock):
         shutil.rmtree(config.tmp_storage_dir+'TMPTFRECORD/')
         os.mkdir(config.tmp_storage_dir+'TMPTFRECORD/')
         # done
-        with open(config.save_binary_dir + 'done','w') as ffd:
+        with open(save_binary_dir + 'done','w') as ffd:
             print('done!',file=ffd)
-        print(config.save_binary_dir + 'done')
+        print(save_binary_dir + 'done')
 
 # in theory, this should stop the parallel stuff until the folder
 #. has been created, but I'm not 100% sure on this one
@@ -196,7 +198,7 @@ my_lock = Lock()
 create_stuff(my_lock)
 
 # get annotations
-imgDirAnn = config.save_binary_dir + config.ann_name + str(int(config.IMAGE_H)) + 'x' + str(int(config.IMAGE_W))  + '_ann/'
+imgDirAnn = save_binary_dir + config.ann_name + str(int(config.IMAGE_H)) + 'x' + str(int(config.IMAGE_W))  + '_ann/'
 # get all annotations
 annotations = glob(imgDirAnn+'*.xml')
 
@@ -235,7 +237,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
                                                  maxboxes=maxboxes, 
                                            feature_list = feature_list, 
                                            binary_dir = binaries_file, 
-                                           mode=mode, maxTag=maxTag)
+                                           mode=mode, maxTag=maxTag,
+                                                 images_jpeg_dir = images_jpeg_dir)
     
     #import sys; sys.exit()
     sto.result = [font,feature_name]
@@ -326,11 +329,11 @@ if yt.is_root():
             }
             return tf.train.Example(features=tf.train.Features(feature=feature))  
         
-        classDir_main_to = config.save_binary_dir + config.ann_name + \
+        classDir_main_to = save_binary_dir + config.ann_name + \
            str(int(config.IMAGE_H)) + 'x' + \
            str(int(config.IMAGE_W))  + '_ann/'
         
-        classDir_main_to_imgs = config.save_binary_dir + feature_name.split('/')[-2] + '/'  
+        classDir_main_to_imgs = save_binary_dir + feature_name.split('/')[-2] + '/'  
         
         # make a temp record file to see how big each file is, on avearge
         # write one image file and see how big it is
@@ -373,11 +376,17 @@ if yt.is_root():
         print('there will be', nfiles_per_file, 'images+labels per TFrecord')
         
         
-        splitsnames = ['train','valid','test']
+        if make_splits: # if we have a splits list
+            splitsnames = ['train','valid','test']
+        else: # or all together
+            splitsnames = ['record']
         for sp in splitsnames:
             print('-----------', sp, '--------------')
-            filelist1 = pd.read_csv(config.tmp_storage_dir+sp+'.csv',
+            if make_splits:
+                filelist1 = pd.read_csv(config.tmp_storage_dir+sp+'.csv',
                                    names=['filename'])['filename'].values
+            else:
+                filelist1 = glob(imgDirAnn+'*xml')
             # check for empty files
             filelist = []
             for a in filelist1:
