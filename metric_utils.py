@@ -665,10 +665,15 @@ def print_metrics_table(totalTrue,TP,FP,FN,
     
     
 def get_years_dataframe(imgs_name,scoremin,ioumin,LABELS,
-                       truebox3,boxes_sq5,labels_sq5,scores_sq5):
-    years = []
-    for n in imgs_name:
-        years.append(n.split('/')[-1][:4])
+                       truebox3,boxes_sq5,labels_sq5,scores_sq5,
+                       fake_years=False):
+    
+    if not fake_years:
+        years = []
+        for n in imgs_name:
+            years.append(n.split('/')[-1][:4])
+    else:
+        years = np.random.randint(1900,2000,len(imgs_name))
     years_u = np.unique(years).astype('int')
     
     TPyear = np.zeros([len(years_u),len(LABELS)])

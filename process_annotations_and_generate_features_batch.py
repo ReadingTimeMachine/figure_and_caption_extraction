@@ -4,7 +4,7 @@ import config
 pdffigures_dpi = 72 # this is the default DPI of coordinates for PDFs for pdffigures2 (docs say 150, but this is a LIE)
 reRun = False # only toggle on if you want to re-run all of pdffigures2 which can take a while
 use_pdfmining = True # generally true, but can set to false for some benchmarks
-generate_features = True # again, generally true, but set to false if you don't want to generate features
+generate_features = False # again, generally true, but set to false if you don't want to generate features
 
 # for defaults
 ocr_results_dir = None
@@ -14,13 +14,26 @@ images_jpeg_dir = None
 full_article_pdfs_dir = None
 
 # For non-defaults (like for benchmarking), set to None for default
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-use_pdfmining = False
+
+# # PMC PubLayNet
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+# use_pdfmining = False
+# generate_features = False
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+
+# ScanBank
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+use_pdfmining = True
 generate_features = False
-save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
+
+
 # ----------------------------------------------
 
 # easy parallel

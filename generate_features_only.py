@@ -109,7 +109,11 @@ binaries_file = 'model12_tfrecordz_pmcnoncom' # benchmark
 # # call these something new?
 # binaries_file = 'model13_tfrecordz'
 
-
+feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word','punctuation', 
+               'text angles','Spacy POS']
+# call these something new?
+binaries_file = 'model14_tfrecordz'
 
 # ----------------------------------------------
 

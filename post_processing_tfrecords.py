@@ -1,57 +1,43 @@
 # set to None if you want to use defaults
 import config
 
-
-
-# binary_dirs = 'binaries_model5_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211212_model5tfz/'
-# weightsFile = 'training_1model5_tfrec_model_l0.025074273.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model10_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211207_model10tfz/'
-# weightsFile = 'training_1model10_tfrec_model_l0.028558243.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model4_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211211_model4tfz/'
-# weightsFile = 'training_1model4_tfrec_model_l0.022068841.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model3_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211209_model3tfz/'
-# weightsFile = 'training_1model3_tfrec_model_l0.021069372.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model2_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211208_model2tfz/'
-# weightsFile = 'training_1model2_tfrec_model_l0.031917848.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model1_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
-# weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model6_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211213_model6tfz/'
-# weightsFile = 'training_1model6_tfrec_model_l0.033180892.h5' # figure/table, fig/table captions
-
 # binary_dirs = 'binaries_model7_tfrecordz/'
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model7tfz/'
 # weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5' # figure/table, fig/table captions
 
-# binary_dirs = 'binaries_model8_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211215_model8tfz/'
-# weightsFile = 'training_1model8_tfrec_model_l0.022871962.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model9_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211205_model9tfz/'
-# weightsFile = 'training_1model9_tfrec_model_l0.033717625.h5' # figure/table, fig/table captions
-
-# binary_dirs = 'binaries_model11_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211216_model11tfz/'
-# weightsFile = 'training_1model11_tfrec_model_l0.031253316.h5' # figure/table, fig/table captions
-
-binary_dirs = 'binaries_model12_tfrecordz/'
+#binary_dirs = 'binaries_model12_tfrecordz/'
+binary_dirs = 'binaries_model12_tfrecordz_pmcnoncom/'
 weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211218_model12tfz/'
 weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5' # figure/table, fig/table captions
 
+binary_dirs = 'binaries_model13_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211219_model13tfz/'
+weightsFile = 'training_1model13_tfrec_model_l0.01955727.h5' # figure/table, fig/table captions
 
+
+
+# for defaults
+ocr_results_dir = None
+save_binary_dir = None
+make_sense_dir = None
+images_jpeg_dir = None
+full_article_pdfs_dir = None
+use_splits = True
+
+# # For non-defaults (like for benchmarking), set to None for default
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+# use_pdfmining = False
+# generate_features = False
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+# use_splits = False
+
+# -------------------------------------------------------------------------
+benchmark = None
+scoreminVec = None
+iouminVec = None
 
 # using the valid or test data?
 use_valid = False
@@ -65,32 +51,28 @@ useColorbars = True
 #adder = 'truebox'
 
 
-
-
-benchmark = None
-scoreminVec = None
-iouminVec = None
-
-
-
 if use_valid: adder = '_valid'
 
-
+if save_binary_dir is None: save_binary_dir = config.save_binary_dir
+if ocr_results_dir is None: ocr_results_dir = config.ocr_results_dir
+if make_sense_dir is None: make_sense_dir = config.make_sense_dir
+if images_jpeg_dir is None: images_jpeg_dir = config.images_jpeg_dir
 # from config file
-annotation_dir = config.save_binary_dir + config.ann_name + str(config.IMAGE_H) + 'x' + str(config.IMAGE_W) + '_ann/'
-
-#'/Users/jillnaiman/MegaYolo/yolo_512x512_ann/'
+annotation_dir = save_binary_dir + config.ann_name + str(config.IMAGE_H) + 'x' + str(config.IMAGE_W) + '_ann/'
 
 if binary_dirs is None: binary_dirs = 'binaries/'
 
-feature_dir = config.save_binary_dir + binary_dirs
-
-pickle_dir = config.ocr_results_dir
-makeSenseDir = config.make_sense_dir
-images_pulled_dir = config.images_jpeg_dir
-badskewList = config.make_sense_dir+config.bad_skews_file
+# a bit of moving things around for old code... change this!
+feature_dir = save_binary_dir + binary_dirs
+pickle_dir = ocr_results_dir
+makeSenseDir = make_sense_dir
+images_pulled_dir = images_jpeg_dir
+badskewList = make_sense_dir+config.bad_skews_file
+# check it
+import os
+if not os.path.isfile(badskewList): badskewList = None
 badannotationsList = badskewList # if 2 different lists
-ocrFilesAll = [config.ocr_results_dir + config.pickle_file_head + '*.pickle']
+ocrFilesAll = [ocr_results_dir + config.pickle_file_head + '*.pickle']
 n_folds_cv = config.n_folds_cv
 if weightsFileDir is None: weightsFileDir = config.weightsFileDir
 if weightsFile is None: weightsFile = config.weightsFile
@@ -148,7 +130,7 @@ if store_diagnostics:
         os.remove(os.path.join(diagnostics_dir + 'TP/', f))
 
 # let's get all of the ocr files
-ocrFiles = get_all_ocr_files()
+ocrFiles = get_all_ocr_files(ocr_results_dir=ocr_results_dir)
 # get important quantities from these files
 if yt.is_root(): print('retreiving OCR data, this can take a moment...')
 ws, paragraphs, squares, html, rotations,colorbars = collect_ocr_process_results(ocrFiles)
@@ -179,9 +161,12 @@ if yt.is_root():
     
     
 # for tfrecrords, get datasets
-test_list = glob.glob(feature_dir + 'test_*tfrecords')
-if use_valid:
-    test_list = glob.glob(feature_dir + 'valid_*tfrecords')
+if use_splits:
+    test_list = glob.glob(feature_dir + 'test_*tfrecords')
+    if use_valid:
+        test_list = glob.glob(feature_dir + 'valid_*tfrecords')
+else:
+    test_list = glob.glob(feature_dir + 'record_*tfrecords')
     
 if yt.is_root():
     print('we have:', len(test_list), 'tfrecords files to loop over')
@@ -254,7 +239,7 @@ else:
     badannotations = []; badskews = []
 
 # get make sense info
-dfMakeSense = get_makesense_info_and_years(df)
+dfMakeSense = get_makesense_info_and_years(df,make_sense_dir=make_sense_dir)
 
 # get years and years list
 years, years_list = get_years(dfMakeSense['filename'].values)
@@ -303,10 +288,13 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
 
         # run model
         if icout%iMod == 0:
-            if not use_valid:
-                print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.test_per))
+            if use_splits:
+                if not use_valid:
+                    print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.test_per))
+                else:
+                    print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.valid_per))
             else:
-                print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.valid_per))
+                print('on ', icout, ' of ~', int(len(annotations)//len(test_list)))
 
         # there is a lot of mess here that gets and formats all true boxes and 
         #. all of the OCR data
@@ -321,7 +309,8 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
         # get OCR results and parse them, open image for image processing
         backtorgb,image_np,rotatedImage,rotatedAngleOCR,bbox_hocr,\
           bboxes_words,bbsq,cbsq, rotation,bbox_par = get_ocr_results(imgs_name, dfMakeSense,df,
-                                                                     image_np=image.numpy())
+                                                                     image_np=image.numpy(),
+                                                                      images_jpeg_dir=images_jpeg_dir)
 
 
         # predict squares in 2 ways

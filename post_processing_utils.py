@@ -46,6 +46,8 @@ def parse_annotations_to_labels(classDir_main_to, testListFile,
     # sort
     annotations = np.unique(annotations).tolist()
     annotations.sort()
+    
+    #print(annotations)
 
     # NEXT: do a quick test run-through of the data generator for train/test splits
     X_full = np.array(annotations)
@@ -654,7 +656,7 @@ def get_ocr_results(imgs_name, dfMakeSense,dfsave,
             indh = ff+'.jpg'
         else:
             # find correct hocr index
-            ff = glob.glob(images_jpeg_dir+ff + '*')
+            ff = glob(images_jpeg_dir+ff + '*')
             if len(ff) == 0:
                 print('have issue! here in looking for thing.')
                 import sys; sys.exit()
