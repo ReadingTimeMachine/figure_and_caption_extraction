@@ -23,6 +23,10 @@ images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocaliza
 full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 make_splits = False
 
+
+
+
+
 # # this supercedes what is in the config file
 # feature_list = ['grayscale','fontsize','carea boxes','paragraph boxes','fraction of numbers in a word','fraction of letters in a word',
 #                 'punctuation','x_ascenders','x_decenders','text angles', 'word confidences','Spacy POS','Spacy TAGs','Spacy DEPs']
@@ -90,12 +94,15 @@ make_splits = False
 # # call these something new?
 # binaries_file = 'model11_tfrecordz'
 
+
+# MODEL 12 IS SO FAR WINNING
 # Start taking things out from the main list of model 7
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
 #                'text angles','Spacy POS']
 feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+                'fraction of numbers in a word',
+                'fraction of letters in a word','punctuation', 
                'text angles','Spacy POS']
 # call these something new?
 #binaries_file = 'model12_tfrecordz'
@@ -109,11 +116,12 @@ binaries_file = 'model12_tfrecordz_pmcnoncom' # benchmark
 # # call these something new?
 # binaries_file = 'model13_tfrecordz'
 
-feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word','punctuation', 
-               'text angles','Spacy POS']
-# call these something new?
-binaries_file = 'model14_tfrecordz'
+# feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word',
+#                 'fraction of letters in a word', 
+#                'text angles','Spacy POS']
+# # call these something new?
+# binaries_file = 'model14_tfrecordz'
 
 # ----------------------------------------------
 

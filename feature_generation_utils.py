@@ -420,16 +420,18 @@ def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=
         med_dec = np.median(decendershere)
         #if min_dec == max_dec: min_dec = 0; max_dec = 1
         #scales_decenders = (decendershere-min_dec)/(max_dec-min_dec) # around the median
-        scales_decenders = (decendershere-med_dec) # around the median
-        min_dec = scales_decenders.min(); max_dec = scales_decenders.max()
-        if min_dec == max_dec: min_dec = 0; max_dec = 1
-        scales_decenders = (scales_decenders-min_dec)/(max_dec-min_dec) # reshift to start at 0
-        scales_decenders[scales_decenders<0] = 0
-        scales_decenders[scales_decenders>1] = 1
-        for b,s in zip(bboxes,scales_decenders):
-            #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255)) # x_ascenders should always be low colors   
-        if feature_invert: imgOrig = 255-imgOrig
+        #print(decendershere)
+        if len(decendershere) > 0:
+            scales_decenders = (decendershere-med_dec) # around the median
+            min_dec = scales_decenders.min(); max_dec = scales_decenders.max()
+            if min_dec == max_dec: min_dec = 0; max_dec = 1
+            scales_decenders = (scales_decenders-min_dec)/(max_dec-min_dec) # reshift to start at 0
+            scales_decenders[scales_decenders<0] = 0
+            scales_decenders[scales_decenders>1] = 1
+            for b,s in zip(bboxes,scales_decenders):
+                #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255)) # x_ascenders should always be low colors   
+            if feature_invert: imgOrig = 255-imgOrig
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
                                          img_resize,fx=0, fy=0, 
                                          interpolation = cv.INTER_NEAREST)
@@ -444,13 +446,14 @@ def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=
         # if min_asc == max_asc: min_asc = 0; max_asc = 1
         # scales_ascenders = (ascendershere-min_asc)/(max_asc-min_asc)
         ascendershere += np.median(ascendershere)
-        min_asc = ascendershere.min(); max_asc = ascendershere.max()
-        scales_ascenders = (ascendershere-min_asc)/(max_asc-min_asc)
-        scales_ascenders[scales_ascenders<0] = 0
-        scales_ascenders[scales_ascenders>1] = 1
-        for b,s in zip(bboxes,scales_ascenders):
-            #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
-            imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255))    
+        if len(ascendershere) > 0:
+            min_asc = ascendershere.min(); max_asc = ascendershere.max()
+            scales_ascenders = (ascendershere-min_asc)/(max_asc-min_asc)
+            scales_ascenders[scales_ascenders<0] = 0
+            scales_ascenders[scales_ascenders>1] = 1
+            for b,s in zip(bboxes,scales_ascenders):
+                #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
+                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255))    
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
                                          img_resize,fx=0, fy=0, 
                                          interpolation = cv.INTER_NEAREST)
