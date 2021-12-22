@@ -277,6 +277,7 @@ def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72,
 def get_annotation_name(d,scount,sfcount,ccount,ignore_ann_list=None):
     if ignore_ann_list is None: ignore_ann_list=config.ignore_ann_list
     # take out any overlapping subfigs
+    #print(d)
     taken_sqs = []; subsq = []
     for s in d['squares'].values:
         for ss in s: # weird formatting
@@ -284,6 +285,8 @@ def get_annotation_name(d,scount,sfcount,ccount,ignore_ann_list=None):
                 taken_sqs.append(ss)
             else:
                 subsq.append(ss)
+    #print(taken_sqs)
+    #print(subsq)
     for ss in subsq: # check how much overlapping with other things
         x1min = ss[0]; y1min = ss[1]; x1max = ss[0]+ss[2]; y1max = ss[1]+ss[3]
         w1,h1 = x1max-x1min,y1max-y1min
@@ -303,29 +306,32 @@ def get_annotation_name(d,scount,sfcount,ccount,ignore_ann_list=None):
 
     #for s in d['squares'].values:
     #    for b in s: # no idea... formatting somewhere
+    #print('---')
+    #print(taken_sqs)
     diagLabs = []
-    for b in taken_sqs:
+    for ib,b in enumerate(taken_sqs):
         gotSomething = True ; notSubfig = True    
         if 'sub fig' in b[-1]: notSubfig = False
         # look for some things that we are ignoring
         # NOTE: some of this is redundant!!
         if b[-1] == 'no label': return [''],[]
-        #    notSubfig = False
-        #else:
-            #if labslabs[LABELS.index(b[-1])] == -1: notSubfig = False
-        #if ignore_mathformula and 'math' in b[-1]: notSubfig = False
-        #print(b[-1], ignore_ann_list)
         if b[-1] in ignore_ann_list: #return '' # in ignore list?
-            diagLabs.append('')
+            #diagLabs.append('')
+            diagLab = ''
+            #print(ib,'hi')
         elif notSubfig or ('sub fig' in b[-1] and (scount <= sfcount) and (ccount == 0) and b[-1] != 'no label'): # this is overly convoluted
             diagLab = ''
             if (scount <= sfcount) and (ccount == 0): # call captions sub-figs
                 if b[-1] == 'sub fig caption':
+                    #print(ib,'hi2')
                     diagLab = 'figure caption'
                 else:
+                    #print(ib,'hi3')
                     diagLab = b[-1]
             else:
+                #print(ib,'hi44')
                 diagLab = b[-1]
+        #print(diagLab)
         diagLabs.append(diagLab)
     return diagLabs, taken_sqs
 

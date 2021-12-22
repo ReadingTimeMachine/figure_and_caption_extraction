@@ -13,6 +13,8 @@ make_sense_dir = None
 images_jpeg_dir = None
 full_article_pdfs_dir = None
 
+plot_diagnostics = True
+
 # For non-defaults (like for benchmarking), set to None for default
 
 # # PMC PubLayNet
@@ -24,17 +26,28 @@ full_article_pdfs_dir = None
 # images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
 # full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 
-# ScanBank
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
-use_pdfmining = True
-generate_features = False
-save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
+# # ScanBank
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+# use_pdfmining = True
+# generate_features = False
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
 
 
 # ----------------------------------------------
+
+# colors for diagnostic plots
+colfig_orig = (0,0,255)
+colfig_mod = (0,255,255)
+
+colcap_orig = (255,0,0)
+colcap_mod = (255,0,255)
+
+coltab = (0,255,0) # no change
+colmath = (255,255,0) # no change
+
 
 # easy parallel
 import yt
@@ -87,9 +100,12 @@ else:
 imgDir, imgDirAnn, imgDirPDF, badskewsList = make_ann_directories(save_binary_dir=save_binary_dir, 
                                                                  make_sense_dir=make_sense_dir)
 
+if plot_diagnostics is None: plot_diagnostics = config.plot_diagnostics
 # for saving diagnostics, if you've chosen to do that
 diagnostics_file = config.tmp_storage_dir + 'tmpAnnDiags/'
 
+if plot_diagnostics:
+    from PIL import Image
 
 
 def create_stuff(lock):
@@ -110,7 +126,7 @@ def create_stuff(lock):
         if not os.path.exists(imgDirPDF):
             os.makedirs(imgDirPDF)
 
-        if config.plot_diagnostics:
+        if plot_diagnostics:
             if not os.path.exists(diagnostics_file): # main file
                 os.makedirs(diagnostics_file)
             ## delete, remake
@@ -356,9 +372,11 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     objNames, objSquares = get_annotation_name(d,scount,sfcount,ccount)
     # (other names, except ignored labels, are unchanged)
     
+    imgPlot = np.array(Image.open(config.images_jpeg_dir+ d['filename'].values[0]+'.jpeg').convert('RGB'))
     for n,bs in zip(objNames, objSquares):
         # just double check for table captions here
         if 'table' in n and 'caption' in n: import sys; sys.exit()
+        if n == '': continue # nothing there, don't put it in!
         fo.write("\t<object>\n")
         fo.write("\t\t<name>"+n+"</name>\n") 
         fo.write("\t\t<bndbox>\n")
@@ -375,34 +393,42 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         fo.write("\t\t\t<ymax>" + str(int(round(ymax))) + "</ymax>\n")
         fo.write("\t\t</bndbox>\n")    
         fo.write("\t</object>\n") 
-        if config.plot_diagnostics:
-            # orig
-            xmin1 = xmin; ymin1 = ymin; xmax1 = xmax; ymax1 = ymax
-            b = borig
-            xmin = max([b[0]*1.0/d['w'].values[0]*IMAGE_W-xborder,0]) # have to rescale to output image size
-            xmax = min([(b[0]+b[2])*1.0/d['w'].values[0]*IMAGE_W+xborder,IMAGE_W])
-            ymin = max([b[1]*1.0/d['h'].values[0]*IMAGE_H-yborder,0])
-            ymax = min([(b[1]+b[3])*1.0/d['h'].values[0]*IMAGE_H+yborder,IMAGE_H])
-            #cv.rectangle(imgDiagResize, (round(xmin), round(ymin)), (round(xmax),round(ymax)), (0, 255, 255), 1)   
-            #ax[0].text(xmin, ymax, diagLab,bbox=dict(facecolor='blue'))
-            for b in captionBox:
-                xmin = max([b[0]*1.0/d['w'].values[0]*IMAGE_W-xborder,0]) # have to rescale to output image size
-                xmax = min([(b[0]+b[2])*1.0/d['w'].values[0]*IMAGE_W+xborder,IMAGE_W])
-                ymin = max([b[1]*1.0/d['h'].values[0]*IMAGE_H-yborder,0])
-                ymax = min([(b[1]+b[3])*1.0/d['h'].values[0]*IMAGE_H+yborder,IMAGE_H])
-                cv.rectangle(imgDiagResize, (round(xmin), round(ymin)), (round(xmax),round(ymax)), (125, 255, 0), 1)   
-            cv.rectangle(imgDiagResize, (round(xmin1), round(ymin1)), (round(xmax1),round(ymax1)), (255, 0, 0), 1)  
-            #ax1.text(x.numpy(), y.numpy(), np.array(LABELS)[myclasses][i], bbox=dict(facecolor=colorLabel))
-            cv.putText(imgDiagResize,diagLab,(round(xmax1),round(ymax1)), cv.FONT_HERSHEY_SIMPLEX, 0.25, (255,0,0))
+        if plot_diagnostics:
+            # orig boxes w/o modification
+            xmin = max([bs[0],0]) # have to rescale to output image size
+            xmax = min([bs[0]+bs[2],d['w'].values[0]])
+            ymin = max([bs[1],0])
+            ymax = min([(bs[1]+bs[3]),d['h'].values[0]])
 
+            if n == 'figure': 
+                col_orig = colfig_orig; col_mod = colfig_mod
+            elif n == 'figure caption':
+                col_orig = colcap_orig; col_mod = colcap_mod
+            elif n == 'table':
+                col_orig = coltab; col_mod = coltab
+            elif n == 'math formula':
+                col_orig = colmath; col_mod = colmath
+            else: # a weirdo
+                col_orig = (100,100,100); col_mod = (100,100,100)
+            cv.rectangle(imgPlot, (round(xmin), round(ymin)), (round(xmax),round(ymax)), col_orig, 7)   # orig
+            # modified boxes
+            xmin = max([b[0],0]) # have to rescale to output image size
+            xmax = min([b[0]+b[2],d['w'].values[0]])
+            ymin = max([b[1],0])
+            ymax = min([(b[1]+b[3]),d['h'].values[0]])
+            cv.rectangle(imgPlot, (round(xmin), round(ymin)), (round(xmax),round(ymax)), col_mod, 4)   # mod
+        #if '1970ApJ___162__811A_p1' in d['filename'].values[0]:
+        #    import sys; sys.exit()
+
+ 
 
 
     fo.write("</annotation>\n")
     fo.close() 
-    if config.plot_diagnostics:
-        Image.fromarray(imgDiagResize).save(diagnostics_file + 'orig_ann/' + ff + '.png')
-        imgDiag.close()
-        del imgDiagResize        
+    if plot_diagnostics:
+        Image.fromarray(imgPlot).save(diagnostics_file + d['filename'].values[0] + '.png')
+        del imgPlot      
+    #if iw>5: import sys; sys.exit()
 
         
         
