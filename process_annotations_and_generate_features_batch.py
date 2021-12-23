@@ -372,7 +372,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     objNames, objSquares = get_annotation_name(d,scount,sfcount,ccount)
     # (other names, except ignored labels, are unchanged)
     
-    imgPlot = np.array(Image.open(config.images_jpeg_dir+ d['filename'].values[0]+'.jpeg').convert('RGB'))
+    if plot_diagnostics:
+        imgPlot = np.array(Image.open(config.images_jpeg_dir+ d['filename'].values[0]+'.jpeg').convert('RGB'))
     for n,bs in zip(objNames, objSquares):
         # just double check for table captions here
         if 'table' in n and 'caption' in n: import sys; sys.exit()
@@ -382,8 +383,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         fo.write("\t\t<bndbox>\n")
 
         # shrink caption around OCR bounding boxes
-        b = true_box_caption_mod(bs,rotation,bboxes_combined,
-                                               bboxes_words=bboxes_words) 
+        b = true_box_caption_mod(bs,rotation,bboxes_words, 
+                                true_overlap = 'area', area_overlap=0.75) 
         
         xmin = max([b[0]*1.0/d['w'].values[0]*config.IMAGE_W,0]) # have to rescale to output image size
         xmax = min([(b[0]+b[2])*1.0/d['w'].values[0]*config.IMAGE_W,config.IMAGE_W])

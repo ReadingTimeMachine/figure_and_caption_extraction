@@ -47,7 +47,10 @@ def make_ann_directories(save_binary_dir=None,make_sense_dir=None, debug=False):
     # get bad skews
     if config.bad_skews_file is not None:
         try:
-            badskews = pd.read_csv(make_sense_dir+config.bad_skews_file, delimiter='(')
+            #badskews = pd.read_csv(make_sense_dir+config.bad_skews_file,
+            #                       delimiter='(')
+            badskews = pd.read_csv(make_sense_dir+config.bad_skews_file)
+
             badskewsList = badskews.index.values.tolist()
             if is_root(): print('--- using a bad skew/bad annotations file ---')
         except:
@@ -336,8 +339,8 @@ def get_annotation_name(d,scount,sfcount,ccount,ignore_ann_list=None):
     return diagLabs, taken_sqs
 
 
-def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap=None, 
-                        bboxes_words=None):
+def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap=None,
+                        area_overlap = 0.75):
     if true_overlap is None: true_overlap=config.true_overlap
     # use only words if requested
     if bboxes_words is not None: bboxes_combined=bboxes_words 
@@ -367,10 +370,20 @@ def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap=None,
                 if true_overlap == 'overlap':
                     isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
                                                        (x2min,y2min,x2max,y2max))
-                    #center is within
+                #center is within
                 elif true_overlap == 'center':
                     x2 = 0.5*(x2min+x2max); y2 = 0.5*(y2min+y2max)
                     isOverlapping = (x2 <= x1max) and (x2 >= x1min) and (y2 <= y1max) and (y2 >= y1min)
+                # calculate area overlapping with a cut-off
+                elif true_overlap == 'area':
+                    # calculate area of overlap
+                    dx = min([x1max,x2max])-max([x1min,x2min])
+                    dy = min([y1max,y2max])-max([y1min,y2min])
+                    area = dx*dy
+                    if dx<0 and dy<0: area = 0.0
+                    isOverlapping=False
+                    if area/((x2max-x2min)*(y2max-y2min)) > area_overlap: isOverlapping = True
+                    
                 # using whichever condition -- change box sizes
                 if isOverlapping:
                     xo = indIou[0]; yo = indIou[1]; xo1 = indIou[2]; yo1 = indIou[3]
