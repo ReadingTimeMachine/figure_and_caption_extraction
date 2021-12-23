@@ -381,7 +381,9 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         fo.write("\t\t<name>"+n+"</name>\n") 
         fo.write("\t\t<bndbox>\n")
 
-        b = true_box_caption_mod(bs,rotation,bboxes_combined) # shrink caption around OCR bounding boxes
+        # shrink caption around OCR bounding boxes
+        b = true_box_caption_mod(bs,rotation,bboxes_combined,
+                                               bboxes_words=bboxes_words) 
         
         xmin = max([b[0]*1.0/d['w'].values[0]*config.IMAGE_W,0]) # have to rescale to output image size
         xmax = min([(b[0]+b[2])*1.0/d['w'].values[0]*config.IMAGE_W,config.IMAGE_W])
@@ -417,7 +419,7 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
             ymin = max([b[1],0])
             ymax = min([(b[1]+b[3]),d['h'].values[0]])
             cv.rectangle(imgPlot, (round(xmin), round(ymin)), (round(xmax),round(ymax)), col_mod, 4)   # mod
-        #if '1970ApJ___162__811A_p1' in d['filename'].values[0]:
+        #if '1913ApJ____38__496B_p4' in d['filename'].values[0]:
         #    import sys; sys.exit()
 
  

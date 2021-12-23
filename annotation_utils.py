@@ -336,7 +336,11 @@ def get_annotation_name(d,scount,sfcount,ccount,ignore_ann_list=None):
     return diagLabs, taken_sqs
 
 
-def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap='overlap'):
+def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap=None, 
+                        bboxes_words=None):
+    if true_overlap is None: true_overlap=config.true_overlap
+    # use only words if requested
+    if bboxes_words is not None: bboxes_combined=bboxes_words 
     x1min = b[0]; y1min = b[1]; x1max = b[0]+b[2]; y1max = b[1]+b[3]
     trueBoxOut = []; borig = [b].copy()[0]
     captionBox = []
@@ -348,7 +352,9 @@ def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap='overlap'):
         i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
         if stats.mode(rotation).mode[0] != 90:
             i10 = indIou[1]; i11 = indIou[3]; i20 = indIou2[1]; i21 = indIou2[2]
-        while (i10 != i20) and (i11 != i21):
+        #icount = 0
+        while (i10 != i20) and (i11 != i21):# and icount<1:
+            #icount+=1
         #if True:
             indIou2 = indIou
             i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
