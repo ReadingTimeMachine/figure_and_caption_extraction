@@ -329,7 +329,8 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
         captionText_figcap, bbox_figcap_pars = get_image_process_boxes(backtorgb, 
                                                                        bbox_hocr, 
                                                                        rotatedImage)
-
+        
+        #if '1962ApJ___136___14U_p4' in imgs_name: import sys; sys.exit()
         # clean overlapping squares
         # if squares are majorly overlapping, take the one with the highest score
         sboxes_cleaned, slabels_cleaned, sscores_cleaned = clean_overlapping_squares(boxes1,
@@ -358,7 +359,7 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
         # -- often the heurstically found boxes are more accurate, especially 
         # in the vertical direction
         boxes_heur, labels_heur, scores_heur,\
-          ibbOverlap = clean_merge_heurstic_captions(boxes_pdf, 
+          ibbOverlap, boxes_heur_tf  = clean_merge_heurstic_captions(boxes_pdf, 
                                                 labels_pdf, scores_pdf, 
                                                 bbox_figcap_pars, LABELS,dfMS)
 
@@ -366,12 +367,13 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
         # sometimes figures are found, but no captions -- check for "extra" 
         # only heuristically found captions, and use these as a last resort
         # when matching figures to captions
-        boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
-                                                                      captionText_figcap,
-                                                                      ibbOverlap,
-                                                                      boxes_heur, 
-                                                                      labels_heur, 
-                                                                      scores_heur, dfMS)
+        boxes_heur2, labels_heur2, scores_heur2 = [],[],[]
+        # boxes_heur2, labels_heur2, scores_heur2 = add_heuristic_captions(bbox_figcap_pars,
+        #                                                               captionText_figcap,
+        #                                                               ibbOverlap,
+        #                                                               boxes_heur, 
+        #                                                               labels_heur, 
+        #                                                               scores_heur, dfMS)
 
         # clean found boxes by paragraphs and words  -- if found box overlaps with 
         #. an OCR box, include this box in the bounding box of captions
@@ -385,13 +387,13 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
           scores_par_found = clean_found_overlap_with_ocr(boxes_heur, labels_heur, 
                                                     scores_heur,bboxes_words,
                                                           bbox_par,rotation,
-                                                          LABELS, dfMS)  
+                                                          LABELS, dfMS, boxes_heur_tf)  
 
         # do same excersize with trueboxes (already done really in processing annoations)
-        truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
-                                               bbox_par,rotation, 
-                                               LABELS, dfMS)
-        #truebox1 = truebox.copy()
+        #truebox1 = clean_true_overlap_with_ocr(truebox, bboxes_words,
+        #                                       bbox_par,rotation, 
+        #                                       LABELS, dfMS)
+        truebox1 = truebox.copy()
 
         # if figure boxes are smaller than image-processing found boxes, merge them; 
         # also, do with colorbars as well if requested

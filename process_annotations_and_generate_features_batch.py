@@ -13,7 +13,7 @@ make_sense_dir = None
 images_jpeg_dir = None
 full_article_pdfs_dir = None
 
-plot_diagnostics = True
+plot_diagnostics = False
 
 # For non-defaults (like for benchmarking), set to None for default
 

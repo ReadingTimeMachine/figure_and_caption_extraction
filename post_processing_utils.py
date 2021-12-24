@@ -844,22 +844,46 @@ def get_image_process_boxes(backtorgb, bbox_hocr, rotatedImage):
     cnts = cnts[0] if len(cnts) == 2 else cnts[1] # not sure what this does, but ok
 
     bbox_figcap_pars1 = []; figcap_rot1 = [] # these will store our bounding boxes from this method
+    minVal = [1e5,1e5]
     for c in cnts:
         x,y,w,h = cv.boundingRect(c)
         # does this overlap with a fig tag'd word?
         x1min = x; y1min = y; x1max = x+w; y1max = y+h
         bboxOver = []#; rotOver = []
+        #print('--')
         for (x2min,y2min,w2,h2),text,c,r,bbpar,bbcar in results_fig_hocr: 
             x2max = x2min+w2; y2max = y2min+h2
-            isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max))
+            isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                               (x2min,y2min,x2max,y2max))
+            # check that not larger than "fig" tag
             #isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
+            #print(x1min,y1min)
             if isOverlapping: # if overlapping -- grab whole SMEARED paragraph
+                minVal = [min([x2min,minVal[0]]),min([y2min,minVal[1]])]
+                # if not rotatedImage:
+                #     #y1min = max([y2min,y1min])
+                #     minVal.append(y2min)
+                # else:
+                #     #x1min = max([x2min,x1min])
+                #     minVal.append(x2min)
+                #print(x1min,y1min)
                 bboxOver.append( (x1min,y1min,x1max,y1max) ) # save rotation for finding "top" later
-        bbox_figcap_pars1.append(bboxOver)
+        # make sure you fix the overlap 
+        bboxOver2 = []
+        #for (x1min,y1min,x1max,y1max),mv in zip(bboxOver,minVal):
+        for x1min,y1min,x1max,y1max in bboxOver:
+            if not rotatedImage:
+                bboxOver2.append( (x1min,max([y1min,minVal[1]]),x1max,y1max) )
+            else:
+                bboxOver2.append( (max([x1min,minVal[0]]),y1min,x1max,y1max) )
+        bbox_figcap_pars1.append(bboxOver2)
+        #print(bboxOver)
+        #print(bboxOver2)
 
     # loop and fill
     bbox_figcap_pars = []; captionText_figcap = []
     for b in bbox_figcap_pars1:
+        #print(b)
         if len(b)>0: # have a thing!
             bb = np.unique(b,axis=0) # unique bounding boxes
             if len(bb) > 1: 
@@ -873,11 +897,13 @@ def get_image_process_boxes(backtorgb, bbox_hocr, rotatedImage):
             for (x2min,y2min,w,h),text,c,r,bbpar,bbcar in bbox_hocr:
                 x2max = x2min+w; y2max = y2min+h
                 #isOverlapping = (x1min <= x2max and x2min <= x1max and y1min <= y2max and y2min <= y1max)
-                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max))
+                isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                   (x2min,y2min,x2max,y2max))
 
                 if isOverlapping:
                     rr.append(r)
                     captionTextHeur.append( (x2min,y2min,x2max,y2max,text) )
+            if len(rr) == 0: rr=[0]
             rrr = stats.mode(rr).mode[0]
             bbox_figcap_pars.append((bb[0],bb[1],bb[2],bb[3],rrr))
             #import sys; sys.exit()
@@ -1066,16 +1092,18 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf,
     else:
         print('no idea...')
         import sys; sys.exit()
-        
+    boxes_heur_tf = []
     for b,l,ss in zip(boxes_pdf, labels_pdf, scores_pdf): # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
         # look for negatives
         #b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); 
         #b[2] = min([config.IMAGE_W,b[2]]); 
         #b[3] = min([config.IMAGE_H,b[3]])
-        x1min = max([0,b[0]])*fracx; y1min = max([0,b[1]])*fracy; 
-        x1max = min([config.IMAGE_W,b[2]])*fracx; y1max = min([config.IMAGE_H,b[3]])*fracy
+        x1min = max([0,b[0]])*fracx; 
+        y1min = max([0,b[1]])*fracy; 
+        x1max = min([config.IMAGE_W,b[2]])*fracx; 
+        y1max = min([config.IMAGE_H,b[3]])*fracy
         # are we even dealing with a caption?
-        bboxOverlap = []
+        bboxOverlap = []; 
         if 'caption' in LABELS[int(l)].lower():
             for ibb,bb in enumerate(bbox_figcap_pars):
                 x2min, y2min, x2max, y2max,r = bb
@@ -1092,27 +1120,34 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf,
                 if isOverlapping: # if its overlapping, take the heuristic bounding box
                     if r == 0:
                         ymin = y2min
-                        xmin = min([x1min,x2min]); xmax = max([x1max,x2max]); ymax = max([y1max,y2max])
+                        xmin = min([x1min,x2min]); 
+                        xmax = max([x1max,x2max]); 
+                        ymax = max([y1max,y2max])
                     else: # assume 90?
                         xmin = x2min
-                        ymin = min([y1min,y2min]); xmax = max([x1max,x2max]); ymax = max([y1max,y2max])
+                        ymin = min([y1min,y2min]); 
+                        xmax = max([x1max,x2max]); 
+                        ymax = max([y1max,y2max])
                     bboxOverlap = (xmin,ymin,xmax,ymax)
                     ibbOverlap.append(ibb)
             if len(bboxOverlap)>0: # found 1 that overlapped
                 boxesOut.append((bboxOverlap[0]/fracx,bboxOverlap[1]/fracy,
                                  bboxOverlap[2]/fracx,bboxOverlap[3]/fracy))
                 labelsOut.append(l); scoresOut.append(ss)
+                boxes_heur_tf.append(True)
             else:
                 boxesOut.append([x1min/fracx,y1min/fracy,x1max/fracx,y1max/fracy]); 
                 labelsOut.append(l); scoresOut.append(ss)
+                boxes_heur_tf.append(False)
         else:
             boxesOut.append([x1min/fracx,y1min/fracy,x1max/fracx,y1max/fracy]); 
             labelsOut.append(l); scoresOut.append(ss)
+            boxes_heur_tf.append(False)
     # reset
     boxesOut = np.array(boxesOut)
     boxes_heur = boxesOut; labels_heur = labelsOut; scores_heur=scoresOut 
     
-    return boxes_heur, labels_heur, scores_heur, ibbOverlap
+    return boxes_heur, labels_heur, scores_heur, ibbOverlap, boxes_heur_tf
 
 
         ##################### LOOK FOR HEURISTIC CAPTIONS NOT OTHERWISE FOUND #################
@@ -1150,7 +1185,8 @@ def add_heuristic_captions(bbox_figcap_pars,captionText_figcap,ibbOverlap,
 
 ########### CLEAN BOTH PREDICTED AND TRUE BOXES BY OVERLAP WITH PARAGRAPHS ############
 def clean_found_overlap_with_ocr(boxes_heur, labels_heur, scores_heur,bboxes_words,
-                                 bbox_par,rotation,LABELS, dfMS, width=None, height=None):
+                                 bbox_par,rotation,LABELS, dfMS, boxes_heur_tf, 
+                                 width=None, height=None):
     if dfMS is not None:
         fracx = dfMS['w'].values[0]*1.0/config.IMAGE_W
         fracy = dfMS['h'].values[0]*1.0/config.IMAGE_H  
@@ -1172,7 +1208,7 @@ def clean_found_overlap_with_ocr(boxes_heur, labels_heur, scores_heur,bboxes_wor
 
     #for found boxes: get overlap with figure caption from paragraphs 
     boxesOut = []; labelsOut = []; scoresOut = []; pars_in_found_box = []
-    for b,l,ss in zip(boxes_heur, labels_heur, scores_heur): # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
+    for b,l,ss,bhtf in zip(boxes_heur, labels_heur, scores_heur, boxes_heur_tf): # these boxes: xmin,ymin,xmax,ymax -- found by YOLO, IMAGE_W,IMAGE_H max
         # look for negatives
         b[0] = max([0,b[0]]); b[1] = max([0,b[1]]); 
         b[2] = min([config.IMAGE_W,b[2]]); 
@@ -1198,7 +1234,8 @@ def clean_found_overlap_with_ocr(boxes_heur, labels_heur, scores_heur,bboxes_wor
                     x2min, y2min, x2max, y2max = bb
                     # is within... vs...
                     if config.found_overlap == 'overlap':
-                        isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),(x2min,y2min,x2max,y2max))
+                        isOverlapping = isRectangleOverlap((x1min,y1min,x1max,y1max),
+                                                           (x2min,y2min,x2max,y2max))
                     elif config.found_overlap == 'center':
                         # center is overlapping
                         x2 = 0.5*(x2min+x2max); y2 = 0.5*(y2min+y2max)
@@ -1214,8 +1251,21 @@ def clean_found_overlap_with_ocr(boxes_heur, labels_heur, scores_heur,bboxes_wor
                         y1min, y1max = indIou[1],indIou[3]
 
             if indIou[0] != 1e10: # found 1 that overlapped
-                boxesOut.append((indIou[0]/fracx,indIou[1]/fracy,indIou[2]/fracx,indIou[3]/fracy))
+                myboxhere1 = [indIou[0]/fracx,indIou[1]/fracy,indIou[2]/fracx,indIou[3]/fracy]
+                # if overlap with a heuristic box,take that max
+                myboxhere = []
+                if bhtf: # yes, a heuristic box -- take closes to "Fig"
+                    if rot == 0: # not rotated
+                        myboxhere = [myboxhere1[0],max([myboxhere1[1],y1min/fracy]), 
+                                     myboxhere1[2],myboxhere1[3]]
+                    else:
+                        myboxhere = [max([myboxhere1[0],x1min/fracx]),myboxhere1[1], 
+                                     myboxhere1[2],myboxhere1[3]]
+                else:
+                    myboxhere = myboxhere1
+                        
                 #print('found overlap', indIou)
+                boxesOut.append(myboxhere)
                 labelsOut.append(l); scoresOut.append(ss)
             else:
                 boxesOut.append(b); labelsOut.append(l); scoresOut.append(ss)
