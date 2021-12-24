@@ -343,7 +343,7 @@ def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap=None,
                         area_overlap = 0.75):
     if true_overlap is None: true_overlap=config.true_overlap
     # use only words if requested
-    if bboxes_words is not None: bboxes_combined=bboxes_words 
+    #if bboxes_words is not None: bboxes_combined=bboxes_words 
     x1min = b[0]; y1min = b[1]; x1max = b[0]+b[2]; y1max = b[1]+b[3]
     trueBoxOut = []; borig = [b].copy()[0]
     captionBox = []

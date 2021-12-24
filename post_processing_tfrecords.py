@@ -5,8 +5,8 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model7tfz/'
 # weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5' # figure/table, fig/table captions
 
-#binary_dirs = 'binaries_model12_tfrecordz/'
-binary_dirs = 'binaries_model12_tfrecordz_pmcnoncom/'
+binary_dirs = 'binaries_model12_tfrecordz/'
+#binary_dirs = 'binaries_model12_tfrecordz_pmcnoncom/'
 weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211218_model12tfz/'
 weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5' # figure/table, fig/table captions
 
@@ -24,15 +24,15 @@ images_jpeg_dir = None
 full_article_pdfs_dir = None
 use_splits = True
 
-# For non-defaults (like for benchmarking), set to None for default
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-use_pdfmining = False
-generate_features = False
-save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
-use_splits = False
+# # For non-defaults (like for benchmarking), set to None for default
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+# use_pdfmining = False
+# generate_features = False
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+# use_splits = False
 
 # -------------------------------------------------------------------------
 benchmark = None
