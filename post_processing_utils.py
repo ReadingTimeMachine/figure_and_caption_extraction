@@ -1135,8 +1135,6 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf,
                 labelsOut.append(l); scoresOut.append(ss)
                 boxes_heur_tf.append(True)
             elif np.shape(bboxOverlap)[0]>1: # found more than 1 that overlapped
-                #print('here')
-                #print(bboxOverlap)
                 # pick best overlap with IOU
                 w1,h1 = x1max-x1min,y1max-y1min
                 x1,y1 = x1min+0.5*w1, y1min+0.5*h1
