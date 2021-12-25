@@ -316,7 +316,7 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
         # predict squares in 2 ways
         # 1. MEGA YOLO
         boxes, scores, labels = model.predict(image_np[np.newaxis, ...])
-        boxes1, scores1, labels1 = np.squeeze(boxes, 0), np.squeeze(scores, 0), np.squeeze(labels, 0)
+        boxes1, scores1, labels1 = np.squeeze(boxes, 0),np.squeeze(scores, 0),np.squeeze(labels, 0)
 
         #save_boxes = boxes.copy(); save_labels = labels.copy(); save_scores2 = scores.copy()
 
