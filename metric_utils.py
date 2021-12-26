@@ -154,6 +154,7 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
                     iouMax = iou
                     id_match_gt = j
             # Assign detection as TP or FP
+            #print('iouMax = ', iouMax)
             if iouMax >= iou_threshold: 
                 # gt was not matched with any detection
                 if detected_gt_per_image[img_det][id_match_gt] == 0:
@@ -208,12 +209,21 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
                         cv.rectangle(img,c1,c2, (0,0,255), 3)
                     have_an_fp = True
                 # print("FP")
-        if len(dict_table['TP']) > 0:
-            dict_table['FN'].append(npos - dict_table['TP'][-1])
-        else:
-            dict_table['FN'].append(npos)
+        tphere = 0; fphere=0
+        if len(dict_table['TP'])>0: 
+            tphere = dict_table['TP'][-1]
             dict_table['TP'].append(0)
-            if len(dict_table['FP']) == 0: dict_table['FP'].append(0)
+        if len(dict_table['FP'])>0: 
+            fphere = dict_table['FP'][-1]
+            dict_table['FP'].append(0)
+        dict_table['FN'].append(npos - tphere - fphere)
+        #if len(dict_table['TP']) > 0: # we have some true positives
+        #    # false negatives will be if there are "extra" boxes found
+        #    dict_table['FN'].append(npos - dict_table['TP'][-1] - dict_table['FP'][-1])
+        #else:
+        #    dict_table['FN'].append(npos)
+        #    dict_table['TP'].append(0)
+        #    if len(dict_table['FP']) == 0: dict_table['FP'].append(0)
         # compute precision, recall and average precision
         acc_FP = np.cumsum(FP)
         acc_TP = np.cumsum(TP)
@@ -255,7 +265,9 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
             'iou': iou_threshold,
             #'table': table
         }
-        retOut[c] = {'TP':np.sum(TP), 'FP':np.sum(FP), 'FN':npos-np.sum(TP), 'npos':npos, 'year':int(fname[:4]), 'name':fname}
+        retOut[c] = {'TP':np.sum(TP), 'FP':np.sum(FP), 
+                     'FN':npos-np.sum(TP)-np.sum(FP), 'npos':npos, 
+                     'year':int(fname[:4]), 'name':fname}
         
     if save_fp is not None and have_an_fp: 
         Image.fromarray(img).save(save_fp+fname+'.jpeg')
@@ -519,7 +531,7 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
         
 def calc_base_metrics_allboxes_cv(LABELS,scoreminVec,iouminVec,
                                   truebox2,boxes_sq4,labels_sq4,scores_sq4,
-                                  n_folds_cv=5, seed=None):     
+                                  n_folds_cv=5, seed=None, return_FP_ind = False):     
     TPs = np.zeros([len(LABELS), len(scoreminVec),len(iouminVec),n_folds_cv])
     #TPs = np.zeros([len(LABELS), len(iouminVec),len(scoreminVec),n_folds_cv])
     totalTrues = TPs.copy(); FPs = TPs.copy(); FNs = TPs.copy()
@@ -527,6 +539,8 @@ def calc_base_metrics_allboxes_cv(LABELS,scoreminVec,iouminVec,
     # place randomly, unless reproducing
     np.random.seed(seed)
     rinds = np.random.randint(0,n_folds_cv, len(truebox2))
+    
+    fpind = []
 
     for iit in range(len(truebox2)): # an array of pages
         for iscore,scoremin in enumerate(scoreminVec):
