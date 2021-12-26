@@ -1138,7 +1138,7 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf,
                 # pick best overlap with IOU
                 ious1 = []
                 #ibbOverlap2 = []
-                **HERE SOMEWHERE IS THE ISSUE**
+                #**HERE SOMEWHERE IS THE ISSUE**
                 for ibb1,bb1 in enumerate(bboxOverlap):
                     w1,h1 = bb1[2]-bb1[0],bb1[3]-bb1[1]
                     x1,y1 = bb1[0]+0.5*w1, bb1[1]+0.5*h1

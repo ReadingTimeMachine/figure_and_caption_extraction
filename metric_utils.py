@@ -333,9 +333,19 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
             #stats.append(new_calcs(gt_boxes, det_boxes, det_labels, det_scores, 
             #                       [ioumin], fname, gt_classes_only))
         stats.append(new_calcs(truebox1, boxes_sq, labels_sq, scores_sq, 
-                               np.repeat(ioumin,len(LABELS)), '1000_placeholder', gt_classes_only))
+                               np.repeat(ioumin,len(LABELS)), 
+                               '1000_placeholder', gt_classes_only))
 
         # fill all arrays
+        #print(stats)
+        totalTrues11 = np.zeros(len(LABELS)).tolist()
+        #print(totalTrues11)
+        for t in truebox1:
+            #print(int(t[-1]-1))
+            totalTrues11[int(t[-1]-1)] += 1
+        #print(totalTrues11)
+        #print(truebox1)
+        #print('--')
         #TPall = np.zeros(len(LABELS)); FPall = np.zeros(len(LABELS)); 
         #FNall = np.zeros(len(LABELS)); allall = np.zeros(len(LABELS))
         #Npos = np.zeros(len(LABELS))
@@ -349,12 +359,14 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
                         #if s[l]['FP'] == 1: FpList.append(s[l]['name'])
                         FNv[l,iioumin,iscoremin] += s[l]['FN']
                         #Npos[l] += s[l]['npos']
-                        totalTruev[l,iioumin,iscoremin] += s[l]['TP'] + s[l]['FN']  
+                        #indstt = np.where(truebox1[-1]
+                        totalTruev[l,iioumin,iscoremin] = totalTrues11[l]#
+                                          #s[l]['TP'] + s[l]['FN']  
                     else:
                         TPv[l] += s[l]['TP']
                         FPv[l] += s[l]['FP']
                         FNv[l] += s[l]['FN']
-                        totalTruev[l] += s[l]['TP'] + s[l]['FN']  
+                        totalTruev[l] = totalTrues11[l]   
         # for years too if we have them
         # per year
         # years2 = []
