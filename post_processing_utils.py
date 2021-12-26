@@ -1101,7 +1101,7 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf,
         x1max = min([config.IMAGE_W,b[2]])*fracx; 
         y1max = min([config.IMAGE_H,b[3]])*fracy
         # are we even dealing with a caption?
-        bboxOverlap = []; 
+        bboxOverlap = []; bboxOverlapOrig = []
         if 'caption' in LABELS[int(l)].lower():
             for ibb,bb in enumerate(bbox_figcap_pars):
                 x2min, y2min, x2max, y2max,r = bb
@@ -1136,17 +1136,28 @@ def clean_merge_heurstic_captions(boxes_pdf, labels_pdf, scores_pdf,
                 boxes_heur_tf.append(True)
             elif np.shape(bboxOverlap)[0]>1: # found more than 1 that overlapped
                 # pick best overlap with IOU
-                w1,h1 = x1max-x1min,y1max-y1min
-                x1,y1 = x1min+0.5*w1, y1min+0.5*h1
                 ious1 = []
-                for ibb,bb in enumerate(bbox_figcap_pars):
-                    if ibb in ibbOverlap:
+                #ibbOverlap2 = []
+                **HERE SOMEWHERE IS THE ISSUE**
+                for ibb1,bb1 in enumerate(bboxOverlap):
+                    w1,h1 = bb1[2]-bb1[0],bb1[3]-bb1[1]
+                    x1,y1 = bb1[0]+0.5*w1, bb1[1]+0.5*h1
+                    iouMax2 = -1000
+                    for ibb,bb in enumerate(bbox_figcap_pars):
+                    #if ibb in ibbOverlap:
                         x2min, y2min, x2max, y2max,r = bb
                         w2,h2 = x2max-x2min,y2max-y2min
                         x2,y2 = x2min+0.5*w2, y2min+0.5*h2
-                        ious1.append(iou_orig(x1,y1,w1,h1, x2,y2,w2,h2))
+                        iouhere = iou_orig(x1,y1,w1,h1, x2,y2,w2,h2)
+                        if iouhere > iouMax2:
+                            iouMax2 = iouhere
+                            #ious1.append()
+                    ious1.append(iouMax2)
                 # which is max IOU
                 indMax = np.argmax(ious1)
+                #print(bboxOverlap)
+                #print(indMax)
+                #print(ibbOverlap)
                 boxesOut.append((bboxOverlap[indMax][0]/fracx,
                                  bboxOverlap[indMax][1]/fracy,
                                  bboxOverlap[indMax][2]/fracx,

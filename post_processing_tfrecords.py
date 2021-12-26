@@ -14,6 +14,9 @@ weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5' # figure/table, fi
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211219_model13tfz/'
 # weightsFile = 'training_1model13_tfrec_model_l0.01955727.h5' # figure/table, fig/table captions
 
+# binary_dirs = 'binaries_model1_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model1_inverted/'
+# weightsFile = 'training_1model1_inverted_model_l0.16807911.h5' # figure/table, fig/table captions
 
 
 # for defaults

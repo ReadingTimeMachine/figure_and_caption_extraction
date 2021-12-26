@@ -13,15 +13,15 @@ images_jpeg_dir = None
 full_article_pdfs_dir = None
 make_splits = True
 
-# For non-defaults (like for benchmarking), set to None for default
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-use_pdfmining = False
-generate_features = False
-save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
-make_splits = False
+# # For non-defaults (like for benchmarking), set to None for default
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+# use_pdfmining = False
+# generate_features = False
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+# make_splits = False
 
 
 
@@ -33,9 +33,9 @@ make_splits = False
 
 
 
-# feature_list = ['grayscale']
-# # call these something new?
-# binaries_file = 'model1_tfrecordz'
+feature_list = ['grayscale']
+# call these something new?
+binaries_file = 'model1_tfrecordz'
 
 # feature_list = ['grayscale','fontsize']
 # # call these something new?
@@ -100,13 +100,13 @@ make_splits = False
 # feature_list = ['grayscale','fontsize','x_ascenders','x_decenders', 'word confidences', 
 #                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
 #                'text angles','Spacy POS']
-feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
-                'fraction of numbers in a word',
-                'fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS']
-# call these something new?
-#binaries_file = 'model12_tfrecordz'
-binaries_file = 'model12_tfrecordz_pmcnoncom' # benchmark
+# feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word',
+#                 'fraction of letters in a word','punctuation', 
+#                'text angles','Spacy POS']
+# # call these something new?
+# #binaries_file = 'model12_tfrecordz'
+# binaries_file = 'model12_tfrecordz_pmcnoncom' # benchmark
 
 
 
