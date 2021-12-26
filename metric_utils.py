@@ -153,8 +153,10 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
                 if iou > iouMax:
                     iouMax = iou
                     id_match_gt = j
+                #print('iou=',iou)
             # Assign detection as TP or FP
             #print('iouMax = ', iouMax)
+            #print('iouMax=',iouMax)
             if iouMax >= iou_threshold: 
                 # gt was not matched with any detection
                 if detected_gt_per_image[img_det][id_match_gt] == 0:
@@ -281,14 +283,21 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
                 years=[], iioumin=-1, iscoremin=-1, 
                 TPyear = [], FPyear=[], totalTrueyear=[], FNyear=[], year=[],
                 totalTruev=[], TPv=[], FPv=[],FNv=[], return_pairs = False, 
-                use_review_calc = True):
+                use_review_calc = True, round_here=True):
     """
     truebox1: trueboxes in YOLO coords (typically 512x512) (xmin,ymin,xmax,ymax, LABEL_INDEX+1)
     boxes_sq: found boxes in YOLO coords (xmin,ymin,xmax,ymax)
     labels_sq: found box labels (LABEL_INDEX) -- NOTE no +1!
     scores_sq: found box score (0.0-1.0)
     LABELS: list of labels (strings), e.g. ['figure', 'figure caption', 'table']
+    round_here: (True) -- since trueboxes are saved in increments of pixels, you 
+                 generally want to force this on found boxes, otherwise, you can 
+                have issues for very small boxes.
     """
+    
+    if round_here:
+        truebox1 = np.round(truebox1)
+        boxes_sq_in = np.round(boxes_sq_in)
     
     # for heuristically-found labels, replace -2 tag with tag for figure caption
     labels_sq = labels_sq_in.copy()
