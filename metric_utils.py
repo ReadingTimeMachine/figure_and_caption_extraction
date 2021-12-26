@@ -156,7 +156,8 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
                 #print('iou=',iou)
             # Assign detection as TP or FP
             #print('iouMax = ', iouMax)
-            #print('iouMax=',iouMax)
+            if iouMax < 0:
+                print('iouMax in new calc is < 0: ',iouMax)
             if iouMax >= iou_threshold: 
                 # gt was not matched with any detection
                 if detected_gt_per_image[img_det][id_match_gt] == 0:
@@ -218,7 +219,7 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
         if len(dict_table['FP'])>0: 
             fphere = dict_table['FP'][-1]
             dict_table['FP'].append(0)
-        dict_table['FN'].append(npos - tphere - fphere)
+        dict_table['FN'].append(npos - tphere - fphere) # WRONG
         #if len(dict_table['TP']) > 0: # we have some true positives
         #    # false negatives will be if there are "extra" boxes found
         #    dict_table['FN'].append(npos - dict_table['TP'][-1] - dict_table['FP'][-1])
@@ -270,6 +271,7 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
         retOut[c] = {'TP':np.sum(TP), 'FP':np.sum(FP), 
                      'FN':npos-np.sum(TP)-np.sum(FP), 'npos':npos, 
                      'year':int(fname[:4]), 'name':fname}
+        # FN IS WrONG
         
     if save_fp is not None and have_an_fp: 
         Image.fromarray(img).save(save_fp+fname+'.jpeg')
@@ -339,10 +341,13 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
         # fill all arrays
         #print(stats)
         totalTrues11 = np.zeros(len(LABELS)).tolist()
+        totalFounds = np.zeros(len(LABELS)).tolist()
         #print(totalTrues11)
         for t in truebox1:
             #print(int(t[-1]-1))
             totalTrues11[int(t[-1]-1)] += 1
+        for f,l in zip(boxes_sq,labels_sq):
+            totalFounds[int(l)] += 1
         #print(totalTrues11)
         #print(truebox1)
         #print('--')
@@ -357,7 +362,8 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
                         TPv[l,iioumin,iscoremin] += s[l]['TP']
                         FPv[l,iioumin,iscoremin] += s[l]['FP']
                         #if s[l]['FP'] == 1: FpList.append(s[l]['name'])
-                        FNv[l,iioumin,iscoremin] += s[l]['FN']
+                        #FNv[l,iioumin,iscoremin] += s[l]['FN'] # NOT RIGHT
+                        FNv[l,iioumin,iscoremin] += max([totalTrues11[l]-totalFounds[l],0])
                         #Npos[l] += s[l]['npos']
                         #indstt = np.where(truebox1[-1]
                         totalTruev[l,iioumin,iscoremin] = totalTrues11[l]#
@@ -365,7 +371,7 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
                     else:
                         TPv[l] += s[l]['TP']
                         FPv[l] += s[l]['FP']
-                        FNv[l] += s[l]['FN']
+                        FNv[l] += max([totalTrues11[l]-totalFounds[l],0])#s[l]['FN']
                         totalTruev[l] = totalTrues11[l]   
         # for years too if we have them
         # per year
