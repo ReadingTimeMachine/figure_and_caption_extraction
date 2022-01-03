@@ -158,6 +158,8 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
             #print('iouMax = ', iouMax)
             if iouMax < 0:
                 print('iouMax in new calc is < 0: ',iouMax)
+            elif iouMax == 0:
+                print('iouMax IS 0')
             if iouMax >= iou_threshold: 
                 # gt was not matched with any detection
                 if detected_gt_per_image[img_det][id_match_gt] == 0:

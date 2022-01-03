@@ -5,18 +5,29 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model7tfz/'
 # weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5' # figure/table, fig/table captions
 
-binary_dirs = 'binaries_model12_tfrecordz/'
-#binary_dirs = 'binaries_model12_tfrecordz_pmcnoncom/'
-weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211218_model12tfz/'
-weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model12_tfrecordz/'
+# #binary_dirs = 'binaries_model12_tfrecordz_pmcnoncom/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211218_model12tfz/'
+# weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5' # figure/table, fig/table captions
 
 # binary_dirs = 'binaries_model13_tfrecordz/'
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211219_model13tfz/'
 # weightsFile = 'training_1model13_tfrec_model_l0.01955727.h5' # figure/table, fig/table captions
 
+
+# ----- current testing? -------
+
 # binary_dirs = 'binaries_model1_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model1_inverted/'
-# weightsFile = 'training_1model1_inverted_model_l0.16807911.h5' # figure/table, fig/table captions
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211206_model1tfz/'
+# weightsFile = 'training_1model1_tfrec_model_l0.026936958.h5' 
+
+# binary_dirs = 'binaries_model2_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211208_model2tfz/'
+# weightsFile = 'training_1model2_tfrec_model_l0.031917848.h5'  
+
+binary_dirs = 'binaries_model3_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211209_model3tfz/'
+weightsFile = 'training_1model3_tfrec_model_l0.021069372.h5'  
 
 
 # for defaults

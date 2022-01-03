@@ -33,9 +33,9 @@ make_splits = True
 
 
 
-feature_list = ['grayscale']
-# call these something new?
-binaries_file = 'model1_tfrecordz'
+# feature_list = ['grayscale']
+# # call these something new?
+# binaries_file = 'model1_tfrecordz'
 
 # feature_list = ['grayscale','fontsize']
 # # call these something new?
