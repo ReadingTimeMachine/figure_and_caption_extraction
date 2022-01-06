@@ -25,9 +25,58 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211208_model2tfz/'
 # weightsFile = 'training_1model2_tfrec_model_l0.031917848.h5'  
 
-binary_dirs = 'binaries_model3_tfrecordz/'
-weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211209_model3tfz/'
-weightsFile = 'training_1model3_tfrec_model_l0.021069372.h5'  
+# binary_dirs = 'binaries_model3_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211209_model3tfz/'
+# weightsFile = 'training_1model3_tfrec_model_l0.021069372.h5'  
+
+# binary_dirs = 'binaries_model4_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211211_model4tfz/'
+# weightsFile = 'training_1model4_tfrec_model_l0.022068841.h5'  
+
+# binary_dirs = 'binaries_model5_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211212_model5tfz/'
+# weightsFile = 'training_1model5_tfrec_model_l0.025074273.h5'  
+
+# binary_dirs = 'binaries_model6_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211213_model6tfz/'
+# weightsFile = 'training_1model6_tfrec_model_l0.033180892.h5'  
+
+# binary_dirs = 'binaries_model7_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211214_model7tfz/'
+# weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5'  
+
+# binary_dirs = 'binaries_model8_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211215_model8tfz/'
+# weightsFile = 'training_1model8_tfrec_model_l0.022871962.h5'  
+
+# binary_dirs = 'binaries_model9_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211216_model9tfz/'
+# weightsFile = 'training_1model9_tfrec_model_l0.033717625.h5'  
+
+# binary_dirs = 'binaries_model10_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211207_model10tfz/'
+# weightsFile = 'training_1model10_tfrec_model_l0.028558243.h5'  
+
+# binary_dirs = 'binaries_model11_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211216_model11tfz/'
+# weightsFile = 'training_1model11_tfrec_model_l0.031253316.h5'  
+
+# binary_dirs = 'binaries_model12_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211218_model12tfz/'
+# weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5'  
+
+# binary_dirs = 'binaries_model13_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211219_model13tfz/'
+# weightsFile = 'training_1model13_tfrec_model_l0.01955727.h5' 
+
+# binary_dirs = 'binaries_model14_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20220105_model14tfz/'
+# weightsFile = 'training_1model14_tfrec_model_l0.032321554.h5' 
+
+binary_dirs = 'binaries_model15_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20220106_model15tfz/'
+weightsFile = 'training_1model15_tfrec_model_l0.028574113.h5' 
+
 
 
 # for defaults

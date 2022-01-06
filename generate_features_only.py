@@ -123,6 +123,21 @@ make_splits = True
 # # call these something new?
 # binaries_file = 'model14_tfrecordz'
 
+# feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
+#                 'fraction of numbers in a word',
+#                 'fraction of letters in a word', 'punctuation',
+#                'text angles']
+# # call these something new?
+# binaries_file = 'model15_tfrecordz'
+
+# NEW model 11
+feature_list = ['grayscale','fontsize', 'word confidences', 
+                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS']
+# call these something new?
+binaries_file = 'model11_tfrecordz'
+
+
 # ----------------------------------------------
 
 # easy parallel
