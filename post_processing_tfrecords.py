@@ -61,9 +61,10 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211216_model11tfz/'
 # weightsFile = 'training_1model11_tfrec_model_l0.031253316.h5'  
 
-# binary_dirs = 'binaries_model12_tfrecordz/'
-# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211218_model12tfz/'
-# weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5'  
+# We have a winner!
+binary_dirs = 'binaries_model12_tfrecordz/'
+weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211218_model12tfz/'
+weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5'  
 
 # binary_dirs = 'binaries_model13_tfrecordz/'
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211219_model13tfz/'
@@ -73,10 +74,14 @@ import config
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20220105_model14tfz/'
 # weightsFile = 'training_1model14_tfrec_model_l0.032321554.h5' 
 
-binary_dirs = 'binaries_model15_tfrecordz/'
-weightsFileDir = config.save_weights_dir +'saved_weights/'+'20220106_model15tfz/'
-weightsFile = 'training_1model15_tfrec_model_l0.028574113.h5' 
+# binary_dirs = 'binaries_model15_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20220106_model15tfz/'
+# weightsFile = 'training_1model15_tfrec_model_l0.028574113.h5' 
 
+# #NEW model11
+# binary_dirs = 'binaries_model11_tfrecordz/'
+# weightsFileDir = config.save_weights_dir +'saved_weights/'+'20220107_model11tfz/'
+# weightsFile = 'training_1model11_tfrec_model_l0.024637591.h5' 
 
 
 # for defaults
@@ -150,7 +155,7 @@ if scoreminVec is None: scoreminVec = config.scoreminVec
 if iouminVec is None: iouminVec = config.iouminVec
 
 diagnostics_dir = config.tmp_storage_dir
-store_diagnostics = config.store_diagnostics
+if store_diagnostics is None: store_diagnostics = config.store_diagnostics
 
 weightsFileDownload = weightsFileDir + weightsFile
 # if not benchmark and not useTFrecords:

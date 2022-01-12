@@ -2,6 +2,7 @@ import numpy as np
 import xml.etree.ElementTree as ET
 import os
 from glob import glob
+import shutil
 
 def isRectangleOverlap(R1, R2):
     if (R1[0]>=R2[2]) or (R1[2]<=R2[0]) or (R1[3]<=R2[1]) or (R1[1]>=R2[3]):
@@ -224,3 +225,12 @@ def parse_annotation(split_file_list, labels, feature_dir = '',
 # b = vector with (xc,yc)
 def manhattan(a, b):
     return sum(abs(val1-val2) for val1, val2 in zip(a,b))
+
+
+# save tmp binaries for this
+def create_destroy_dirs(dirs):
+    if not os.path.exists(dirs):
+        os.makedirs(dirs)
+    # delete and remake
+    shutil.rmtree(dirs)
+    os.makedirs(dirs)

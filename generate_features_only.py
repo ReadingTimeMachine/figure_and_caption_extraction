@@ -13,6 +13,12 @@ images_jpeg_dir = None
 full_article_pdfs_dir = None
 make_splits = True
 
+# final test set
+save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
+binaries_file = 'model12_finaltest'# for final test set
+
+
 # # For non-defaults (like for benchmarking), set to None for default
 # ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
 # use_pdfmining = False
@@ -130,13 +136,23 @@ make_splits = True
 # # call these something new?
 # binaries_file = 'model15_tfrecordz'
 
-# NEW model 11
-feature_list = ['grayscale','fontsize', 'word confidences', 
-                'fraction of numbers in a word','fraction of letters in a word','punctuation', 
-               'text angles','Spacy POS']
-# call these something new?
-binaries_file = 'model11_tfrecordz'
+# # NEW model 11
+# feature_list = ['grayscale','fontsize', 'word confidences', 
+#                 'fraction of numbers in a word','fraction of letters in a word','punctuation', 
+#                'text angles','Spacy POS']
+# # call these something new?
+# binaries_file = 'model11_tfrecordz'
 
+
+# MODEL 12 -- winner winner, chicken dinner
+feature_list = ['grayscale','x_ascenders','x_decenders', 'word confidences', 
+                'fraction of numbers in a word',
+                'fraction of letters in a word','punctuation', 
+               'text angles','Spacy POS']
+#binaries_file = 'model12_tfrecordz' # default name
+#binaries_file = 'model12_finaltest'# for final test set
+# # call these something new?
+# binaries_file = 'model12_tfrecordz_pmcnoncom' # benchmark
 
 # ----------------------------------------------
 
