@@ -97,7 +97,7 @@ store_diagnostics = False
 # for the REAL test list
 save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
 make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
-binary_dirs = 'model12_finaltest/'# for final test set
+binary_dirs = 'binaries_model12_finaltest/'# for final test set
 
 
 # # For non-defaults (like for benchmarking), set to None for default
@@ -246,6 +246,11 @@ if use_valid:
     
 if yt.is_root():
     print('we have:', len(test_list), 'tfrecords files to loop over')
+    
+# check for others
+others_list = glob.glob(feature_dir + 'train_*tfrecords')
+use_splits = True
+if len(others_list) == 0: use_splits = False
 
 #test_list = glob.glob(feature_dir + 'train_*tfrecords')
 
@@ -364,13 +369,13 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
 
         # run model
         if icout%iMod == 0:
-            #if use_splits:
-            if not use_valid:
-                print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.test_per))
+            if use_splits:
+                if not use_valid:
+                    print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.test_per))
+                else:
+                    print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.valid_per))
             else:
-                print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.valid_per))
-            #else:
-            #    print('on ', icout, ' of ~', int(len(annotations)//len(test_list)))
+                print('on ', icout, ' of ~', int(len(annotations)//len(test_list)))
 
         # there is a lot of mess here that gets and formats all true boxes and 
         #. all of the OCR data

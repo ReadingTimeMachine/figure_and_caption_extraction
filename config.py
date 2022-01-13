@@ -31,6 +31,8 @@ metric_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocal
 
 # where to save numbers? these will be used by the paper
 save_table_dats_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/paper1/tables/tolatex/'
+# and figures?
+save_figures_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/paper1/figures/'
 
 
 # X. Diagnostic dir
