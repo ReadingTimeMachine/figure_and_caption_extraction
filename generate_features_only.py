@@ -11,12 +11,14 @@ save_binary_dir = None
 make_sense_dir = None
 images_jpeg_dir = None
 full_article_pdfs_dir = None
-make_splits = True
+#make_splits = True
 
 # final test set
 save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
 make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
 binaries_file = 'model12_finaltest'# for final test set
+#splits_directory = None # this will then make splits
+no_splits = True # if set to true, only 1 set of tfrecords files is created, all labeled as "test"
 
 
 # # For non-defaults (like for benchmarking), set to None for default
@@ -194,6 +196,8 @@ debug = False
 
 if images_jpeg_dir is None: images_jpeg_dir = config.images_jpeg_dir
 if save_binary_dir is None: save_binary_dir = config.save_binary_dir
+make_splits = False
+if splits_directory is None and no_splits=False: make_splits=True
 
 # let's get all of the ocr files
 ocrFiles = get_all_ocr_files(ocr_results_dir=ocr_results_dir)
@@ -423,7 +427,7 @@ if yt.is_root():
         if make_splits: # if we have a splits list
             splitsnames = ['train','valid','test']
         else: # or all together
-            splitsnames = ['record']
+            splitsnames = ['test']
         for sp in splitsnames:
             print('-----------', sp, '--------------')
             if make_splits:
