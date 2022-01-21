@@ -94,21 +94,29 @@ store_diagnostics = False
 ##use_splits = True 
 
 
-# for the REAL test list
-save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
-binary_dirs = 'binaries_model12_finaltest/'# for final test set
+# # for the REAL test list
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
+# binary_dirs = 'binaries_model12_finaltest/'# for final test set
 
 
 # # For non-defaults (like for benchmarking), set to None for default
 # ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-# use_pdfmining = False
-# generate_features = False
 # save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
 # make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
 # images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
 # full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
-# use_splits = False
+# binary_dirs = 'binaries_model12_pmcnoncom/'
+
+# Scan bank
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
+binary_dirs = 'binaries_model12_scanbank/'# for final test set
+
+
 
 # -------------------------------------------------------------------------
 benchmark = None
@@ -243,6 +251,12 @@ if use_valid:
     test_list = glob.glob(feature_dir + 'valid_*tfrecords')
 #else:
 #    test_list = glob.glob(feature_dir + 'record_*tfrecords')
+# try one more thing
+if len(test_list) == 0:
+    test_list = glob.glob(feature_dir + 'record_*tfrecords')
+if len(test_list) == 0:
+    print('no test files, stopping...')
+    import sys; sys.exit()
     
 if yt.is_root():
     print('we have:', len(test_list), 'tfrecords files to loop over')

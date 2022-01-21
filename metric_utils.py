@@ -221,7 +221,8 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
         if len(dict_table['FP'])>0: 
             fphere = dict_table['FP'][-1]
             dict_table['FP'].append(0)
-        dict_table['FN'].append(npos - tphere - fphere) # WRONG
+        #dict_table['FN'].append(npos - tphere - fphere) # WRONG
+        dict_table['FN'].append(-1) # placeholder
         #if len(dict_table['TP']) > 0: # we have some true positives
         #    # false negatives will be if there are "extra" boxes found
         #    dict_table['FN'].append(npos - dict_table['TP'][-1] - dict_table['FP'][-1])
@@ -255,6 +256,7 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
             [ap, mpre, mrec, _] = calculate_ap_11_point_interp(rec, prec)
         else:
             Exception('method not defined')
+        #print(ap)
         # add class result in the dictionary to be returned
         ret[c] = {
             'precision': prec,
@@ -272,7 +274,8 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
         }
         retOut[c] = {'TP':np.sum(TP), 'FP':np.sum(FP), 
                      'FN':npos-np.sum(TP)-np.sum(FP), 'npos':npos, 
-                     'year':int(fname[:4]), 'name':fname}
+                     'year':int(fname[:4]), 'name':fname}#, 
+                    #'AP':ap}
         # FN IS WrONG
         
     if save_fp is not None and have_an_fp: 
@@ -287,7 +290,8 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
                 years=[], iioumin=-1, iscoremin=-1, 
                 TPyear = [], FPyear=[], totalTrueyear=[], FNyear=[], year=[],
                 totalTruev=[], TPv=[], FPv=[],FNv=[], return_pairs = False, 
-                use_review_calc = True, round_here=True):
+                use_review_calc = True, round_here=True):#, 
+                #return_mAP=False, mAP_range=[0.5,0.95,0.5]):
     """
     truebox1: trueboxes in YOLO coords (typically 512x512) (xmin,ymin,xmax,ymax, LABEL_INDEX+1)
     boxes_sq: found boxes in YOLO coords (xmin,ymin,xmax,ymax)
@@ -297,6 +301,8 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
     round_here: (True) -- since trueboxes are saved in increments of pixels, you 
                  generally want to force this on found boxes, otherwise, you can 
                 have issues for very small boxes.
+    XXXreturn_mAP: calculate and return map or not?
+    XXXmAP_range: [start, stop, step size] -- default is for COCO/ICDAR challenges
     """
     
     if round_here:
@@ -357,6 +363,16 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
         #FNall = np.zeros(len(LABELS)); allall = np.zeros(len(LABELS))
         #Npos = np.zeros(len(LABELS))
         #FpList = []
+        
+        # # return mAP?
+        # if return_mAP:
+        #     for ious in np.arange(mAP_range[0],mAP_range[1] + mAP_range[2],mAP_range[2]):
+        #         statsMAP = new_calcs(truebox1, boxes_sq, labels_sq, scores_sq, 
+        #                        np.repeat(ious,len(LABELS)), 
+        #                        '1000_placeholder', gt_classes_only)
+        #         #print(statsMAP)
+            
+        
         for s in stats:
             for l in range(len(LABELS)):
                 if l in s:
@@ -560,7 +576,8 @@ def calc_metrics(truebox1, boxes_sq_in, labels_sq_in, scores_sq_in, LABELS,ioumi
         
 def calc_base_metrics_allboxes_cv(LABELS,scoreminVec,iouminVec,
                                   truebox2,boxes_sq4,labels_sq4,scores_sq4,
-                                  n_folds_cv=5, seed=None, return_FP_ind = False):     
+                                  n_folds_cv=5, seed=None, return_FP_ind = False):#,
+                                 #return_mAP=False, mAP_range=[0.5,0.95,0.5]):     
     TPs = np.zeros([len(LABELS), len(scoreminVec),len(iouminVec),n_folds_cv])
     #TPs = np.zeros([len(LABELS), len(iouminVec),len(scoreminVec),n_folds_cv])
     totalTrues = TPs.copy(); FPs = TPs.copy(); FNs = TPs.copy()
@@ -589,7 +606,9 @@ def calc_base_metrics_allboxes_cv(LABELS,scoreminVec,iouminVec,
                         bboxes.append(b); llabels.append(l); sscores.append(s)
 
                 totalTruev1, TPv1, FPv1, FNv1 = calc_metrics(tboxes, bboxes, llabels, 
-                                                             sscores, LABELS,ioumin)
+                                                             sscores, LABELS,ioumin)#,
+                                                            #return_mAP=return_mAP,
+                                                            #mAP_range=mAP_range)
                 #print(FPv1)
                 # only the "fake" index
                 #totalTrues[:,iiou,iscore,rinds[iit]] += totalTruev1; 
@@ -760,3 +779,31 @@ def get_years_dataframe(imgs_name,scoremin,ioumin,LABELS,
         df[colname] = FNyear[:,il]
         
     return df
+
+
+# map calculation
+def calc_AP(truebox3,boxes_sq5,labels_sq5, scores_sq5,LABELS, 
+            scoreMin = [0.1], iou_mAP_coco_range =[0.5,0.95,0.05]):
+    # iou ranges -- default is COCO
+    ious_mAP = np.arange(iou_mAP_coco_range[0],
+                     iou_mAP_coco_range[1] + iou_mAP_coco_range[2],
+                     iou_mAP_coco_range[2])
+    
+    TPv, FPv, FNv, totalTruev = calc_base_metrics_allboxes_cv(LABELS,scoreMin,ious_mAP,
+                                                  truebox3,boxes_sq5,labels_sq5, 
+                                                  scores_sq5,n_folds_cv=1)
+    precision, precision_std, recall, \
+      recall_std, f1, f1_std = calc_prec_rec_f1_cv(TPv,FPv,FNv,
+                                                   LABELS,scoreMin,
+                                                   ious_mAP)
+
+    precision = precision.reshape((len(LABELS),len(ious_mAP)))
+    recall = recall.reshape((len(LABELS),len(ious_mAP)))
+    # ap per class:
+    apOut = []
+    for l in range(len(LABELS)):
+        [ap, mpre, mrec, ii] = calculate_ap_every_point(recall[l,:]/100., 
+                                                        precision[l,:]/100.)
+        apOut.append(ap)
+        
+    return apOut

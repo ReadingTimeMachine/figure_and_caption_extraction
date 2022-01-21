@@ -11,27 +11,38 @@ save_binary_dir = None
 make_sense_dir = None
 images_jpeg_dir = None
 full_article_pdfs_dir = None
+test_list_dir = None # where to save a file with the test results
 #make_splits = True
 
-# final test set
-save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
-binaries_file = 'model12_finaltest'# for final test set
-#splits_directory = None # this will then make splits
+# # final test set
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
+# binaries_file = 'model12_finaltest'# for final test set
+# #splits_directory = None # this will then make splits
+# no_splits = True # if set to true, only 1 set of tfrecords files is created, all labeled as "test"
+# test_list_dir = '/Users/jillnaiman/MegaYolo_test/'
+
+# PMC non com pages
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+use_pdfmining = False
+save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+binaries_file = 'model12_pmcnoncom'# for final test set
 no_splits = True # if set to true, only 1 set of tfrecords files is created, all labeled as "test"
+test_list_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 
-
-# # For non-defaults (like for benchmarking), set to None for default
-# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-# use_pdfmining = False
-# generate_features = False
-# save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
-# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
-# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
-# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
-# make_splits = False
-
-
+# ScanBank pages
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+use_pdfmining = False
+save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
+binaries_file = 'model12_scanbank'# for final test set
+no_splits = True # if set to true, only 1 set of tfrecords files is created, all labeled as "test"
+test_list_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
 
 
 
@@ -197,7 +208,9 @@ debug = False
 if images_jpeg_dir is None: images_jpeg_dir = config.images_jpeg_dir
 if save_binary_dir is None: save_binary_dir = config.save_binary_dir
 make_splits = False
-if splits_directory is None and no_splits=False: make_splits=True
+if splits_directory is None and no_splits==False: make_splits=True
+    
+if test_list_dir is None: test_list_dir = config.save_weights_dir + 'saved_weights/'
 
 # let's get all of the ocr files
 ocrFiles = get_all_ocr_files(ocr_results_dir=ocr_results_dir)
@@ -428,6 +441,9 @@ if yt.is_root():
             splitsnames = ['train','valid','test']
         else: # or all together
             splitsnames = ['test']
+        testListFile = test_list_dir + 'testList.csv' # to create test list
+        testFiles = []
+
         for sp in splitsnames:
             print('-----------', sp, '--------------')
             if make_splits:
@@ -444,6 +460,7 @@ if yt.is_root():
                                                        feature_dir=config.tmp_storage_dir+'TMPTFRECORD/',
                                                        annotation_dir=classDir_main_to) 
                     filelist.append(imgs_name[0])
+                    if sp == 'test': testFiles.append(a)
                 except:
                     print('no file', a)    
                     
@@ -478,5 +495,12 @@ if yt.is_root():
                         
         # remove all tmp files
         shutil.rmtree(config.tmp_storage_dir+'TMPTFRECORD/')
+        # write testlist
+        #df = pd.DataFrame({'filenames'})
+        with open(testListFile, 'w') as the_file:
+            for l in testFiles:
+                the_file.write(l+'\n')
+        
+        
         print('All done!')
             
