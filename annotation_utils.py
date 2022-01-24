@@ -353,6 +353,7 @@ def true_box_caption_mod(b,rotation,bboxes_combined, true_overlap=None,
         indIou2[0] *= 2; indIou2[1] *= 2; indIou2[2] *= 2; indIou2[3] *= 2
         # don't expand super far in y direction, only x
         i10 = indIou[0]; i11=indIou[2]; i20 = indIou2[0]; i21 = indIou2[2]
+        if len(rotation) == 0: rotation = [0]
         if stats.mode(rotation).mode[0] != 90:
             i10 = indIou[1]; i11 = indIou[3]; i20 = indIou2[1]; i21 = indIou2[2]
         #icount = 0

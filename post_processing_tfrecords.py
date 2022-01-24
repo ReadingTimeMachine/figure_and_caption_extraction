@@ -268,7 +268,7 @@ if len(others_list) == 0: use_splits = False
 
 #test_list = glob.glob(feature_dir + 'train_*tfrecords')
 
-nProcs = len(test_list)
+nProcs = max([len(test_list),6])
 
 #if not use_training:
 test_raw_data = tf.data.TFRecordDataset(filenames=test_list, 

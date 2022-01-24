@@ -36,13 +36,13 @@ images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocaliza
 full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
 
 # # Final Test Dataset
-# ocr_results_dir = None #'/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing/'
+# ocr_results_dir = None 
 # use_pdfmining = True
 # generate_features = False
 # save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
 # make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
-# images_jpeg_dir = None #'/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
-# full_article_pdfs_dir = None #'/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
+# images_jpeg_dir = None 
+# full_article_pdfs_dir = None 
 
 
 # ----------------------------------------------
