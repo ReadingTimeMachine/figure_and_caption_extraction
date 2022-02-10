@@ -94,10 +94,10 @@ store_diagnostics = False
 ##use_splits = True 
 
 
-# for the REAL test list
-save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
-binary_dirs = 'binaries_model12_finaltest/'# for final test set
+# # for the REAL test list
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
+# binary_dirs = 'binaries_model12_finaltest/'# for final test set
 
 
 # # For non-defaults (like for benchmarking), set to None for default
@@ -108,13 +108,13 @@ binary_dirs = 'binaries_model12_finaltest/'# for final test set
 # full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 # binary_dirs = 'binaries_model12_pmcnoncom/'
 
-# # Scan bank -- try our model on the scanbank ETDs
-# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
-# save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
-# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
-# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
-# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
-# binary_dirs = 'binaries_model12_scanbank/'# for final test set
+# Scan bank -- try our model on the scanbank ETDs
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
+binary_dirs = 'binaries_model12_scanbank/'# for final test set
 
 
 

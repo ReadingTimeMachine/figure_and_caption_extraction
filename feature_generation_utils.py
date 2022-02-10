@@ -332,10 +332,11 @@ def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=
         imgOrig[:,:] = background
         # fill
         for b,su in zip(bboxes,scales_unscaled):
-            if feature_invert:
-                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255*su))
-            else:
-                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-255*su))
+            if not np.isnan(su):
+                if feature_invert:
+                    imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255*su))
+                else:
+                    imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-255*su))
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
                                          img_resize,fx=0, fy=0, 
                                          interpolation = cv.INTER_NEAREST)
@@ -430,7 +431,8 @@ def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=
             scales_decenders[scales_decenders>1] = 1
             for b,s in zip(bboxes,scales_decenders):
                 #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
-                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255)) # x_ascenders should always be low colors   
+                if not np.isnan(s):
+                    imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255)) # x_ascenders should always be low colors   
             if feature_invert: imgOrig = 255-imgOrig
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
                                          img_resize,fx=0, fy=0, 
@@ -452,8 +454,9 @@ def generate_single_feature(df, LABELS, maxboxes=50, feature_list = None, debug=
             scales_ascenders[scales_ascenders<0] = 0
             scales_ascenders[scales_ascenders>1] = 1
             for b,s in zip(bboxes,scales_ascenders):
-                #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))    
-                imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255))    
+                #imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(255-s*255))  
+                if not np.isnan(s):
+                    imgOrig[b[1]:b[3], b[0]:b[2]] = int(round(s*255))    
         imgout[:,:,ifeature] = cv.resize(np.array(imgOrig).astype(np.uint8),
                                          img_resize,fx=0, fy=0, 
                                          interpolation = cv.INTER_NEAREST)
