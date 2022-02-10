@@ -94,10 +94,10 @@ store_diagnostics = False
 ##use_splits = True 
 
 
-# # for the REAL test list
-# save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
-# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
-# binary_dirs = 'binaries_model12_finaltest/'# for final test set
+# for the REAL test list
+save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
+binary_dirs = 'binaries_model12_finaltest/'# for final test set
 
 
 # # For non-defaults (like for benchmarking), set to None for default
@@ -108,13 +108,13 @@ store_diagnostics = False
 # full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 # binary_dirs = 'binaries_model12_pmcnoncom/'
 
-# Scan bank
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
-save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
-binary_dirs = 'binaries_model12_scanbank/'# for final test set
+# # Scan bank -- try our model on the scanbank ETDs
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
+# binary_dirs = 'binaries_model12_scanbank/'# for final test set
 
 
 
@@ -268,7 +268,7 @@ if len(others_list) == 0: use_splits = False
 
 #test_list = glob.glob(feature_dir + 'train_*tfrecords')
 
-nProcs = max([len(test_list),6])
+nProcs = min([len(test_list),6])
 
 #if not use_training:
 test_raw_data = tf.data.TFRecordDataset(filenames=test_list, 

@@ -62,7 +62,7 @@ def make_ann_directories(save_binary_dir=None,make_sense_dir=None, debug=False):
     return imgDir, imgDirAnn, imgDirPDF, badskewsList
 
 
-def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
+def collect_ocr_process_results(ocrFiles, debug = True, imod=1000, get_paragraphs=True):
     # we'll need this to grab only the text
     paragraphs = []; ws = []; squares = []; paragraphs_unskewed = []; pdfwords = []; html = []
     rotations = []; colorbars = []
@@ -75,44 +75,45 @@ def collect_ocr_process_results(ocrFiles, debug = True, imod=1000):
                  full_run_pdf, full_run_hocr, color_bars,\
                   centers_in, centers_out = pickle.load(f)  
 
-        # here -- generate HTML text, and paragraphs
-        full_run_htmlText = []; full_run_paragraphs = []
-        for ihocr,hocr in enumerate(full_run_hocr):
-            if debug: 
-                if ihocr%imod == 0 and is_root(): print('--- OCR retrieval: on', ihocr,'of',len(full_run_hocr), '---')
-            # translate to text to find namespace for xpath
-            htmlText = hocr.decode('utf-8')
-            full_run_htmlText.append(htmlText)
-            # grab namespace
-            nameSpace = ''
-            for l in htmlText.split('\n'):
-                if 'xmlns' in l:
-                    nameSpace = l.split('xmlns="')[1].split('"')[0]
-                    break
-            tree = etree.fromstring(hocr)
-            ns = {'tei': nameSpace}
+        if get_paragraphs:
+            # here -- generate HTML text, and paragraphs
+            full_run_htmlText = []; full_run_paragraphs = []
+            for ihocr,hocr in enumerate(full_run_hocr):
+                if debug: 
+                    if ihocr%imod == 0 and is_root(): print('--- OCR retrieval: on', ihocr,'of',len(full_run_hocr), '---')
+                # translate to text to find namespace for xpath
+                htmlText = hocr.decode('utf-8')
+                full_run_htmlText.append(htmlText)
+                # grab namespace
+                nameSpace = ''
+                for l in htmlText.split('\n'):
+                    if 'xmlns' in l:
+                        nameSpace = l.split('xmlns="')[1].split('"')[0]
+                        break
+                tree = etree.fromstring(hocr)
+                ns = {'tei': nameSpace}
 
-            # now, grab parent structure and see if you can see a "text angle" tag for rotated text
-            angles = []; lines = []; ocr_par = []
-            for i,angle in enumerate(tree.xpath("//tei:span[@class='ocrx_word']", namespaces=ns)):
-                myangle = angle.xpath("../@title", namespaces=ns) # this should be line tag
-                par = angle.xpath("../../@title", namespaces=ns) # grab spacing of paragraph blocks for layout stuff later
-                par = par[0]
-                bb = np.array(par.split(' ')[1:]).astype('int').tolist()
-                x = bb[0]; y = bb[1]
-                w = bb[2]-x; h = bb[3]-y
-                ocr_par.append((x,y,w,h))
+                # now, grab parent structure and see if you can see a "text angle" tag for rotated text
+                angles = []; lines = []; ocr_par = []
+                for i,angle in enumerate(tree.xpath("//tei:span[@class='ocrx_word']", namespaces=ns)):
+                    myangle = angle.xpath("../@title", namespaces=ns) # this should be line tag
+                    par = angle.xpath("../../@title", namespaces=ns) # grab spacing of paragraph blocks for layout stuff later
+                    par = par[0]
+                    bb = np.array(par.split(' ')[1:]).astype('int').tolist()
+                    x = bb[0]; y = bb[1]
+                    w = bb[2]-x; h = bb[3]-y
+                    ocr_par.append((x,y,w,h))
 
-            full_run_paragraphs.append(ocr_par)
-            
-        # splits
-        for i,w in enumerate(wsout):
-            wsout[i] = w.split('/')[-1]
+                full_run_paragraphs.append(ocr_par)
 
-        ws.extend(wsout); paragraphs.extend(full_run_paragraphs); squares.extend(full_run_squares);
-        html.extend(full_run_htmlText); 
-        rotations.extend(full_run_rotations)
-        colorbars.extend(color_bars)
+            # splits
+            for i,w in enumerate(wsout):
+                wsout[i] = w.split('/')[-1]
+
+            ws.extend(wsout); paragraphs.extend(full_run_paragraphs); squares.extend(full_run_squares);
+            html.extend(full_run_htmlText); 
+            rotations.extend(full_run_rotations)
+            colorbars.extend(color_bars)
         
     return ws, paragraphs, squares, html, rotations, colorbars
 

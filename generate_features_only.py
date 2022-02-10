@@ -14,12 +14,12 @@ full_article_pdfs_dir = None
 test_list_dir = None # where to save a file with the test results
 #make_splits = True
 
-# # final test set
-# save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
-# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
-# binaries_file = 'model12_finaltest'# for final test set
-# no_splits = True # if set to true, only 1 set of tfrecords files is created, all labeled as "test"
-# test_list_dir = '/Users/jillnaiman/MegaYolo_test/'
+# final test set
+save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
+binaries_file = 'model12_finaltest'# for final test set
+no_splits = True # if set to true, only 1 set of tfrecords files is created, all labeled as "test"
+test_list_dir = '/Users/jillnaiman/MegaYolo_test/'
 
 # # PMC non com pages
 # ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
@@ -32,16 +32,16 @@ test_list_dir = None # where to save a file with the test results
 # images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
 # full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 
-# ScanBank pages
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
-use_pdfmining = False
-save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
-binaries_file = 'model12_scanbank'# for final test set
-no_splits = True # if set to true, only 1 set of tfrecords files is created, all labeled as "test"
-test_list_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
+# # ScanBank pages
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+# use_pdfmining = False
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
+# binaries_file = 'model12_scanbank'# for final test set
+# no_splits = True # if set to true, only 1 set of tfrecords files is created, all labeled as "test"
+# test_list_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
 
 
 

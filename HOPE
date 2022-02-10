@@ -1,0 +1,434 @@
+/Users/jillnaiman/anaconda3/envs/Paper1/lib/python3.7/site-packages/yt/utilities/logger.py:4: VisibleDeprecationWarning: The configuration file /Users/jillnaiman/.config/yt/ytrc is deprecated in favor of /Users/jillnaiman/.config/yt/yt.toml. Currently, both are present. Please manually remove the deprecated one to silence this warning.
+Deprecated since v4.0.0. This feature will be removed in v4.1.0
+  from yt.config import ytcfg
+yt : [INFO     ] 2022-02-09 23:00:17,337 Global parallel computation enabled: 0 / 6
+/Users/jillnaiman/anaconda3/envs/Paper1/lib/python3.7/site-packages/yt/utilities/logger.py:4: VisibleDeprecationWarning: The configuration file /Users/jillnaiman/.config/yt/ytrc is deprecated in favor of /Users/jillnaiman/.config/yt/yt.toml. Currently, both are present. Please manually remove the deprecated one to silence this warning.
+Deprecated since v4.0.0. This feature will be removed in v4.1.0
+  from yt.config import ytcfg
+yt : [INFO     ] 2022-02-09 23:00:17,337 Global parallel computation enabled: 1 / 6
+/Users/jillnaiman/anaconda3/envs/Paper1/lib/python3.7/site-packages/yt/utilities/logger.py:4: VisibleDeprecationWarning: The configuration file /Users/jillnaiman/.config/yt/ytrc is deprecated in favor of /Users/jillnaiman/.config/yt/yt.toml. Currently, both are present. Please manually remove the deprecated one to silence this warning.
+Deprecated since v4.0.0. This feature will be removed in v4.1.0
+  from yt.config import ytcfg
+yt : [INFO     ] 2022-02-09 23:00:17,337 Global parallel computation enabled: 2 / 6
+/Users/jillnaiman/anaconda3/envs/Paper1/lib/python3.7/site-packages/yt/utilities/logger.py:4: VisibleDeprecationWarning: The configuration file /Users/jillnaiman/.config/yt/ytrc is deprecated in favor of /Users/jillnaiman/.config/yt/yt.toml. Currently, both are present. Please manually remove the deprecated one to silence this warning.
+Deprecated since v4.0.0. This feature will be removed in v4.1.0
+  from yt.config import ytcfg
+yt : [INFO     ] 2022-02-09 23:00:17,337 Global parallel computation enabled: 4 / 6
+/Users/jillnaiman/anaconda3/envs/Paper1/lib/python3.7/site-packages/yt/utilities/logger.py:4: VisibleDeprecationWarning: The configuration file /Users/jillnaiman/.config/yt/ytrc is deprecated in favor of /Users/jillnaiman/.config/yt/yt.toml. Currently, both are present. Please manually remove the deprecated one to silence this warning.
+Deprecated since v4.0.0. This feature will be removed in v4.1.0
+  from yt.config import ytcfg
+yt : [INFO     ] 2022-02-09 23:00:17,337 Global parallel computation enabled: 5 / 6
+/Users/jillnaiman/anaconda3/envs/Paper1/lib/python3.7/site-packages/yt/utilities/logger.py:4: VisibleDeprecationWarning: The configuration file /Users/jillnaiman/.config/yt/ytrc is deprecated in favor of /Users/jillnaiman/.config/yt/yt.toml. Currently, both are present. Please manually remove the deprecated one to silence this warning.
+Deprecated since v4.0.0. This feature will be removed in v4.1.0
+  from yt.config import ytcfg
+yt : [INFO     ] 2022-02-09 23:00:17,338 Global parallel computation enabled: 3 / 6
+working with pickle file: /Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/full_ocr_newPDFs_TIFF_take2.pickle
+working with: 70 full article PDFs, will pull random pages from these
+no more files!
+no more files!
+no more files!
+no more files!
+no more files!
+no more files!
+end loop to get pages of PDFs, iloop= 700
+START:  Wed Feb  9 23:01:49 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 0 of 700 at Wed Feb  9 23:02:23 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 10 of 700 at Wed Feb  9 23:02:52 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 20 of 700 at Wed Feb  9 23:04:27 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 30 of 700 at Wed Feb  9 23:04:59 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 40 of 700 at Wed Feb  9 23:05:52 2022
+On 50 of 700 at Wed Feb  9 23:07:19 2022
+On 60 of 700 at Wed Feb  9 23:08:27 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 70 of 700 at Wed Feb  9 23:09:04 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 80 of 700 at Wed Feb  9 23:10:23 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 90 of 700 at Wed Feb  9 23:11:46 2022
+On 100 of 700 at Wed Feb  9 23:11:52 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 110 of 700 at Wed Feb  9 23:13:12 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 120 of 700 at Wed Feb  9 23:14:36 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 130 of 700 at Wed Feb  9 23:15:10 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 140 of 700 at Wed Feb  9 23:16:22 2022
+On 150 of 700 at Wed Feb  9 23:17:57 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 160 of 700 at Wed Feb  9 23:18:37 2022
+On 170 of 700 at Wed Feb  9 23:19:23 2022
+rotation issue
+180.0
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 180 of 700 at Wed Feb  9 23:20:40 2022
+rotation issue
+180.0
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 200 of 700 at Wed Feb  9 23:22:37 2022
+On 190 of 700 at Wed Feb  9 23:22:51 2022
+rotation issue
+-50
+On 210 of 700 at Wed Feb  9 23:24:07 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 220 of 700 at Wed Feb  9 23:25:47 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 240 of 700 at Wed Feb  9 23:27:10 2022
+On 230 of 700 at Wed Feb  9 23:27:54 2022
+rotation issue
+-50
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 250 of 700 at Wed Feb  9 23:29:57 2022
+On 260 of 700 at Wed Feb  9 23:30:57 2022
+On 270 of 700 at Wed Feb  9 23:31:05 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 290 of 700 at Wed Feb  9 23:34:00 2022
+On 320 of 700 at Wed Feb  9 23:37:53 2022
+On 300 of 700 at Wed Feb  9 23:38:39 2022
+rotation issue
+180.0
+On 280 of 700 at Wed Feb  9 23:41:23 2022
+On 330 of 700 at Wed Feb  9 23:41:36 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 350 of 700 at Wed Feb  9 23:41:48 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 380 of 700 at Wed Feb  9 23:44:42 2022
+On 360 of 700 at Wed Feb  9 23:45:06 2022
+On 310 of 700 at Wed Feb  9 23:46:05 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 410 of 700 at Wed Feb  9 23:48:08 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 390 of 700 at Wed Feb  9 23:48:26 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 340 of 700 at Wed Feb  9 23:49:21 2022
+no TIFF file to remove for: /Users/jillnaiman/Downloads/tmp/1721_1_16105_p25.tiff
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 440 of 700 at Wed Feb  9 23:51:46 2022
+rotation issue
+-50
+On 370 of 700 at Wed Feb  9 23:53:07 2022
+On 420 of 700 at Wed Feb  9 23:53:28 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 470 of 700 at Wed Feb  9 23:54:53 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 400 of 700 at Wed Feb  9 23:56:41 2022
+On 450 of 700 at Wed Feb  9 23:56:45 2022
+On 500 of 700 at Wed Feb  9 23:57:57 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 480 of 700 at Wed Feb  9 23:59:40 2022
+On 430 of 700 at Thu Feb 10 00:00:00 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 530 of 700 at Thu Feb 10 00:01:01 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+rotation issue
+-50
+On 510 of 700 at Thu Feb 10 00:03:05 2022
+On 460 of 700 at Thu Feb 10 00:03:12 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 560 of 700 at Thu Feb 10 00:04:10 2022
+rotation issue
+-50
+rotation issue
+-50
+On 540 of 700 at Thu Feb 10 00:05:53 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 490 of 700 at Thu Feb 10 00:06:54 2022
+On 590 of 700 at Thu Feb 10 00:07:10 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 570 of 700 at Thu Feb 10 00:09:31 2022
+On 520 of 700 at Thu Feb 10 00:09:47 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 620 of 700 at Thu Feb 10 00:10:34 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 600 of 700 at Thu Feb 10 00:12:35 2022
+On 550 of 700 at Thu Feb 10 00:13:16 2022
+On 650 of 700 at Thu Feb 10 00:14:58 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 630 of 700 at Thu Feb 10 00:15:56 2022
+On 580 of 700 at Thu Feb 10 00:16:48 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 680 of 700 at Thu Feb 10 00:18:41 2022
+rotation issue
+-50
+On 660 of 700 at Thu Feb 10 00:18:58 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 610 of 700 at Thu Feb 10 00:19:58 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 690 of 700 at Thu Feb 10 00:22:13 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 640 of 700 at Thu Feb 10 00:22:41 2022
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+   **** Error: Invalid (0 scaling) text matrix for Tm ****
+               Output may be incorrect.
+On 670 of 700 at Thu Feb 10 00:25:31 2022
+DONE at Thu Feb 10 00:27:50 2022
