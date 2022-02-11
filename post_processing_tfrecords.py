@@ -640,6 +640,7 @@ if yt.is_root():
     pp += binary_dirs.split('/')[0]
     pp += adder
     pp += '.pickle'
+    print('saving to:', pp)
     with open(pp, 'wb') as ff:
         pickle.dump([icombo,imgs_name, truebox, pdfboxes, pdfrawboxes, captionText_figcap,\
                      bbox_figcap_pars,\
