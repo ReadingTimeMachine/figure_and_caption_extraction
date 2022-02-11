@@ -185,6 +185,9 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     # subset dataframe
     d = dfMakeSense.loc[dfMakeSense['filename']==dfMakeSense['filename'].values[iw]]
 
+    #if "1721_1_13329_p29" in dfMakeSense['filename'].values[iw]:
+    #    print(d)
+    
     # get squares & save -- check for any NotSures and continue if found
     gotSomething = False
     scount=0;sfcount=0; ccount = 0
@@ -207,7 +210,9 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     # goOn lets us know if we should continue or not
     goOn, dfsingle, indh, fracxDiag, fracyDiag, fname = get_cross_index(d,df,img_resize,
                                                                        images_jpeg_dir=images_jpeg_dir)
-    if not goOn: continue
+    if not goOn:
+        print('----- not going on -------')
+        continue
 
     _, rotation, _, _, _, bbox_par, bboxes_words = angles_results_from_ocr(dfsingle['hocr'], 
                                                                            return_extras=True)
