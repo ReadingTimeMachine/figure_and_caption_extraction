@@ -235,7 +235,12 @@ def get_pdffigures_info(jsonfile, page,ff,d,pdffigures_dpi=72,
     if os.path.isfile(jsonfile):
         # read in pdffigures2 json
         with open(jsonfile,'r') as ff3:
-            fj = json.loads(ff3.read())    
+            try:
+                fj = json.loads(ff3.read())    
+            except:
+                print('no json for ', jsonfile)
+                fj['figures'] = []
+                fj['regionless-captions'] = []
         # only want objects on our specific page
         figsThisPage = []
         for fb in fj['figures']:

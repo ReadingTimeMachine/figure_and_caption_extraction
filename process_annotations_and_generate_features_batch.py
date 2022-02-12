@@ -17,23 +17,24 @@ plot_diagnostics = False
 
 # For non-defaults (like for benchmarking), set to None for default
 
-# # PMC PubLayNet
-# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-# use_pdfmining = False
-# generate_features = False
-# save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
-# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
-# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
-# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
-
-# ScanBank -- images from scanbank
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+# PMC PubLayNet
+ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+#use_pdfmining = False
 use_pdfmining = True
 generate_features = False
-save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
+save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+
+# # ScanBank -- images from scanbank
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
+# use_pdfmining = True
+# generate_features = False
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_scanbank/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_scanbank/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_scanbank/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/scanbank/etds/'
 
 # # Final Test Dataset
 # ocr_results_dir = None 
@@ -72,6 +73,7 @@ import pandas as pd
 import cv2 as cv
 import numpy as np
 import xml.etree.ElementTree as ET
+import subprocess
 
 from annotation_utils import get_all_ocr_files, make_ann_directories, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years, get_cross_index, get_pdffigures_info, get_annotation_name, \
@@ -226,10 +228,14 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
     # run pdffigures2 on this thing
     fileExpected = imgDirPDF + fname.split('/')[-1].split('_p')[0] + '.json'
     pdfExpected = full_article_pdfs_dir + fname.split('/')[-1].split('_p')[0] + '.pdf'
+    
+    #import sys; sys.exit()
     # do we have any pdf heres?
     if os.path.exists(pdfExpected) and use_pdfmining:
+        #print('hi')
         if not os.path.exists(fileExpected) or reRun:
             #import sys; sys.exit()
+            #print('hello')
             try:
                 subprocess.check_call(
                 'java'
@@ -308,7 +314,8 @@ for sto, iw in yt.parallel_objects(wsInds, config.nProcs, storage=my_storage):
         figsThisPage, rawBoxThisPage, xc, fracy, \
            fracyYOLO, fracxYOLO = get_pdffigures_info(jsonfile, 
                                                       page,d['filename'].values[0],
-                                                      d,pdffigures_dpi=pdffigures_dpi)
+                                                      d,pdffigures_dpi=pdffigures_dpi, 
+                                                     full_article_pdfs_dir=full_article_pdfs_dir)
 
         # if we have any PDF boxes, write them out:
         for fp in figsThisPage:
