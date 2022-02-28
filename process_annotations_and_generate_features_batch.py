@@ -17,15 +17,15 @@ plot_diagnostics = False
 
 # For non-defaults (like for benchmarking), set to None for default
 
-# PMC PubLayNet
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-#use_pdfmining = False
-use_pdfmining = True
-generate_features = False
-save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+# # PMC PubLayNet
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+# #use_pdfmining = False
+# use_pdfmining = True
+# generate_features = False
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
 
 # # ScanBank -- images from scanbank
 # ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_scanbank/'
@@ -44,6 +44,7 @@ full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLo
 # make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
 # images_jpeg_dir = None 
 # full_article_pdfs_dir = None 
+
 
 
 # ----------------------------------------------
