@@ -350,7 +350,7 @@ years, years_list = get_years(dfMakeSense['filename'].values)
 
 
 
-if yt.is_root(): print('START LOOPS: ', time.ctime(start_time))
+if yt.is_root(): print('START LOOPS: ', time.ctime(time.time()))
 
 
 my_storage = {}
@@ -569,7 +569,7 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
 
     
 if yt.is_root():
-    print('END LOOPS: ', time.ctime(start_time))
+    print('END LOOPS: ', time.ctime(time.time()))
     icombo,imgs_name, truebox, pdfboxes, pdfrawboxes, captionText_figcap = [],[],[],[],[],[]
     bbox_figcap_pars = []
     sboxes_cleaned, slabels_cleaned, sscores_cleaned = [],[],[]
@@ -667,4 +667,4 @@ if yt.is_root():
                      boxes_sq5, labels_sq5, scores_sq5,\
                      truebox1,truebox2,truebox3,rotatedImage,LABELS,boxes1, scores1, labels1], ff)
             
-    print('END RUN: ', time.ctime(start_time))
+    print('END RUN: ', time.ctime(time.time()))
