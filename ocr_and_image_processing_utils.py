@@ -484,7 +484,8 @@ def find_squares_auto(img, results_culled, angles_culled,
 
     # HOG
     selem = disk(hog_disk_radius)
-    hogShmear = filters.rank.mean(util.img_as_ubyte(mag.copy()/mag.max()), selem=selem)
+    #hogShmear = filters.rank.mean(util.img_as_ubyte(mag.copy()/mag.max()), selem=selem)
+    hogShmear = filters.rank.mean(util.img_as_ubyte(mag.copy()/mag.max()), footprint=selem)
     saved_squares_hog, c4 = find_squares_auto_one(hogShmear.copy(), 
                                           deltaBin = deltaBin, 
                                           deltaBinReplace = 

@@ -96,19 +96,19 @@ store_diagnostics = False
 
 # # for the REAL test list
 # save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
-# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
+# make_sense_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations_test/'
 # binary_dirs = 'binaries_model12_finaltest/'# for final test set
 
 
-# PMC PubLayNet
-# For non-defaults (like for benchmarking), set to None for default
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
-save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
-full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
-######binary_dirs = 'binaries_model12_pmcnoncom/'
-binary_dirs = 'binaries_model12_tfrecordz_pmcnoncom/'
+# # PMC PubLayNet
+# # For non-defaults (like for benchmarking), set to None for default
+# ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/OCR_processing_pmcnoncom/'
+# save_binary_dir = '/Users/jillnaiman/MegaYolo_pmcnoncom/'
+# make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Annotations_pmcnoncom/MakeSenseAnnotations/'
+# images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/Pages_pmcnoncom/RandomSingleFromPDFIndexed/'
+# full_article_pdfs_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/BenchMarks/data/PMC_noncom/pdfs/'
+# ######binary_dirs = 'binaries_model12_pmcnoncom/'
+# binary_dirs = 'binaries_model12_tfrecordz_pmcnoncom/'
 
 
 # # Scan bank -- try our model on the scanbank ETDs
@@ -194,6 +194,7 @@ import pickle
 import numpy as np
 import tensorflow as tf
 import glob
+import time
 from annotation_utils import get_all_ocr_files, collect_ocr_process_results, \
    get_makesense_info_and_years, get_years
 from post_processing_utils import parse_annotations_to_labels, \
@@ -215,6 +216,11 @@ if store_diagnostics:
         os.remove(os.path.join(diagnostics_dir + 'FP/', f))
     for f in os.listdir(diagnostics_dir + 'TP/'):
         os.remove(os.path.join(diagnostics_dir + 'TP/', f))
+
+        
+# count:
+start_time = time.time()
+if yt.is_root(): print('START RUN: ', time.ctime(start_time))
 
 # let's get all of the ocr files
 ocrFiles = get_all_ocr_files(ocr_results_dir=ocr_results_dir)
@@ -344,6 +350,7 @@ years, years_list = get_years(dfMakeSense['filename'].values)
 
 
 
+if yt.is_root(): print('START LOOPS: ', time.ctime(start_time))
 
 
 my_storage = {}
@@ -562,6 +569,7 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
 
     
 if yt.is_root():
+    print('END LOOPS: ', time.ctime(start_time))
     icombo,imgs_name, truebox, pdfboxes, pdfrawboxes, captionText_figcap = [],[],[],[],[],[]
     bbox_figcap_pars = []
     sboxes_cleaned, slabels_cleaned, sscores_cleaned = [],[],[]
@@ -659,3 +667,4 @@ if yt.is_root():
                      boxes_sq5, labels_sq5, scores_sq5,\
                      truebox1,truebox2,truebox3,rotatedImage,LABELS,boxes1, scores1, labels1], ff)
             
+    print('END RUN: ', time.ctime(start_time))

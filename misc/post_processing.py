@@ -1,9 +1,16 @@
 # set to None if you want to use defaults
 
 
-binary_dirs = 'binaries_model8_tfrecordz/'
-weightsFileDir = save_weights_dir + '20211204_model8tfz/'
-weightsFile = 'training_1model8_tfrec_model_l0.023908472.h5' # figure/table, fig/table captions
+# binary_dirs = 'binaries_model8_tfrecordz/'
+# weightsFileDir = save_weights_dir + '20211204_model8tfz/'
+# weightsFile = 'training_1model8_tfrec_model_l0.023908472.h5' # figure/table, fig/table captions
+# useTFrecords = True
+
+
+save_weights_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/saved_weights/'
+binary_dirs = 'binaries_model12_tfrecordz/'
+weightsFileDir = save_weights_dir + '20211218_model12tfz/'
+weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5' # figure/table, fig/table captions
 useTFrecords = True
 
 

@@ -1,38 +1,45 @@
 ####### Locations of general storage #######
 
 # 0. Where are article PDFs stored?
-full_article_pdfs_dir = '/Users/jillnaiman/tmpADSDownloads/pdfs/'
+full_article_pdfs_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/ADSDownloads/pdfs/'
 # NOTE: the default is for PDFs but it will also look for individual pages in .bmp, .jpg, and .jpeg file formats
 
 # 1. where to store JPEGs of individual pages from PDF articles?
-images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Pages/RandomSingleFromPDFIndexed/'
+#images_jpeg_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Pages/RandomSingleFromPDFIndexed/'
+images_jpeg_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Pages/RandomSingleFromPDFIndexed/'
 
 # 2. where to store OCR & image processing results?
-ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/OCR_processing/'
+#ocr_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/OCR_processing/'
+ocr_results_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/OCR_processing/'
 
 # 3. where should we store generated features and annotations?
-save_binary_dir = '/Users/jillnaiman/MegaYolo/'
+save_binary_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/StoredFeatures/MegaYolo/'
 
 # 4. where are MakeSense.ai annotations stored (as .csv files)
-make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations/'
+#make_sense_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations/'
+make_sense_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/Annotations/MakeSenseAnnotations/'
 
 # 5. What jar file for pdffigures2?
 #pdffigures_jar_path = '/Users/jillnaiman/Downloads/ScanBank/bin/pdffigures2-assembly-0.1.0.jar' # use scanbank's
-pdffigures_jar_path = '/Users/jillnaiman/figure_and_caption_extraction/bin/pdffigures2-assembly-0.1.0.jar' # use ours
+pdffigures_jar_path = '/Users/jnaiman/figure_and_caption_extraction/bin/pdffigures2-assembly-0.1.0.jar' # use ours
 
 # 6. Where to store weights
-save_weights_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/'
+#save_weights_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/'
+save_weights_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/mega_yolo/'
 
 # X. What is a good temporary storage directory?
-tmp_storage_dir = '/Users/jillnaiman/Downloads/tmp/'
+tmp_storage_dir = '/Users/jnaiman/Downloads/tmp/'
 
 # 7. where to store results/metric results?
-metric_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/MetricsResults/'
+#metric_results_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/MetricsResults/'
+metric_results_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/MetricsResults/'
 
 # where to save numbers? these will be used by the paper
-save_table_dats_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/paper1/tables/tolatex/'
+#save_table_dats_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/paper1/tables/tolatex/'
+save_table_dats_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/paper1/tables/tolatex/'
 # and figures?
-save_figures_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/paper1/figures/'
+#save_figures_dir = '/Users/jillnaiman/Dropbox/wwt_image_extraction/FigureLocalization/paper1/figures/'
+save_figures_dir = '/Users/jnaiman/Dropbox/wwt_image_extraction/FigureLocalization/paper1/figures/'
 
 
 # X. Diagnostic dir
