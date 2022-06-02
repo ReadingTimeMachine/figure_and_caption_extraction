@@ -91,8 +91,9 @@ make_sense_dir = None
 images_jpeg_dir = None
 full_article_pdfs_dir = None
 store_diagnostics = False
-##use_splits = True 
 
+use_training = False # generally set to false, only set to true if you want to post process training instances
+use_valid = False # generally set to false, only set to true if you want to post process validation data
 
 # # for the REAL test list
 # save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
@@ -126,8 +127,6 @@ benchmark = None
 scoreminVec = None
 iouminVec = None
 
-# using the valid or test data?
-use_valid = False
 
 
 #adder = '_mod1' # leave empty to save default file
@@ -135,10 +134,11 @@ adder = '' # leave empty to save default file
 
 
 useColorbars = True
-#adder = 'truebox'
 
+if use_training: use_valid = False # take on or other
 
 if use_valid: adder = '_valid'
+if use_training: adder = '_train'
 
 if save_binary_dir is None: save_binary_dir = config.save_binary_dir
 if ocr_results_dir is None: ocr_results_dir = config.ocr_results_dir
@@ -258,8 +258,8 @@ if yt.is_root():
 test_list = glob.glob(feature_dir + 'test_*tfrecords')
 if use_valid:
     test_list = glob.glob(feature_dir + 'valid_*tfrecords')
-#else:
-#    test_list = glob.glob(feature_dir + 'record_*tfrecords')
+if use_training:
+    test_list = glob.glob(feature_dir + 'train_*tfrecords')
 # try one more thing
 if len(test_list) == 0:
     test_list = glob.glob(feature_dir + 'record_*tfrecords')
@@ -325,6 +325,7 @@ def _parse_nfeatures(example_proto):
     return nfeatures
 nfeatures_data = test_raw_data.map(lambda example_proto:_parse_nfeatures(example_proto))
 
+# how many features in this model -- just check one
 n_features = -1
 for f in nfeatures_data.take(1):
     n_features = int(f.numpy())
@@ -335,6 +336,7 @@ model = build_predict(weightsFileDownload, anchorsFile,
                       debug=False,n_features=n_features)
 model.load_weights(weightsFileDownload)
 
+# list to tag bad annotations
 if badskewList is not None:
     badskews = pd.read_csv(badskewList); badannotations = pd.read_csv(badannotationsList)
     badskews = badskews['filename'].values.tolist()
@@ -355,24 +357,11 @@ if yt.is_root(): print('START LOOPS: ', time.ctime(time.time()))
 
 my_storage = {}
 
-#wsInds = np.arange(0,len(annotations))
-#wsInds = np.arange(0,6) # debug
-#wsInds = wsInds[1:]
-#wsInds = wsInds[:2]
-
 wsInds = np.arange(0,len(test_list))
 
 # run the thing
 iMod = 10
 
-#icout = 0
-
-#for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
-    
-#a = annotations[icombo] # which annotation
-#k_cv = ann_inds[icombo] # which fold?
-#for image,images_name in test_dataset.__iter__():
-#for image,images_name in test_dataset:
 for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
     print(' ---- main loop: ' + str(icombo+1) + ' of ' + str(len(test_list)) + ' -------')
     sto.result_id = icombo
@@ -396,8 +385,10 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
             if use_splits:
                 if not use_valid:
                     print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.test_per))
-                else:
+                elif not use_training:
                     print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.valid_per))
+                else:
+                    print('on ', icout, ' of ~', int(len(annotations)//len(test_list)*config.train_per))
             else:
                 print('on ', icout, ' of ~', int(len(annotations)//len(test_list)))
 
@@ -528,9 +519,10 @@ for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
                                                              rotatedAngleOCR,
                                                              dfMS)
 
-        # check for overlaps
+        # expand around large horizontal captions -- this is an annotation step, done 
+        #.  here so we can turn this "on and off" in storage
         truebox2 = expand_true_boxes_fig_cap(truebox1, rotatedImage, LABELS)
-        # again for found boxes?  I feel like maybe not the one above?
+        # again for found boxes
         boxes_sq4, labels_sq4, scores_sq4 = expand_found_boxes_fig_cap(boxes_sq3, 
                                                                     labels_sq3, 
                                                                     scores_sq3,
