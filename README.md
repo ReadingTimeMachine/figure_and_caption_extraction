@@ -2,7 +2,7 @@
 
 This code is very much in Beta and needs a through deep clean. 
 
-This work has been excepted to [TPDL 2022](https://link.springer.com/book/10.1007/978-3-031-16802-4) as [Figure and Figure Caption Extraction for Mixed Raster and Vector PDFs: Digitization of Astronomical Literature with OCR Features](https://arxiv.org/abs/2209.04460).
+This work has been accepted to [TPDL 2022](https://link.springer.com/book/10.1007/978-3-031-16802-4) as [Figure and Figure Caption Extraction for Mixed Raster and Vector PDFs: Digitization of Astronomical Literature with OCR Features](https://arxiv.org/abs/2209.04460).
 
 Writing of talk (and, let's be honest, eating of Italian food) took precedence, but expect cleaner code mid-October.
 
