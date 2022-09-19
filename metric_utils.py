@@ -202,7 +202,6 @@ def new_calcs(gt_boxes, det_boxes, det_labels, det_scores,
                     if img is None:
                         img = np.array(Image.open(images_pulled_dir+fname+'.jpeg').convert('RGB'))
                         fracx = img.shape[1]/image_shape[0]; fracy = img.shape[0]/image_shape[1] 
-                        #**HERE: see, e.g. 1896ApJ_____4__238W_p14.jpeg which is tagged as a false positive but shouldn't be...
                     # plot found
                     c1 = (round(det[0]*fracx),round(det[1]*fracy)); 
                     c2 = (round(det[2]*fracx), round(det[3]*fracy))

@@ -1,6 +1,9 @@
 # set to None if you want to use defaults
 import config
 
+use_training = False # generally set to false, only set to true if you want to post process training instances
+use_valid = False # generally set to false, only set to true if you want to post process validation data
+
 # binary_dirs = 'binaries_model7_tfrecordz/'
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211114_model7tfz/'
 # weightsFile = 'training_1model7_tfrec_model_l0.020921115.h5' # figure/table, fig/table captions
@@ -65,6 +68,8 @@ import config
 binary_dirs = 'binaries_model12_tfrecordz/'
 weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211218_model12tfz/'
 weightsFile = 'training_1model12_tfrec_model_l0.019131713.h5'  
+use_training = False
+use_valid = True
 
 # binary_dirs = 'binaries_model13_tfrecordz/'
 # weightsFileDir = config.save_weights_dir +'saved_weights/'+'20211219_model13tfz/'
@@ -92,8 +97,6 @@ images_jpeg_dir = None
 full_article_pdfs_dir = None
 store_diagnostics = False
 
-use_training = False # generally set to false, only set to true if you want to post process training instances
-use_valid = False # generally set to false, only set to true if you want to post process validation data
 
 # # for the REAL test list
 # save_binary_dir = '/Users/jillnaiman/MegaYolo_test/'
@@ -361,6 +364,8 @@ wsInds = np.arange(0,len(test_list))
 
 # run the thing
 iMod = 10
+
+#import sys; sys.exit()
 
 for sto, icombo in yt.parallel_objects(wsInds, nProcs, storage=my_storage):
     print(' ---- main loop: ' + str(icombo+1) + ' of ' + str(len(test_list)) + ' -------')
