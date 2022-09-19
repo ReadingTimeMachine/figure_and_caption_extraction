@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1965ApJ___142__399N_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1965</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>217</xmin>
+			<ymin>477</ymin>
+			<xmax>294</xmax>
+			<ymax>481</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>72</xmin>
+			<ymin>24</ymin>
+			<xmax>437</xmax>
+			<ymax>471</ymax>
+		</bndbox>
+	</object>
+</annotation>

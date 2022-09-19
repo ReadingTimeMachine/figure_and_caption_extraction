@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1962ApJ___136___21M_p8.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1962</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>343</xmin>
+			<ymin>18</ymin>
+			<xmax>367</xmax>
+			<ymax>489</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>166</xmin>
+			<ymin>15</ymin>
+			<xmax>332</xmax>
+			<ymax>495</ymax>
+		</bndbox>
+	</object>
+</annotation>

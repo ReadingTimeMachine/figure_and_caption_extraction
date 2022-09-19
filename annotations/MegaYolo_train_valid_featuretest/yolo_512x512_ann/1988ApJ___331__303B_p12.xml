@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1988ApJ___331__303B_p12.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1988</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>276</xmin>
+			<ymin>372</ymin>
+			<xmax>461</xmax>
+			<ymax>474</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>311</xmin>
+			<ymin>140</ymin>
+			<xmax>468</xmax>
+			<ymax>159</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>314</xmin>
+			<ymin>95</ymin>
+			<xmax>468</xmax>
+			<ymax>117</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1934ApJ____80___19M_p30.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1934</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>77</xmin>
+			<ymin>149</ymin>
+			<xmax>379</xmax>
+			<ymax>257</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>204</xmin>
+			<ymin>335</ymin>
+			<xmax>251</xmax>
+			<ymax>349</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>193</xmin>
+			<ymin>364</ymin>
+			<xmax>252</xmax>
+			<ymax>384</ymax>
+		</bndbox>
+	</object>
+</annotation>

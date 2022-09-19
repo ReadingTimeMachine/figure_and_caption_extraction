@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1976ApJ___209__621D_p8.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1976</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>57</xmin>
+			<ymin>180</ymin>
+			<xmax>457</xmax>
+			<ymax>202</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>125</xmin>
+			<ymin>55</ymin>
+			<xmax>382</xmax>
+			<ymax>178</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>137</xmin>
+			<ymin>351</ymin>
+			<xmax>379</xmax>
+			<ymax>458</ymax>
+		</bndbox>
+	</object>
+</annotation>

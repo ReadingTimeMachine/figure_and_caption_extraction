@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1990ApJ___348__333C_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1990</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>93</xmin>
+			<ymin>269</ymin>
+			<xmax>397</xmax>
+			<ymax>442</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>29</xmin>
+			<ymin>447</ymin>
+			<xmax>466</xmax>
+			<ymax>463</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>93</xmin>
+			<ymin>37</ymin>
+			<xmax>406</xmax>
+			<ymax>176</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1978ApJ___220__510E_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1978</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>121</xmin>
+			<ymin>56</ymin>
+			<xmax>388</xmax>
+			<ymax>160</ymax>
+		</bndbox>
+	</object>
+</annotation>

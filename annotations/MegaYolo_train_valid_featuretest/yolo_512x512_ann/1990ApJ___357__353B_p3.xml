@@ -1,0 +1,111 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1990ApJ___357__353B_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1990</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>31</xmin>
+			<ymin>172</ymin>
+			<xmax>472</xmax>
+			<ymax>184</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>145</xmin>
+			<ymin>53</ymin>
+			<xmax>353</xmax>
+			<ymax>167</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>202</xmin>
+			<ymin>212</ymin>
+			<xmax>476</xmax>
+			<ymax>231</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>208</xmin>
+			<ymin>246</ymin>
+			<xmax>476</xmax>
+			<ymax>265</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>191</xmin>
+			<ymin>274</ymin>
+			<xmax>476</xmax>
+			<ymax>294</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>203</xmin>
+			<ymin>311</ymin>
+			<xmax>476</xmax>
+			<ymax>324</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>187</xmin>
+			<ymin>338</ymin>
+			<xmax>476</xmax>
+			<ymax>357</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>181</xmin>
+			<ymin>358</ymin>
+			<xmax>477</xmax>
+			<ymax>377</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>195</xmin>
+			<ymin>378</ymin>
+			<xmax>477</xmax>
+			<ymax>396</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>177</xmin>
+			<ymin>397</ymin>
+			<xmax>477</xmax>
+			<ymax>416</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>213</xmin>
+			<ymin>468</ymin>
+			<xmax>478</xmax>
+			<ymax>480</ymax>
+		</bndbox>
+	</object>
+</annotation>

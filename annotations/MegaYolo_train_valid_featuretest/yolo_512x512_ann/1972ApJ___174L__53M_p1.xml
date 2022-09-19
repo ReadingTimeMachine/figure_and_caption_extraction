@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1972ApJ___174L__53M_p1.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1972</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>424</xmin>
+			<ymin>45</ymin>
+			<xmax>449</xmax>
+			<ymax>426</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>83</xmin>
+			<ymin>433</ymin>
+			<xmax>424</xmax>
+			<ymax>449</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>55</xmin>
+			<ymin>41</ymin>
+			<xmax>455</xmax>
+			<ymax>428</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>83</xmin>
+			<ymin>432</ymin>
+			<xmax>424</xmax>
+			<ymax>450</ymax>
+		</bndbox>
+	</object>
+</annotation>

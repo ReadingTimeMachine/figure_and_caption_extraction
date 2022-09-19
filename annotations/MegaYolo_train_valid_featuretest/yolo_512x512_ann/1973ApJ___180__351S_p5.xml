@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1973ApJ___180__351S_p5.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1973</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>160</xmin>
+			<ymin>53</ymin>
+			<xmax>350</xmax>
+			<ymax>149</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>78</xmin>
+			<ymin>358</ymin>
+			<xmax>432</xmax>
+			<ymax>451</ymax>
+		</bndbox>
+	</object>
+</annotation>

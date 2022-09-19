@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1958ApJ___128__166A_p5.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1958</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>123</xmin>
+			<ymin>138</ymin>
+			<xmax>386</xmax>
+			<ymax>441</ymax>
+		</bndbox>
+	</object>
+</annotation>

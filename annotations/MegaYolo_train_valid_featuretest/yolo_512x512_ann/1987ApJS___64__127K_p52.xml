@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1987ApJS___64__127K_p52.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1987</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>70</xmin>
+			<ymin>467</ymin>
+			<xmax>441</xmax>
+			<ymax>497</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>208</xmin>
+			<ymin>439</ymin>
+			<xmax>326</xmax>
+			<ymax>442</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>47</xmin>
+			<ymin>50</ymin>
+			<xmax>488</xmax>
+			<ymax>436</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>208</xmin>
+			<ymin>438</ymin>
+			<xmax>326</xmax>
+			<ymax>443</ymax>
+		</bndbox>
+	</object>
+</annotation>

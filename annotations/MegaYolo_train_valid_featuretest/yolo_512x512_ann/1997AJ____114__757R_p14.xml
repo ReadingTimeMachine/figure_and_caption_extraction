@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1997AJ____114__757R_p14.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1997</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>38</xmin>
+			<ymin>309</ymin>
+			<xmax>243</xmax>
+			<ymax>344</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>45</xmin>
+			<ymin>21</ymin>
+			<xmax>232</xmax>
+			<ymax>304</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>38</xmin>
+			<ymin>309</ymin>
+			<xmax>243</xmax>
+			<ymax>345</ymax>
+		</bndbox>
+	</object>
+</annotation>

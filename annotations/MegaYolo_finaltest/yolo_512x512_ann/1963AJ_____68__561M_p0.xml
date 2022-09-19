@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1963AJ_____68__561M_p0.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1963</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>342</xmin>
+			<ymin>372</ymin>
+			<xmax>450</xmax>
+			<ymax>474</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>257</xmin>
+			<ymin>400</ymin>
+			<xmax>327</xmax>
+			<ymax>445</ymax>
+		</bndbox>
+	</object>
+</annotation>

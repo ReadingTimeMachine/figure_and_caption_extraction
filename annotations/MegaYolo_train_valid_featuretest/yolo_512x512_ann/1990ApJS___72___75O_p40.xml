@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1990ApJS___72___75O_p40.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1990</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>48</xmin>
+			<ymin>425</ymin>
+			<xmax>441</xmax>
+			<ymax>497</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>160</xmin>
+			<ymin>415</ymin>
+			<xmax>378</xmax>
+			<ymax>419</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>86</xmin>
+			<ymin>39</ymin>
+			<xmax>451</xmax>
+			<ymax>409</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>160</xmin>
+			<ymin>415</ymin>
+			<xmax>378</xmax>
+			<ymax>420</ymax>
+		</bndbox>
+	</object>
+</annotation>

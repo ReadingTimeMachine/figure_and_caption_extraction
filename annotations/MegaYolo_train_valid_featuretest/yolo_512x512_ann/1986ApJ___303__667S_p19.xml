@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1986ApJ___303__667S_p19.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1986</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>45</xmin>
+			<ymin>44</ymin>
+			<xmax>223</xmax>
+			<ymax>322</ymax>
+		</bndbox>
+	</object>
+</annotation>

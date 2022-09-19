@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1965ApJS___12__163L_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1965</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>54</xmin>
+			<ymin>46</ymin>
+			<xmax>459</xmax>
+			<ymax>443</ymax>
+		</bndbox>
+	</object>
+</annotation>

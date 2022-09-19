@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1974ApJ___189__263W_p12.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1974</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>70</xmin>
+			<ymin>421</ymin>
+			<xmax>441</xmax>
+			<ymax>497</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>146</xmin>
+			<ymin>412</ymin>
+			<xmax>359</xmax>
+			<ymax>416</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>146</xmin>
+			<ymin>411</ymin>
+			<xmax>359</xmax>
+			<ymax>417</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>79</xmin>
+			<ymin>43</ymin>
+			<xmax>433</xmax>
+			<ymax>409</ymax>
+		</bndbox>
+	</object>
+</annotation>

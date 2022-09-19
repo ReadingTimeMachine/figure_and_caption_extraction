@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1978ApJ___223__740P_p8.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1978</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>310</xmin>
+			<ymin>36</ymin>
+			<xmax>435</xmax>
+			<ymax>360</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>239</xmin>
+			<ymin>395</ymin>
+			<xmax>296</xmax>
+			<ymax>398</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>239</xmin>
+			<ymin>394</ymin>
+			<xmax>296</xmax>
+			<ymax>399</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>87</xmin>
+			<ymin>34</ymin>
+			<xmax>437</xmax>
+			<ymax>392</ymax>
+		</bndbox>
+	</object>
+</annotation>

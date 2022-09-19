@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1992AJ____104_1349F_p11.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1992</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>65</xmin>
+			<ymin>449</ymin>
+			<xmax>441</xmax>
+			<ymax>501</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>114</xmin>
+			<ymin>402</ymin>
+			<xmax>439</xmax>
+			<ymax>424</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>109</xmin>
+			<ymin>55</ymin>
+			<xmax>438</xmax>
+			<ymax>396</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>114</xmin>
+			<ymin>402</ymin>
+			<xmax>439</xmax>
+			<ymax>425</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1982AJ_____87_1288T_p0.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1982</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>58</xmin>
+			<ymin>273</ymin>
+			<xmax>443</xmax>
+			<ymax>447</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>61</xmin>
+			<ymin>452</ymin>
+			<xmax>448</xmax>
+			<ymax>462</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>61</xmin>
+			<ymin>451</ymin>
+			<xmax>448</xmax>
+			<ymax>462</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>53</xmin>
+			<ymin>270</ymin>
+			<xmax>447</xmax>
+			<ymax>448</ymax>
+		</bndbox>
+	</object>
+</annotation>

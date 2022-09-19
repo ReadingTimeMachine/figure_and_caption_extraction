@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1995AJ____110_1576C_p14.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1995</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>70</xmin>
+			<ymin>426</ymin>
+			<xmax>469</xmax>
+			<ymax>497</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>43</xmin>
+			<ymin>396</ymin>
+			<xmax>469</xmax>
+			<ymax>418</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>43</xmin>
+			<ymin>390</ymin>
+			<xmax>469</xmax>
+			<ymax>420</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>48</xmin>
+			<ymin>64</ymin>
+			<xmax>463</xmax>
+			<ymax>388</ymax>
+		</bndbox>
+	</object>
+</annotation>

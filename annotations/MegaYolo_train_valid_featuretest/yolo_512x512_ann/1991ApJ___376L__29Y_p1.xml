@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1991ApJ___376L__29Y_p1.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1991</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>268</xmin>
+			<ymin>296</ymin>
+			<xmax>469</xmax>
+			<ymax>454</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>265</xmin>
+			<ymin>458</ymin>
+			<xmax>476</xmax>
+			<ymax>478</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>264</xmin>
+			<ymin>292</ymin>
+			<xmax>474</xmax>
+			<ymax>455</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>265</xmin>
+			<ymin>458</ymin>
+			<xmax>476</xmax>
+			<ymax>480</ymax>
+		</bndbox>
+	</object>
+</annotation>

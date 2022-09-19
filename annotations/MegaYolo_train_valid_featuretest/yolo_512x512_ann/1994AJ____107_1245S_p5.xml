@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1994AJ____107_1245S_p5.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1994</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>262</xmin>
+			<ymin>243</ymin>
+			<xmax>454</xmax>
+			<ymax>265</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>264</xmin>
+			<ymin>375</ymin>
+			<xmax>454</xmax>
+			<ymax>396</ymax>
+		</bndbox>
+	</object>
+</annotation>

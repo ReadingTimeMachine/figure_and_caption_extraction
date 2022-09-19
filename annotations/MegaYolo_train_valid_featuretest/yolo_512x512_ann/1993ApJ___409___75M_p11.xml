@@ -1,0 +1,57 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1993ApJ___409___75M_p11.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1993</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>33</xmin>
+			<ymin>50</ymin>
+			<xmax>461</xmax>
+			<ymax>325</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>256</xmin>
+			<ymin>462</ymin>
+			<xmax>464</xmax>
+			<ymax>478</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>40</xmin>
+			<ymin>339</ymin>
+			<xmax>231</xmax>
+			<ymax>345</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>251</xmin>
+			<ymin>316</ymin>
+			<xmax>470</xmax>
+			<ymax>459</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>82</xmin>
+			<ymin>427</ymin>
+			<xmax>242</xmax>
+			<ymax>450</ymax>
+		</bndbox>
+	</object>
+</annotation>

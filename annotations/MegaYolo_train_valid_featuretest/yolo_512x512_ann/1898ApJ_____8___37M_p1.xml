@@ -1,0 +1,57 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1898ApJ_____8___37M_p1.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1898</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>128</xmin>
+			<ymin>79</ymin>
+			<xmax>325</xmax>
+			<ymax>182</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>212</xmin>
+			<ymin>185</ymin>
+			<xmax>237</xmax>
+			<ymax>190</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>164</xmin>
+			<ymin>345</ymin>
+			<xmax>286</xmax>
+			<ymax>356</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>163</xmin>
+			<ymin>357</ymin>
+			<xmax>271</xmax>
+			<ymax>384</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>164</xmin>
+			<ymin>382</ymin>
+			<xmax>269</xmax>
+			<ymax>405</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1976ApJS___32__283H_p26.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1976</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>171</xmin>
+			<ymin>473</ymin>
+			<xmax>358</xmax>
+			<ymax>477</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>97</xmin>
+			<ymin>48</ymin>
+			<xmax>445</xmax>
+			<ymax>470</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>171</xmin>
+			<ymin>473</ymin>
+			<xmax>359</xmax>
+			<ymax>478</ymax>
+		</bndbox>
+	</object>
+</annotation>

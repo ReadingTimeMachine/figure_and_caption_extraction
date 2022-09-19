@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1995ApJ___447__220D_p5.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1995</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>30</xmin>
+			<ymin>199</ymin>
+			<xmax>464</xmax>
+			<ymax>232</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>32</xmin>
+			<ymin>43</ymin>
+			<xmax>462</xmax>
+			<ymax>189</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>67</xmin>
+			<ymin>323</ymin>
+			<xmax>426</xmax>
+			<ymax>471</ymax>
+		</bndbox>
+	</object>
+</annotation>

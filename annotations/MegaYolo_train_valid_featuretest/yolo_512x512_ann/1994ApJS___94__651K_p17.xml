@@ -1,0 +1,66 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1994ApJS___94__651K_p17.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1994</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>30</xmin>
+			<ymin>328</ymin>
+			<xmax>223</xmax>
+			<ymax>444</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>23</xmin>
+			<ymin>451</ymin>
+			<xmax>233</xmax>
+			<ymax>466</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>29</xmin>
+			<ymin>326</ymin>
+			<xmax>227</xmax>
+			<ymax>446</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>23</xmin>
+			<ymin>450</ymin>
+			<xmax>233</xmax>
+			<ymax>467</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>21</xmin>
+			<ymin>281</ymin>
+			<xmax>465</xmax>
+			<ymax>315</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>32</xmin>
+			<ymin>39</ymin>
+			<xmax>454</xmax>
+			<ymax>277</ymax>
+		</bndbox>
+	</object>
+</annotation>

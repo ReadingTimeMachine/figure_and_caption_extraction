@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1961ApJ___134__275D_p15.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1961</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>82</xmin>
+			<ymin>354</ymin>
+			<xmax>432</xmax>
+			<ymax>364</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>78</xmin>
+			<ymin>47</ymin>
+			<xmax>436</xmax>
+			<ymax>346</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>82</xmin>
+			<ymin>353</ymin>
+			<xmax>433</xmax>
+			<ymax>364</ymax>
+		</bndbox>
+	</object>
+</annotation>

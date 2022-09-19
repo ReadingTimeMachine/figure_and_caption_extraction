@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1984AJ_____89_1802H_p0.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1984</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>60</xmin>
+			<ymin>324</ymin>
+			<xmax>207</xmax>
+			<ymax>341</ymax>
+		</bndbox>
+	</object>
+</annotation>

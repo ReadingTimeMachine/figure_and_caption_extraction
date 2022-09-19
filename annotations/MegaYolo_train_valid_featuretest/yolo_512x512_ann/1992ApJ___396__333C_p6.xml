@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1992ApJ___396__333C_p6.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1992</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>128</xmin>
+			<ymin>74</ymin>
+			<xmax>470</xmax>
+			<ymax>102</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>210</xmin>
+			<ymin>119</ymin>
+			<xmax>471</xmax>
+			<ymax>129</ymax>
+		</bndbox>
+	</object>
+</annotation>

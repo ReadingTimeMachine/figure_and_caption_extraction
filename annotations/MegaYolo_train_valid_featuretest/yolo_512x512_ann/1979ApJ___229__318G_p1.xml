@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1979ApJ___229__318G_p1.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1979</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>63</xmin>
+			<ymin>105</ymin>
+			<xmax>451</xmax>
+			<ymax>328</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>58</xmin>
+			<ymin>333</ymin>
+			<xmax>455</xmax>
+			<ymax>368</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>60</xmin>
+			<ymin>102</ymin>
+			<xmax>454</xmax>
+			<ymax>330</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>58</xmin>
+			<ymin>332</ymin>
+			<xmax>455</xmax>
+			<ymax>369</ymax>
+		</bndbox>
+	</object>
+</annotation>

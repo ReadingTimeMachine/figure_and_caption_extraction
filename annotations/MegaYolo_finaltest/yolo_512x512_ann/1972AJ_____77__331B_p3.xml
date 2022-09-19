@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1972AJ_____77__331B_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1972</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>108</xmin>
+			<ymin>436</ymin>
+			<xmax>406</xmax>
+			<ymax>451</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>83</xmin>
+			<ymin>67</ymin>
+			<xmax>433</xmax>
+			<ymax>438</ymax>
+		</bndbox>
+	</object>
+</annotation>

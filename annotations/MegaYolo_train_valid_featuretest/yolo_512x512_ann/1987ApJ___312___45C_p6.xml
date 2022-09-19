@@ -1,0 +1,57 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1987ApJ___312___45C_p6.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1987</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>30</xmin>
+			<ymin>455</ymin>
+			<xmax>467</xmax>
+			<ymax>470</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>101</xmin>
+			<ymin>281</ymin>
+			<xmax>397</xmax>
+			<ymax>452</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>88</xmin>
+			<ymin>63</ymin>
+			<xmax>244</xmax>
+			<ymax>81</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>88</xmin>
+			<ymin>113</ymin>
+			<xmax>181</xmax>
+			<ymax>124</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>87</xmin>
+			<ymin>132</ymin>
+			<xmax>245</xmax>
+			<ymax>143</ymax>
+		</bndbox>
+	</object>
+</annotation>

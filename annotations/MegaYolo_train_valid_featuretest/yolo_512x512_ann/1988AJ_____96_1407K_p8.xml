@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1988AJ_____96_1407K_p8.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1988</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>40</xmin>
+			<ymin>453</ymin>
+			<xmax>441</xmax>
+			<ymax>498</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>115</xmin>
+			<ymin>420</ymin>
+			<xmax>394</xmax>
+			<ymax>443</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>114</xmin>
+			<ymin>419</ymin>
+			<xmax>394</xmax>
+			<ymax>445</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>109</xmin>
+			<ymin>39</ymin>
+			<xmax>405</xmax>
+			<ymax>415</ymax>
+		</bndbox>
+	</object>
+</annotation>

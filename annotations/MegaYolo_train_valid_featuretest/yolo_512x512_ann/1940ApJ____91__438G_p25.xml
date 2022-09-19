@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1940ApJ____91__438G_p25.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1940</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>101</xmin>
+			<ymin>167</ymin>
+			<xmax>351</xmax>
+			<ymax>237</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1993AJ____105__209I_p9.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1993</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>67</xmin>
+			<ymin>166</ymin>
+			<xmax>236</xmax>
+			<ymax>177</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>62</xmin>
+			<ymin>47</ymin>
+			<xmax>240</xmax>
+			<ymax>154</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>270</xmin>
+			<ymin>167</ymin>
+			<xmax>439</xmax>
+			<ymax>177</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>263</xmin>
+			<ymin>48</ymin>
+			<xmax>443</xmax>
+			<ymax>153</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1996ApJS__107__621D_p13.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1996</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>45</xmin>
+			<ymin>429</ymin>
+			<xmax>478</xmax>
+			<ymax>435</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>59</xmin>
+			<ymin>78</ymin>
+			<xmax>464</xmax>
+			<ymax>426</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>45</xmin>
+			<ymin>429</ymin>
+			<xmax>478</xmax>
+			<ymax>437</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1991AJ____101_1699C_p21.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1991</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>64</xmin>
+			<ymin>461</ymin>
+			<xmax>441</xmax>
+			<ymax>500</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>108</xmin>
+			<ymin>447</ymin>
+			<xmax>446</xmax>
+			<ymax>450</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>108</xmin>
+			<ymin>63</ymin>
+			<xmax>447</xmax>
+			<ymax>438</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>108</xmin>
+			<ymin>446</ymin>
+			<xmax>447</xmax>
+			<ymax>453</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1973ApJ___180__725M_p14.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1973</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>53</xmin>
+			<ymin>415</ymin>
+			<xmax>417</xmax>
+			<ymax>495</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>53</xmin>
+			<ymin>398</ymin>
+			<xmax>461</xmax>
+			<ymax>408</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>50</xmin>
+			<ymin>73</ymin>
+			<xmax>466</xmax>
+			<ymax>396</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>53</xmin>
+			<ymin>391</ymin>
+			<xmax>462</xmax>
+			<ymax>409</ymax>
+		</bndbox>
+	</object>
+</annotation>

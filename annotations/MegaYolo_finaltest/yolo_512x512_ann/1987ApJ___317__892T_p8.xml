@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1987ApJ___317__892T_p8.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1987</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>32</xmin>
+			<ymin>52</ymin>
+			<xmax>275</xmax>
+			<ymax>465</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>288</xmin>
+			<ymin>447</ymin>
+			<xmax>469</xmax>
+			<ymax>462</ymax>
+		</bndbox>
+	</object>
+</annotation>

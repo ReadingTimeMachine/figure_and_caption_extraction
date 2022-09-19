@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1995ApJ___447L_143W_p0.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1995</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>316</xmin>
+			<ymin>396</ymin>
+			<xmax>485</xmax>
+			<ymax>405</ymax>
+		</bndbox>
+	</object>
+</annotation>

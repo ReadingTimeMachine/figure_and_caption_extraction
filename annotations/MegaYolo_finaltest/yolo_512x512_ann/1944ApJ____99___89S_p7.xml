@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1944ApJ____99___89S_p7.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1944</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>84</xmin>
+			<ymin>273</ymin>
+			<xmax>428</xmax>
+			<ymax>335</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>130</xmin>
+			<ymin>138</ymin>
+			<xmax>382</xmax>
+			<ymax>270</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>207</xmin>
+			<ymin>376</ymin>
+			<xmax>285</xmax>
+			<ymax>387</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>197</xmin>
+			<ymin>418</ymin>
+			<xmax>313</xmax>
+			<ymax>448</ymax>
+		</bndbox>
+	</object>
+</annotation>

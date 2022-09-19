@@ -1,0 +1,57 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1995ApJS___99__427T_p22.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1995</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>49</xmin>
+			<ymin>403</ymin>
+			<xmax>490</xmax>
+			<ymax>416</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>48</xmin>
+			<ymin>339</ymin>
+			<xmax>490</xmax>
+			<ymax>383</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>259</xmin>
+			<ymin>329</ymin>
+			<xmax>286</xmax>
+			<ymax>333</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>85</xmin>
+			<ymin>44</ymin>
+			<xmax>451</xmax>
+			<ymax>326</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>48</xmin>
+			<ymin>337</ymin>
+			<xmax>490</xmax>
+			<ymax>384</ymax>
+		</bndbox>
+	</object>
+</annotation>

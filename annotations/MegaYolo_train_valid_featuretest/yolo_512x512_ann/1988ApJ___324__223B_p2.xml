@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1988ApJ___324__223B_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1988</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>72</xmin>
+			<ymin>93</ymin>
+			<xmax>428</xmax>
+			<ymax>393</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>31</xmin>
+			<ymin>399</ymin>
+			<xmax>472</xmax>
+			<ymax>413</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>31</xmin>
+			<ymin>398</ymin>
+			<xmax>472</xmax>
+			<ymax>416</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>68</xmin>
+			<ymin>90</ymin>
+			<xmax>430</xmax>
+			<ymax>384</ymax>
+		</bndbox>
+	</object>
+</annotation>

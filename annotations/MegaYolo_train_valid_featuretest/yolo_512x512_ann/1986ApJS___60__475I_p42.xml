@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1986ApJS___60__475I_p42.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1986</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>91</xmin>
+			<ymin>325</ymin>
+			<xmax>413</xmax>
+			<ymax>328</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>126</xmin>
+			<ymin>38</ymin>
+			<xmax>368</xmax>
+			<ymax>319</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>91</xmin>
+			<ymin>324</ymin>
+			<xmax>413</xmax>
+			<ymax>329</ymax>
+		</bndbox>
+	</object>
+</annotation>

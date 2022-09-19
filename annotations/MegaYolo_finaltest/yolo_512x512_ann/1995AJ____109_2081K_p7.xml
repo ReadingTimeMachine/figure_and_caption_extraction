@@ -1,0 +1,66 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1995AJ____109_2081K_p7.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1995</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>260</xmin>
+			<ymin>255</ymin>
+			<xmax>448</xmax>
+			<ymax>282</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>259</xmin>
+			<ymin>47</ymin>
+			<xmax>450</xmax>
+			<ymax>244</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>58</xmin>
+			<ymin>142</ymin>
+			<xmax>148</xmax>
+			<ymax>151</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>60</xmin>
+			<ymin>121</ymin>
+			<xmax>251</xmax>
+			<ymax>131</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>63</xmin>
+			<ymin>93</ymin>
+			<xmax>146</xmax>
+			<ymax>102</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>65</xmin>
+			<ymin>170</ymin>
+			<xmax>150</xmax>
+			<ymax>179</ymax>
+		</bndbox>
+	</object>
+</annotation>

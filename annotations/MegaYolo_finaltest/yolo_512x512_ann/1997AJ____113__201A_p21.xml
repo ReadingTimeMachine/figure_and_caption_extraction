@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1997AJ____113__201A_p21.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1997</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>63</xmin>
+			<ymin>412</ymin>
+			<xmax>239</xmax>
+			<ymax>417</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>68</xmin>
+			<ymin>41</ymin>
+			<xmax>234</xmax>
+			<ymax>407</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>271</xmin>
+			<ymin>47</ymin>
+			<xmax>436</xmax>
+			<ymax>404</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>266</xmin>
+			<ymin>412</ymin>
+			<xmax>442</xmax>
+			<ymax>416</ymax>
+		</bndbox>
+	</object>
+</annotation>

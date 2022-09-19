@@ -1,0 +1,129 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1993ApJ___407__806C_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1993</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>99</xmin>
+			<ymin>367</ymin>
+			<xmax>242</xmax>
+			<ymax>381</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>105</xmin>
+			<ymin>339</ymin>
+			<xmax>238</xmax>
+			<ymax>357</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>111</xmin>
+			<ymin>312</ymin>
+			<xmax>245</xmax>
+			<ymax>324</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>101</xmin>
+			<ymin>258</ymin>
+			<xmax>245</xmax>
+			<ymax>269</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>102</xmin>
+			<ymin>396</ymin>
+			<xmax>244</xmax>
+			<ymax>408</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>315</xmin>
+			<ymin>134</ymin>
+			<xmax>471</xmax>
+			<ymax>159</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>271</xmin>
+			<ymin>182</ymin>
+			<xmax>472</xmax>
+			<ymax>200</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>299</xmin>
+			<ymin>428</ymin>
+			<xmax>467</xmax>
+			<ymax>447</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>306</xmin>
+			<ymin>362</ymin>
+			<xmax>468</xmax>
+			<ymax>384</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>326</xmin>
+			<ymin>246</ymin>
+			<xmax>470</xmax>
+			<ymax>265</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>326</xmin>
+			<ymin>454</ymin>
+			<xmax>465</xmax>
+			<ymax>474</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>311</xmin>
+			<ymin>392</ymin>
+			<xmax>464</xmax>
+			<ymax>409</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>340</xmin>
+			<ymin>67</ymin>
+			<xmax>471</xmax>
+			<ymax>80</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1916ApJ____44___65W_p7.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1916</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>108</xmin>
+			<ymin>185</ymin>
+			<xmax>394</xmax>
+			<ymax>250</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>245</xmin>
+			<ymin>254</ymin>
+			<xmax>265</xmax>
+			<ymax>257</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>103</xmin>
+			<ymin>183</ymin>
+			<xmax>398</xmax>
+			<ymax>250</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>246</xmin>
+			<ymin>252</ymin>
+			<xmax>265</xmax>
+			<ymax>258</ymax>
+		</bndbox>
+	</object>
+</annotation>

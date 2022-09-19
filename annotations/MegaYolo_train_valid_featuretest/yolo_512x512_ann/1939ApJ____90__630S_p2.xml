@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1939ApJ____90__630S_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1939</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>table</name>
+		<bndbox>
+			<xmin>117</xmin>
+			<ymin>160</ymin>
+			<xmax>333</xmax>
+			<ymax>307</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>table caption</name>
+		<bndbox>
+			<xmin>209</xmin>
+			<ymin>141</ymin>
+			<xmax>243</xmax>
+			<ymax>145</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>111</xmin>
+			<ymin>139</ymin>
+			<xmax>340</xmax>
+			<ymax>310</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,57 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1996ApJ___460__744H_p6.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1996</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>128</xmin>
+			<ymin>305</ymin>
+			<xmax>409</xmax>
+			<ymax>316</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>86</xmin>
+			<ymin>32</ymin>
+			<xmax>444</xmax>
+			<ymax>305</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>113</xmin>
+			<ymin>456</ymin>
+			<xmax>262</xmax>
+			<ymax>464</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>126</xmin>
+			<ymin>476</ymin>
+			<xmax>259</xmax>
+			<ymax>488</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>351</xmin>
+			<ymin>342</ymin>
+			<xmax>498</xmax>
+			<ymax>359</ymax>
+		</bndbox>
+	</object>
+</annotation>

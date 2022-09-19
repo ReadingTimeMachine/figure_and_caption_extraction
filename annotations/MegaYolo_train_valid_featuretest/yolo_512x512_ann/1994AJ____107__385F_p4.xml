@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1994AJ____107__385F_p4.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1994</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>224</xmin>
+			<ymin>49</ymin>
+			<xmax>280</xmax>
+			<ymax>52</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>127</xmin>
+			<ymin>47</ymin>
+			<xmax>381</xmax>
+			<ymax>223</ymax>
+		</bndbox>
+	</object>
+</annotation>

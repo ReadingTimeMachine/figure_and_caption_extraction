@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1984AJ_____89_1802H_p6.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1984</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>70</xmin>
+			<ymin>466</ymin>
+			<xmax>441</xmax>
+			<ymax>501</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>180</xmin>
+			<ymin>435</ymin>
+			<xmax>399</xmax>
+			<ymax>457</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>180</xmin>
+			<ymin>434</ymin>
+			<xmax>399</xmax>
+			<ymax>460</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>175</xmin>
+			<ymin>52</ymin>
+			<xmax>403</xmax>
+			<ymax>426</ymax>
+		</bndbox>
+	</object>
+</annotation>

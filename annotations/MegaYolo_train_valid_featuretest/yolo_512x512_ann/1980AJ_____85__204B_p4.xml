@@ -1,0 +1,57 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1980AJ_____85__204B_p4.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1980</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>66</xmin>
+			<ymin>43</ymin>
+			<xmax>446</xmax>
+			<ymax>318</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>178</xmin>
+			<ymin>325</ymin>
+			<xmax>331</xmax>
+			<ymax>328</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>62</xmin>
+			<ymin>40</ymin>
+			<xmax>449</xmax>
+			<ymax>320</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>177</xmin>
+			<ymin>324</ymin>
+			<xmax>331</xmax>
+			<ymax>330</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>257</xmin>
+			<ymin>415</ymin>
+			<xmax>456</xmax>
+			<ymax>459</ymax>
+		</bndbox>
+	</object>
+</annotation>

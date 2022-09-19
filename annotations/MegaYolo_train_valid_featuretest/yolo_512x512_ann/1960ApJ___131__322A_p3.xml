@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1960ApJ___131__322A_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1960</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>72</xmin>
+			<ymin>409</ymin>
+			<xmax>449</xmax>
+			<ymax>413</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>6</xmin>
+			<ymin>93</ymin>
+			<xmax>510</xmax>
+			<ymax>408</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>70</xmin>
+			<ymin>405</ymin>
+			<xmax>450</xmax>
+			<ymax>416</ymax>
+		</bndbox>
+	</object>
+</annotation>

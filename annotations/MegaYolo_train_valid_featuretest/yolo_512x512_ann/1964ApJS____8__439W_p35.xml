@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1964ApJS____8__439W_p35.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1964</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>60</xmin>
+			<ymin>44</ymin>
+			<xmax>459</xmax>
+			<ymax>469</ymax>
+		</bndbox>
+	</object>
+</annotation>

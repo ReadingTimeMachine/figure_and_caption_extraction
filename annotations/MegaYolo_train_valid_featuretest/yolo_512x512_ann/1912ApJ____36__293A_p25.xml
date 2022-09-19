@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1912ApJ____36__293A_p25.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1912</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>78</xmin>
+			<ymin>93</ymin>
+			<xmax>377</xmax>
+			<ymax>415</ymax>
+		</bndbox>
+	</object>
+</annotation>

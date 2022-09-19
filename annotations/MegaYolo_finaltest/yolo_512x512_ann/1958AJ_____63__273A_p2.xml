@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1958AJ_____63__273A_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1958</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>57</xmin>
+			<ymin>286</ymin>
+			<xmax>237</xmax>
+			<ymax>446</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>72</xmin>
+			<ymin>239</ymin>
+			<xmax>233</xmax>
+			<ymax>250</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>244</xmin>
+			<ymin>59</ymin>
+			<xmax>428</xmax>
+			<ymax>248</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>248</xmin>
+			<ymin>252</ymin>
+			<xmax>427</xmax>
+			<ymax>292</ymax>
+		</bndbox>
+	</object>
+</annotation>

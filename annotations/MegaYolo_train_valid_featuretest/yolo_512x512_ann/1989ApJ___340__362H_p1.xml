@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1989ApJ___340__362H_p1.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1989</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>347</xmin>
+			<ymin>392</ymin>
+			<xmax>374</xmax>
+			<ymax>396</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>264</xmin>
+			<ymin>388</ymin>
+			<xmax>455</xmax>
+			<ymax>463</ymax>
+		</bndbox>
+	</object>
+</annotation>

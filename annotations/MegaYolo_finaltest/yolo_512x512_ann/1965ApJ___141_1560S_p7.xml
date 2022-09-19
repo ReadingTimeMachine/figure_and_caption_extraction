@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1965ApJ___141_1560S_p7.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1965</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>84</xmin>
+			<ymin>323</ymin>
+			<xmax>429</xmax>
+			<ymax>352</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>153</xmin>
+			<ymin>119</ymin>
+			<xmax>364</xmax>
+			<ymax>317</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>180</xmin>
+			<ymin>67</ymin>
+			<xmax>437</xmax>
+			<ymax>77</ymax>
+		</bndbox>
+	</object>
+</annotation>

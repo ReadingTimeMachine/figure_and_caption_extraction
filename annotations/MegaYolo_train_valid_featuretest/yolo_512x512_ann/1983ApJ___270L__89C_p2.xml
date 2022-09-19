@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1983ApJ___270L__89C_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1983</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>267</xmin>
+			<ymin>374</ymin>
+			<xmax>458</xmax>
+			<ymax>463</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>56</xmin>
+			<ymin>410</ymin>
+			<xmax>247</xmax>
+			<ymax>464</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+</annotation>

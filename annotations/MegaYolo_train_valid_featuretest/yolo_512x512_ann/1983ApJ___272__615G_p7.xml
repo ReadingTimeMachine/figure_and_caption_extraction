@@ -1,0 +1,57 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1983ApJ___272__615G_p7.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1983</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>70</xmin>
+			<ymin>448</ymin>
+			<xmax>441</xmax>
+			<ymax>497</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>56</xmin>
+			<ymin>430</ymin>
+			<xmax>454</xmax>
+			<ymax>440</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>65</xmin>
+			<ymin>424</ymin>
+			<xmax>357</xmax>
+			<ymax>428</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>56</xmin>
+			<ymin>423</ymin>
+			<xmax>454</xmax>
+			<ymax>440</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>110</xmin>
+			<ymin>40</ymin>
+			<xmax>402</xmax>
+			<ymax>408</ymax>
+		</bndbox>
+	</object>
+</annotation>

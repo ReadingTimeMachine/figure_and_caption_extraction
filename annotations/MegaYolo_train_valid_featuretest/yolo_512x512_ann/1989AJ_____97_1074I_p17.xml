@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1989AJ_____97_1074I_p17.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1989</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>61</xmin>
+			<ymin>463</ymin>
+			<xmax>456</xmax>
+			<ymax>498</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>216</xmin>
+			<ymin>446</ymin>
+			<xmax>269</xmax>
+			<ymax>449</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>216</xmin>
+			<ymin>445</ymin>
+			<xmax>269</xmax>
+			<ymax>451</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>58</xmin>
+			<ymin>39</ymin>
+			<xmax>436</xmax>
+			<ymax>441</ymax>
+		</bndbox>
+	</object>
+</annotation>

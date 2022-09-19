@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1977ApJ___218___70A_p17.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1977</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>108</xmin>
+			<ymin>171</ymin>
+			<xmax>395</xmax>
+			<ymax>398</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>55</xmin>
+			<ymin>405</ymin>
+			<xmax>454</xmax>
+			<ymax>429</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>55</xmin>
+			<ymin>404</ymin>
+			<xmax>454</xmax>
+			<ymax>430</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>104</xmin>
+			<ymin>37</ymin>
+			<xmax>397</xmax>
+			<ymax>400</ymax>
+		</bndbox>
+	</object>
+</annotation>

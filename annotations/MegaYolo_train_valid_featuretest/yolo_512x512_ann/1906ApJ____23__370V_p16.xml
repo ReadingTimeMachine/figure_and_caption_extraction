@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1906ApJ____23__370V_p16.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1906</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>154</xmin>
+			<ymin>107</ymin>
+			<xmax>359</xmax>
+			<ymax>346</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>205</xmin>
+			<ymin>356</ymin>
+			<xmax>311</xmax>
+			<ymax>360</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>149</xmin>
+			<ymin>105</ymin>
+			<xmax>365</xmax>
+			<ymax>348</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>205</xmin>
+			<ymin>356</ymin>
+			<xmax>312</xmax>
+			<ymax>361</ymax>
+		</bndbox>
+	</object>
+</annotation>

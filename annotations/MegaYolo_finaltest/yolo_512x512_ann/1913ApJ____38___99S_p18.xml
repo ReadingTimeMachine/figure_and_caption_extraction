@@ -1,0 +1,57 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1913ApJ____38___99S_p18.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1913</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>133</xmin>
+			<ymin>242</ymin>
+			<xmax>374</xmax>
+			<ymax>283</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>148</xmin>
+			<ymin>77</ymin>
+			<xmax>374</xmax>
+			<ymax>99</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>175</xmin>
+			<ymin>198</ymin>
+			<xmax>281</xmax>
+			<ymax>211</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>123</xmin>
+			<ymin>296</ymin>
+			<xmax>372</xmax>
+			<ymax>372</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>203</xmin>
+			<ymin>177</ymin>
+			<xmax>256</xmax>
+			<ymax>189</ymax>
+		</bndbox>
+	</object>
+</annotation>

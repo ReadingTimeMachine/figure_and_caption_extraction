@@ -1,0 +1,66 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1997AJ____114__680A_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1997</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>42</xmin>
+			<ymin>186</ymin>
+			<xmax>247</xmax>
+			<ymax>197</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>48</xmin>
+			<ymin>30</ymin>
+			<xmax>241</xmax>
+			<ymax>178</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>65</xmin>
+			<ymin>483</ymin>
+			<xmax>223</xmax>
+			<ymax>488</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>48</xmin>
+			<ymin>352</ymin>
+			<xmax>242</xmax>
+			<ymax>475</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>284</xmin>
+			<ymin>160</ymin>
+			<xmax>446</xmax>
+			<ymax>165</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>264</xmin>
+			<ymin>27</ymin>
+			<xmax>461</xmax>
+			<ymax>153</ymax>
+		</bndbox>
+	</object>
+</annotation>

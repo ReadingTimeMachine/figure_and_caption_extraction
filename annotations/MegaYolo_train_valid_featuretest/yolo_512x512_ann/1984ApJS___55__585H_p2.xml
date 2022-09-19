@@ -1,0 +1,66 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1984ApJS___55__585H_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1984</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>66</xmin>
+			<ymin>53</ymin>
+			<xmax>474</xmax>
+			<ymax>430</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>142</xmin>
+			<ymin>437</ymin>
+			<xmax>351</xmax>
+			<ymax>440</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>22</xmin>
+			<ymin>251</ymin>
+			<xmax>479</xmax>
+			<ymax>432</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>144</xmin>
+			<ymin>217</ymin>
+			<xmax>354</xmax>
+			<ymax>222</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>142</xmin>
+			<ymin>436</ymin>
+			<xmax>351</xmax>
+			<ymax>442</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>25</xmin>
+			<ymin>51</ymin>
+			<xmax>478</xmax>
+			<ymax>211</ymax>
+		</bndbox>
+	</object>
+</annotation>

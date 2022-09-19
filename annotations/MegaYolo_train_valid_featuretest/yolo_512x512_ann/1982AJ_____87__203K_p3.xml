@@ -1,0 +1,93 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1982AJ_____87__203K_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1982</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>367</xmin>
+			<ymin>146</ymin>
+			<xmax>445</xmax>
+			<ymax>182</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>367</xmin>
+			<ymin>146</ymin>
+			<xmax>446</xmax>
+			<ymax>183</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>55</xmin>
+			<ymin>52</ymin>
+			<xmax>362</xmax>
+			<ymax>292</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>263</xmin>
+			<ymin>320</ymin>
+			<xmax>451</xmax>
+			<ymax>329</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>266</xmin>
+			<ymin>359</ymin>
+			<xmax>453</xmax>
+			<ymax>370</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>264</xmin>
+			<ymin>387</ymin>
+			<xmax>450</xmax>
+			<ymax>395</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>262</xmin>
+			<ymin>407</ymin>
+			<xmax>452</xmax>
+			<ymax>416</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>264</xmin>
+			<ymin>426</ymin>
+			<xmax>323</xmax>
+			<ymax>435</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>261</xmin>
+			<ymin>444</ymin>
+			<xmax>451</xmax>
+			<ymax>455</ymax>
+		</bndbox>
+	</object>
+</annotation>

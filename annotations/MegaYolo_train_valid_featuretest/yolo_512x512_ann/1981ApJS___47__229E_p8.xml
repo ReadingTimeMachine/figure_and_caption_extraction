@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1981ApJS___47__229E_p8.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1981</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>56</xmin>
+			<ymin>446</ymin>
+			<xmax>449</xmax>
+			<ymax>494</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>119</xmin>
+			<ymin>436</ymin>
+			<xmax>409</xmax>
+			<ymax>440</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>51</xmin>
+			<ymin>44</ymin>
+			<xmax>477</xmax>
+			<ymax>428</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>119</xmin>
+			<ymin>433</ymin>
+			<xmax>409</xmax>
+			<ymax>440</ymax>
+		</bndbox>
+	</object>
+</annotation>

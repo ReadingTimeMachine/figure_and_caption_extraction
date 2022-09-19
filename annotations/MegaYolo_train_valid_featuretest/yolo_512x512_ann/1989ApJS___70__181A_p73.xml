@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1989ApJS___70__181A_p73.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1989</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>73</xmin>
+			<ymin>89</ymin>
+			<xmax>433</xmax>
+			<ymax>396</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>162</xmin>
+			<ymin>401</ymin>
+			<xmax>345</xmax>
+			<ymax>404</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>66</xmin>
+			<ymin>86</ymin>
+			<xmax>436</xmax>
+			<ymax>398</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>162</xmin>
+			<ymin>400</ymin>
+			<xmax>345</xmax>
+			<ymax>406</ymax>
+		</bndbox>
+	</object>
+</annotation>

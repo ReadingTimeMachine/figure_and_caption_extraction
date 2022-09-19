@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1948ApJ___107__375G_p1.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1948</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>78</xmin>
+			<ymin>204</ymin>
+			<xmax>429</xmax>
+			<ymax>326</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>208</xmin>
+			<ymin>71</ymin>
+			<xmax>434</xmax>
+			<ymax>79</ymax>
+		</bndbox>
+	</object>
+</annotation>

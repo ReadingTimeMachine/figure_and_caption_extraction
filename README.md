@@ -15,7 +15,7 @@ Writing of talk (and, let's be honest, eating of Italian food) took precedence, 
  5. `generate_features_only.py` -- generates features in batchs for certain feature sets, saves them in tfrecords format
  6. `mega_yolo_train_tfrecords.ipynb` -- to be run on the cloud (set up for Google Collab), trains the model.  Make sure to download weights if not doing all work on Collab.
  7. `post_processing_tfrecords.py` -- post processes results of test dataset (in tfrecords format) from saved weights
- 8. `explore_calculate_metrics.ipynb` -- takes in post-process results, 
+ 8. `explore_calculate_metrics.ipynb` -- takes in post-process results, calculates various metrics, makes nice plots for talk 
  
 ### For exploring data
 

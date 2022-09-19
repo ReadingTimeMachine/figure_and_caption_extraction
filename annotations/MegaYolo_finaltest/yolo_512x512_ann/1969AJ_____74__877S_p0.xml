@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo_test/binaries/1969AJ_____74__877S_p0.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1969</year>
+	<yearMin>1852</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1949</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>52</xmin>
+			<ymin>257</ymin>
+			<xmax>454</xmax>
+			<ymax>473</ymax>
+		</bndbox>
+	</object>
+</annotation>

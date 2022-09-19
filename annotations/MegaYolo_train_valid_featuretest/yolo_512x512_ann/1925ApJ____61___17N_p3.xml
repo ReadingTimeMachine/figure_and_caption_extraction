@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1925ApJ____61___17N_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1925</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>100</xmin>
+			<ymin>146</ymin>
+			<xmax>409</xmax>
+			<ymax>301</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>183</xmin>
+			<ymin>307</ymin>
+			<xmax>323</xmax>
+			<ymax>311</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>96</xmin>
+			<ymin>143</ymin>
+			<xmax>413</xmax>
+			<ymax>303</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>184</xmin>
+			<ymin>306</ymin>
+			<xmax>323</xmax>
+			<ymax>312</ymax>
+		</bndbox>
+	</object>
+</annotation>

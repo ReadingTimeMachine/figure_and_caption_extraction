@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1976ApJ___205__397C_p9.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1976</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>68</xmin>
+			<ymin>406</ymin>
+			<xmax>441</xmax>
+			<ymax>496</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>84</xmin>
+			<ymin>397</ymin>
+			<xmax>445</xmax>
+			<ymax>401</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>110</xmin>
+			<ymin>34</ymin>
+			<xmax>419</xmax>
+			<ymax>394</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>84</xmin>
+			<ymin>391</ymin>
+			<xmax>444</xmax>
+			<ymax>402</ymax>
+		</bndbox>
+	</object>
+</annotation>

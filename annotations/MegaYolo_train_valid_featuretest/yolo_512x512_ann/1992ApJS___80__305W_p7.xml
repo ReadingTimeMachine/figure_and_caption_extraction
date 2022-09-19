@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1992ApJS___80__305W_p7.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1992</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>217</xmin>
+			<ymin>461</ymin>
+			<xmax>273</xmax>
+			<ymax>476</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>217</xmin>
+			<ymin>460</ymin>
+			<xmax>273</xmax>
+			<ymax>464</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>28</xmin>
+			<ymin>22</ymin>
+			<xmax>469</xmax>
+			<ymax>444</ymax>
+		</bndbox>
+	</object>
+</annotation>

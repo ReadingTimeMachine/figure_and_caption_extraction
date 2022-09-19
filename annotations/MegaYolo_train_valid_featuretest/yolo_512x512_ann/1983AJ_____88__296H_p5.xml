@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1983AJ_____88__296H_p5.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1983</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>61</xmin>
+			<ymin>99</ymin>
+			<xmax>418</xmax>
+			<ymax>408</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>203</xmin>
+			<ymin>465</ymin>
+			<xmax>307</xmax>
+			<ymax>469</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>56</xmin>
+			<ymin>74</ymin>
+			<xmax>421</xmax>
+			<ymax>430</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>203</xmin>
+			<ymin>465</ymin>
+			<xmax>307</xmax>
+			<ymax>470</ymax>
+		</bndbox>
+	</object>
+</annotation>

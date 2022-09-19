@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1953ApJ___118__353H_p12.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1953</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>table</name>
+		<bndbox>
+			<xmin>126</xmin>
+			<ymin>155</ymin>
+			<xmax>423</xmax>
+			<ymax>283</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>table caption</name>
+		<bndbox>
+			<xmin>238</xmin>
+			<ymin>144</ymin>
+			<xmax>272</xmax>
+			<ymax>148</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>76</xmin>
+			<ymin>140</ymin>
+			<xmax>434</xmax>
+			<ymax>287</ymax>
+		</bndbox>
+	</object>
+</annotation>

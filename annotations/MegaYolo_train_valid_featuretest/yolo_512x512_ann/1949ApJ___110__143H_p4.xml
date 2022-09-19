@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1949ApJ___110__143H_p4.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1949</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>64</xmin>
+			<ymin>363</ymin>
+			<xmax>449</xmax>
+			<ymax>382</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>64</xmin>
+			<ymin>363</ymin>
+			<xmax>449</xmax>
+			<ymax>383</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>61</xmin>
+			<ymin>70</ymin>
+			<xmax>453</xmax>
+			<ymax>357</ymax>
+		</bndbox>
+	</object>
+</annotation>

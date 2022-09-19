@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1967ApJ___148__659M_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1967</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>91</xmin>
+			<ymin>386</ymin>
+			<xmax>417</xmax>
+			<ymax>495</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>97</xmin>
+			<ymin>370</ymin>
+			<xmax>440</xmax>
+			<ymax>379</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>97</xmin>
+			<ymin>362</ymin>
+			<xmax>440</xmax>
+			<ymax>380</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>124</xmin>
+			<ymin>72</ymin>
+			<xmax>414</xmax>
+			<ymax>365</ymax>
+		</bndbox>
+	</object>
+</annotation>

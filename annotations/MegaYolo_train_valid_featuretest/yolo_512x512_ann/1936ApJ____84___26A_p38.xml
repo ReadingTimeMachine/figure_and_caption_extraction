@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1936ApJ____84___26A_p38.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1936</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>78</xmin>
+			<ymin>56</ymin>
+			<xmax>371</xmax>
+			<ymax>409</ymax>
+		</bndbox>
+	</object>
+</annotation>

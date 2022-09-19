@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1948ApJ___107__337U_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1948</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>198</xmin>
+			<ymin>432</ymin>
+			<xmax>222</xmax>
+			<ymax>435</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>198</xmin>
+			<ymin>431</ymin>
+			<xmax>314</xmax>
+			<ymax>437</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>152</xmin>
+			<ymin>49</ymin>
+			<xmax>360</xmax>
+			<ymax>427</ymax>
+		</bndbox>
+	</object>
+</annotation>

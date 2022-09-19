@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1918ApJ____47__102A_p0.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1918</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>table</name>
+		<bndbox>
+			<xmin>85</xmin>
+			<ymin>254</ymin>
+			<xmax>371</xmax>
+			<ymax>325</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>table caption</name>
+		<bndbox>
+			<xmin>209</xmin>
+			<ymin>244</ymin>
+			<xmax>244</xmax>
+			<ymax>248</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>76</xmin>
+			<ymin>241</ymin>
+			<xmax>375</xmax>
+			<ymax>329</ymax>
+		</bndbox>
+	</object>
+</annotation>

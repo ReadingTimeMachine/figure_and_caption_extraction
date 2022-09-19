@@ -1,0 +1,75 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1957ApJ___126__167A_p4.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1957</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>94</xmin>
+			<ymin>311</ymin>
+			<xmax>416</xmax>
+			<ymax>317</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>169</xmin>
+			<ymin>136</ymin>
+			<xmax>344</xmax>
+			<ymax>305</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>159</xmin>
+			<ymin>61</ymin>
+			<xmax>432</xmax>
+			<ymax>81</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>159</xmin>
+			<ymin>112</ymin>
+			<xmax>430</xmax>
+			<ymax>132</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>127</xmin>
+			<ymin>344</ymin>
+			<xmax>428</xmax>
+			<ymax>364</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>161</xmin>
+			<ymin>367</ymin>
+			<xmax>234</xmax>
+			<ymax>388</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>math formula</name>
+		<bndbox>
+			<xmin>170</xmin>
+			<ymin>391</ymin>
+			<xmax>332</xmax>
+			<ymax>410</ymax>
+		</bndbox>
+	</object>
+</annotation>

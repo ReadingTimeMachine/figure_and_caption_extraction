@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1970ApJ___160__293H_p4.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1970</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>41</xmin>
+			<ymin>93</ymin>
+			<xmax>453</xmax>
+			<ymax>343</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>235</xmin>
+			<ymin>349</ymin>
+			<xmax>260</xmax>
+			<ymax>352</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>39</xmin>
+			<ymin>91</ymin>
+			<xmax>457</xmax>
+			<ymax>345</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>235</xmin>
+			<ymin>348</ymin>
+			<xmax>260</xmax>
+			<ymax>353</ymax>
+		</bndbox>
+	</object>
+</annotation>

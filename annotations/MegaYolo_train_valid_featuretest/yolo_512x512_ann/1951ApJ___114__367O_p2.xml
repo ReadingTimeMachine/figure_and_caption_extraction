@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1951ApJ___114__367O_p2.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1951</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>115</xmin>
+			<ymin>115</ymin>
+			<xmax>398</xmax>
+			<ymax>276</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>86</xmin>
+			<ymin>284</ymin>
+			<xmax>428</xmax>
+			<ymax>293</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>87</xmin>
+			<ymin>283</ymin>
+			<xmax>428</xmax>
+			<ymax>295</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>111</xmin>
+			<ymin>111</ymin>
+			<xmax>403</xmax>
+			<ymax>280</ymax>
+		</bndbox>
+	</object>
+</annotation>

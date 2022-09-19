@@ -1,0 +1,30 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1971ApJ___166__361P_p3.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1971</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfoRAW>
+		<name>raw</name>
+		<bndbox>
+			<xmin>238</xmin>
+			<ymin>46</ymin>
+			<xmax>273</xmax>
+			<ymax>50</ymax>
+		</bndbox>
+	</PDFinfoRAW>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>80</xmin>
+			<ymin>42</ymin>
+			<xmax>433</xmax>
+			<ymax>473</ymax>
+		</bndbox>
+	</object>
+</annotation>

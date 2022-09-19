@@ -1,0 +1,21 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1937ApJ____86__274M_p34.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1937</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>151</xmin>
+			<ymin>54</ymin>
+			<xmax>280</xmax>
+			<ymax>417</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,39 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1952ApJ___116__541W_p5.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1952</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>table</name>
+		<bndbox>
+			<xmin>117</xmin>
+			<ymin>183</ymin>
+			<xmax>386</xmax>
+			<ymax>296</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>table caption</name>
+		<bndbox>
+			<xmin>238</xmin>
+			<ymin>174</ymin>
+			<xmax>271</xmax>
+			<ymax>177</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>table</name>
+		<bndbox>
+			<xmin>112</xmin>
+			<ymin>170</ymin>
+			<xmax>398</xmax>
+			<ymax>288</ymax>
+		</bndbox>
+	</object>
+</annotation>

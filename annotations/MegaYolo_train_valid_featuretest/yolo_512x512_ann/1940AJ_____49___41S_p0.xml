@@ -1,0 +1,48 @@
+<annotation>
+	<filename>/Users/jillnaiman/MegaYolo/binaries/1940AJ_____49___41S_p0.npz</filename>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<year>1940</year>
+	<yearMin>1895</yearMin>
+	<yearMax>1997</yearMax>
+	<yearMean>1946</yearMean>
+	<PDFinfo>
+		<name>figure</name>
+		<bndbox>
+			<xmin>240</xmin>
+			<ymin>176</ymin>
+			<xmax>439</xmax>
+			<ymax>339</ymax>
+		</bndbox>
+	</PDFinfo>
+	<PDFinfo>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>329</xmin>
+			<ymin>341</ymin>
+			<xmax>355</xmax>
+			<ymax>345</ymax>
+		</bndbox>
+	</PDFinfo>
+	<object>
+		<name>figure</name>
+		<bndbox>
+			<xmin>251</xmin>
+			<ymin>189</ymin>
+			<xmax>433</xmax>
+			<ymax>334</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>figure caption</name>
+		<bndbox>
+			<xmin>287</xmin>
+			<ymin>335</ymin>
+			<xmax>397</xmax>
+			<ymax>345</ymax>
+		</bndbox>
+	</object>
+</annotation>
