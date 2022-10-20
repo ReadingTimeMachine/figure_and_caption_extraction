@@ -34,7 +34,7 @@ def get_already_ocr_processed(ocr_results_dir=None,pickle_file_head=None):
         for i,w in enumerate(wsout):
             wsout[i] = w.split('/')[-1].split('.jpeg')[0]
 
-            wsAlreadyDone.extend(wsout)
+        wsAlreadyDone.extend(wsout)
     return wsAlreadyDone
 
 
